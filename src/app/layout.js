@@ -1,10 +1,11 @@
 import { DM_Sans } from "next/font/google";
-import "./styles/normalize.css"
+import "./styles/normalize.css";
+import "./styles/variables.css"
 import "./styles/globals.css";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
-  weight: ["300","400", "500", "700"],
+  weight: ["300","400", "500", "600", "700"],
   variable: "--font-dm-sans",
   display: "swap",
 });

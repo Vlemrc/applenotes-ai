@@ -8,8 +8,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        grayLight: "var(--gray-light)",
+        gray: "var(--gray)",
+        grayLightDark: "var(--gray-light-dark)",
+        grayOpacity: "var(--gray-opacity)",
+        grayDark: "var(--gray-dark)",
+        text: "var(--text)",
+        yellow: "var(--yellow)",
+        yellowDark: "var(--yellow-dark)",
+        yellowLight: "var(--yellow-light)",
+        yellowGradient: "var(--yellow-gradient)",
       },
       fontFamily: {
         dmSans: ["var(--font-dm-sans)", "sans-serif"],
