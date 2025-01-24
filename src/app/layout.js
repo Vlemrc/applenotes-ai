@@ -1,4 +1,5 @@
 import { DM_Sans } from "next/font/google";
+import "./styles/normalize.css"
 import "./styles/globals.css";
 
 const dmSans = DM_Sans({

@@ -3,8 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --gray-light: #F2F2F2;
+  --gray: #DCDCDC;
+  --gray-light-dark:#BFBFBF;
+  --gray-opacity:#A19D99;
+  --gray-dark:#6F6F6F;
+  --text:#282828;
+  --yellow:#DC9F3A;
+  --yellow-dark:#BA951D;
+  --yellow-light:#FFC300;
+  --yellow-gradient: linear-gradient(0deg, rgba(255, 195, 0, 1) 0%, rgba(255, 212, 73, 1) 100%);
   font-family: var(--font-dm-sans), sans-serif;
 }
 
