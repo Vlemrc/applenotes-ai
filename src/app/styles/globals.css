@@ -4,4 +4,5 @@
 
 body {
   font-family: var(--font-dm-sans), sans-serif;
+  letter-spacing: -0.05em;
 }

@@ -24,7 +24,7 @@ const Leftbar = () => {
       <div className="notes">
         <h6 className="font-bold text-grayDark pb-[5px]">iCloud</h6>
         <ul>
-          <li className="flex flex-row justify-between w-full px-3 py-2 bg-yellowDark rounded-lg">
+          <li className="flex flex-row justify-between w-full px-3 py-1 bg-yellowDark rounded-lg">
             <div className="flex flex-row gap-2 items-center">
               <Folder />
               <p className="font-semibold text-white">Notes</p>
@@ -33,7 +33,7 @@ const Leftbar = () => {
           </li>
           <li className="flex flex-row justify-between w-full px-3 py-2 rounded-lg">
             <div className="flex flex-row gap-2 items-center">
-              <Bin />
+              <Bin color="#DC9F3A" />
               <p className="font-semibold text-text">Suppr. récentes</p>
             </div>
             <p className="font-semibold text-grayOpacity">{totalDeleteNotes}</p>

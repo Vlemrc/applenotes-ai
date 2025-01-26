@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import NoteItem from "../components/NoteItem";
+import { dataNotes } from '@/app/dataNotes';
 
 export default function NotesPage() {
   const [notes, setNotes] = useState([]);
@@ -20,19 +21,16 @@ export default function NotesPage() {
     localStorage.setItem("notes", JSON.stringify(updatedNotes));
   };
 
+  const notes2 = dataNotes
+
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold">Mes Notes</h1>
-      <button className="mt-4 p-2 bg-blue-500 text-white" onClick={addNote}>
+      {/* <button className="mt-4 p-2 bg-blue-500 text-white" onClick={addNote}>
         Ajouter une note
-      </button>
-      <ul className="mt-4">
-        {notes.map((note) => (
-          <li key={note.id} className="border-b p-2">
-            <Link href={`/notes/${note.id}`} className="text-blue-500">
-              {note.title}
-            </Link>
-          </li>
+      </button> */}
+      <ul>
+        {notes2.map((note, index) => (
+          <NoteItem key={index} note={note} />
         ))}
       </ul>
     </div>

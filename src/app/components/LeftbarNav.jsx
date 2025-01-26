@@ -4,7 +4,7 @@ import MenuNotes from "./icons/MenuNotes";
 
 const LeftbarNav = () => {
     return (
-        <div className="h-[50px] border-b border-solid border-gray flex flex-row justify-between items-center px-2.5">
+        <div className="h-[50px] border-b border-solid border-gray flex flex-row justify-between items-center px-2.5 py-4">
             <div className="flex flex-row items-center">
                 <div className="hover:bg-grayLight rounded-md cursor-pointer transition-colors duration-300 h-7 w-8 flex items-center justify-center">
                     <MenuNotes />
@@ -14,7 +14,7 @@ const LeftbarNav = () => {
                 </div>
             </div>
             <div className="hover:bg-grayLight rounded-md cursor-pointer transition-colors duration-300 h-7 w-8 flex items-center justify-center">
-                <Bin />
+                <Bin color="#BFBFBF" />
             </div>
         </div>
     )
