@@ -31,3 +31,9 @@ body {
   transform: scaleX(1);
   transform-origin: bottom left;
 }
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}

@@ -3,6 +3,7 @@ import Leftbar from "@/components/main/Leftbar";
 import Sidebar from "@/components/main/Sidebar";
 import AiButton from "@/components/AiButton";
 import Breadcrumb from "@/components/Breadcrumb";
+import FlashCard from "@/components/main/Flashcard";
 
 export default function Home() {
   return (
@@ -13,6 +14,8 @@ export default function Home() {
         <ActionsNav />
         <div className="px-8 py-4">
           <Breadcrumb />
+          <h1 className="text-text text-xl font-black uppercase">Dmitry Bivol</h1>
+          <FlashCard />
         </div>
         <AiButton />
       </div>
