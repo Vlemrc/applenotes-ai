@@ -4,6 +4,7 @@ import { dataNotes, dataDeleteNotes} from '@/app/dataNotes';
 import Bin from '../icons/Bin';
 import Folder from '../icons/Folder';
 import Sidebar from '../icons/Sidebar';
+import IconHoverContainer from '../IconHoverContainer';
 
 const Leftbar = () => {
 
@@ -16,9 +17,9 @@ const Leftbar = () => {
         <div className="bg-[#FF5F57] h-3 w-3 rounded-full"></div>
         <div className="bg-[#FFBD2F] h-3 w-3 rounded-full"></div>
         <div className="bg-[#28C840] h-3 w-3 rounded-full mr-2"></div>
-        <div className="h-7 w-8 flex items-center justify-center bg-transparent hover:bg-grayLight rounded-md cursor-pointer transition-colors duration-300">
+        <IconHoverContainer>
           <Sidebar />
-        </div>
+        </IconHoverContainer>
 
       </div>
       <div className="notes">

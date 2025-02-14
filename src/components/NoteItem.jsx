@@ -1,7 +1,11 @@
 import Link from "next/link";
 
 const NoteItem = ({ note }) => {
-    const isActive = true
+
+    let isActive = null
+    if( note.id == 2) {
+        isActive = true
+    }
     return (
         <Link key={note.id} href={`/notes/${note.id}`} className="w-full h-full">
             <li className={`${isActive ? "bg-gray" : ""} py-4 px-7 w-full rounded-lg`}>

@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: var(--font-dm-sans), sans-serif;
+  letter-spacing: -0.05em;
+}
+
+/* Animation Hover Link Underline */
+
+.animlinkunderline {
+  position:relative;
+}
+
+.animlinkunderline::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  border-radius: 5px;
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background: black;
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.animlinkunderline:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
