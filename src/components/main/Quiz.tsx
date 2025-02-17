@@ -1,12 +1,9 @@
-import { Progress } from "../ui/progress"
-
 const Quiz = () => {
     return (
         <div>
             <h1 className="font-semibold text-yellowLight uppercase -mt-1">Quiz</h1>
             <div className="relative bg-grayLight flex flex-col items-center p-6 rounded-xl mt-10">
                 <div id="progress" className="w-full flex flex-col items-center justify-center gap-1">
-                    <Progress value={33} />
                     <p className="text-xs text-grayOpacity">3 / 10</p>
                 </div>
                 <h1 className="text-text text-lg font-semibold pt-5">Quelle est la nationalité de Dmitry Bivol ?</h1>

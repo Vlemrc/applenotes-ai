@@ -1,4 +1,4 @@
-import Bin from "./icons/Bin";
+import Trash from "./icons/Trash";
 import MenuGrid from "./icons/MenuGrid";
 import MenuNotes from "./icons/MenuNotes";
 
@@ -14,7 +14,7 @@ const LeftbarNav = () => {
                 </div>
             </div>
             <div className="hover:bg-grayLight rounded-md cursor-pointer transition-colors duration-300 h-7 w-8 flex items-center justify-center">
-                <Bin color="#BFBFBF" />
+                <Trash color="#6F6F6F" height="22" width="22" />
             </div>
         </div>
     )

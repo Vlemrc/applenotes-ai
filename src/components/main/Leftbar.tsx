@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { dataNotes, dataDeleteNotes} from '@/app/dataNotes';
-import Bin from '../icons/Bin';
+import Trash from '../icons/Trash';
 import Folder from '../icons/Folder';
 import Sidebar from '../icons/Sidebar';
 import IconHoverContainer from '../IconHoverContainer';
@@ -27,14 +27,14 @@ const Leftbar = () => {
         <ul>
           <li className="flex flex-row justify-between w-full px-3 py-1 bg-yellowDark rounded-lg">
             <div className="flex flex-row gap-2 items-center">
-              <Folder />
+              <Folder color="#6F6F6F" />
               <p className="font-semibold text-white">Notes</p>
             </div>
             <p className="font-semibold text-white">{totalNotes}</p>
           </li>
           <li className="flex flex-row justify-between w-full px-3 py-2 rounded-lg">
             <div className="flex flex-row gap-2 items-center">
-              <Bin color="#DC9F3A" />
+              <Trash color="#DC9F3A" height="18" width="18" />
               <p className="font-semibold text-text">Suppr. récentes</p>
             </div>
             <p className="font-semibold text-grayOpacity">{totalDeleteNotes}</p>

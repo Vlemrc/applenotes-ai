@@ -1,23 +1,13 @@
-import ActionsNav from "../components/ActionsNav";
 import Leftbar from "@/components/main/Leftbar";
-import Sidebar from "@/components/main/Sidebar";
-import AiButton from "@/components/AiButton";
-import Breadcrumb from "@/components/Breadcrumb";
-import FlashCard from "@/components/main/Flashcard";
+import NotesLayout from "@/components/main/NotesLayout";
+import { dataNotes } from "./dataNotes"
 
 export default function Home() {
   return (
     <main className="flex flex-row h-full">
       <Leftbar />
-      <Sidebar />
       <div className="relative flex flex-col w-full">
-        <ActionsNav />
-        <div className="px-8 py-4">
-          <Breadcrumb />
-          <h1 className="text-text text-xl font-black uppercase">Dmitry Bivol</h1>
-          <FlashCard />
-        </div>
-        <AiButton />
+        <NotesLayout notes={dataNotes} />
       </div>
     </main>
   );

@@ -19,7 +19,7 @@ const ActionsNav = () => {
 
                 <div className="flex flex-row items-center gap-2">
                     <IconHoverContainer>
-                         <Text color="#BFBFBF" />
+                         <Text color="#6F6F6F" />
                     </IconHoverContainer>
                     <IconHoverContainer>
                          <CheckList color="#6F6F6F" />
