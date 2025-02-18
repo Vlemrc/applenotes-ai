@@ -15,7 +15,7 @@ const NotesLayout = ({ notes }: NotesLayoutProps) => {
 
   const handleNoteSelect = (note: Note): void => {
     setSelectedNote(note)
-    router.push(`/?id=${note.id}`, undefined, { shallow: true })
+    router.push(`/?id=${note.id}`, undefined)
   }
 
   if (!notes || notes.length === 0) {
@@ -31,6 +31,7 @@ const NotesLayout = ({ notes }: NotesLayoutProps) => {
       <div className="w-full relative">
         <ActionsNav />
         {selectedNote && <NoteContent note={selectedNote} />}
+        
         <AiButton />
       </div>
     </div>

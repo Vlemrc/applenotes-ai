@@ -37,3 +37,21 @@ body {
     --radius: 0.5rem;
   }
 }
+
+/* Label bulle */
+
+.label-bulle {
+  position:relative;
+}
+
+.label-bulle::after {
+  content:'';
+  position: absolute;
+  top:-12px;
+  left:50%;
+  transform: translateX(-50%) rotate(45deg);
+  width:10px;
+  height:10px;
+  background-color: var(--gray-light);
+  border-radius: 1px;
+}
