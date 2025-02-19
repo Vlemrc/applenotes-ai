@@ -1,23 +1,18 @@
-import { dataNotes } from "@/app/dataNotes"
+import { notFound } from "next/navigation"
 import AiHelpExtend from "@/components/AiHelpExtend"
 import AiInput from "@/components/AiInput"
-import { use } from "react"
+import { getNotes } from "@/lib/getNotes"
+import { formatDate } from "@/utils/formatDate"
 
-export default function AssistantIAPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params)
-  const note = dataNotes.find((n) => n.id === Number.parseInt(resolvedParams.id))
-  
+export default async function AssistantIAPage({ params }: { params: { id: string } }) {
+  const notes = await getNotes()
+  const note = notes.find((n) => n.id === Number.parseInt(params.id))
+
   if (!note) {
-    return null
+    notFound()
   }
 
-  const date = new Date(note.date).toLocaleString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit"
-  }).replace("à ", "à ")
+  const date = formatDate(note.createdAt)
 
   return (
     <>

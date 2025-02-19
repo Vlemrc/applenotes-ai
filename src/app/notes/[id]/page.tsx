@@ -1,17 +1,15 @@
-import { dataNotes } from "@/app/dataNotes"
 import { notFound } from "next/navigation"
 import NoteContent from "@/components/main/NoteContent"
-import { use } from "react"
+import { getNotes } from "@/lib/getNotes"
 
-export default function NotePage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params)
-  const note = dataNotes.find((n) => n.id === Number.parseInt(resolvedParams.id))
+export default async function NotePage({ params }: { params: { id: string } }) {
+  const notes = await getNotes()
+  const note = notes.find((n) => n.id === Number.parseInt(params.id))
 
   if (!note) {
     notFound()
   }
 
-  return (
-    <NoteContent note={note} />
-  )
+  return <NoteContent note={note} />
 }
+

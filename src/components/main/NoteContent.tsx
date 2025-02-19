@@ -6,7 +6,7 @@ interface NoteContentProps {
 
 const NoteContent = ({ note }: NoteContentProps) => {
 
-  const date = new Date(note.date).toLocaleString("fr-FR", {
+  const date = new Date(note.createdAt).toLocaleString("fr-FR", {
     day: "numeric",
     month: "long",
     year: "numeric",

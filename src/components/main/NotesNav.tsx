@@ -1,36 +1,46 @@
-import NoteItem from "../NoteItem";
-import { dataNotes } from "@/app/dataNotes";
+import NoteItem from "../NoteItem"
+import { Note } from "@/types/notes"
 
-export default function NotesNav() {
+interface NotesNavProps {
+  notes: Note[]
+}
 
-  const todayNotes = []
-  const yesterdayNotes = []
-  const lastWeekNotes = []
-  const lastMonthNotes = []
-  const lastYearNotes = []
-  const olderNotes = []
+export default function NotesNav({ notes }: NotesNavProps) {
+  const todayNotes: Note[] = []
+  const yesterdayNotes: Note[] = []
+  const lastWeekNotes: Note[] = []
+  const lastMonthNotes: Note[] = []
+  const lastYearNotes: Note[] = []
+  const olderNotes: Note[] = []
 
-  dataNotes.forEach((note) => {
-    const noteDate = new Date(note.date)
-    const today = new Date()
-    const yesterday = new Date(today)
-    yesterday.setDate(today.getDate() - 1)
-    const lastWeek = new Date(today)
-    lastWeek.setDate(today.getDate() - 7)
-    const lastMonth = new Date(today)
-    lastMonth.setMonth(today.getMonth() - 1)
-    const lastYear = new Date(today)
-    lastYear.setFullYear(today.getFullYear() - 1)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  
+  const yesterday = new Date(today)
+  yesterday.setDate(today.getDate() - 1)
+  
+  const lastWeek = new Date(today)
+  lastWeek.setDate(today.getDate() - 7)
+  
+  const lastMonth = new Date(today)
+  lastMonth.setMonth(today.getMonth() - 1)
+  
+  const lastYear = new Date(today)
+  lastYear.setFullYear(today.getFullYear() - 1)
 
-    if (noteDate >= today) {
+  notes.forEach((note) => {
+    const noteDate = new Date(note.createdAt) // Changé de note.date à note.createdAt
+    noteDate.setHours(0, 0, 0, 0)
+
+    if (noteDate.getTime() === today.getTime()) {
       todayNotes.push(note)
-    } else if (noteDate >= yesterday) {
+    } else if (noteDate.getTime() === yesterday.getTime()) {
       yesterdayNotes.push(note)
-    } else if (noteDate >= lastWeek) {
+    } else if (noteDate >= lastWeek && noteDate < yesterday) {
       lastWeekNotes.push(note)
-    } else if (noteDate >= lastMonth) {
+    } else if (noteDate >= lastMonth && noteDate < lastWeek) {
       lastMonthNotes.push(note)
-    } else if (noteDate >= lastYear) {
+    } else if (noteDate >= lastYear && noteDate < lastMonth) {
       lastYearNotes.push(note)
     } else {
       olderNotes.push(note)
@@ -38,7 +48,7 @@ export default function NotesNav() {
   })
 
   return (
-    <ul className="overflow-scroll">
+    <ul className="overflow-scroll overflow-x-hidden">
       <div className="absolute bg-gray top-[50px] w-calc-minus-15 w-full h-[33px] z-10"></div>
       {todayNotes.length !== 0 && (
         <>

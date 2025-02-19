@@ -11,13 +11,16 @@ const NoteItem = ({ note }: NoteItemProps) => {
     const pathname = usePathname()
     const isActive = pathname.includes(`/notes/${note.id}`)
 
-    // Je rends mes dates lisibles
-    const date = new Date(note.date).toLocaleDateString("fr-FR", {
+    // Formatage de la date
+    const date = new Date(note.createdAt).toLocaleDateString("fr-FR", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric"
     })
     
+    console.log("Date reçue:", note.createdAt) // Pour débugger
+    console.log("Date formatée:", date) // Pour débugger
+
     return (
         <Link href={`/notes/${note.id}`} className={`${isActive ? "" : "border-nav-note"}`}>
             <li className={`${isActive ? "bg-gray" : "bg-white"} pt-4 pl-7 w-full rounded-md transition-colors`}>
