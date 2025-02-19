@@ -17,8 +17,8 @@ const AiHelpExtend = () => {
                 </div>
             </button>
             <div className="pb-4">
-                <p className={`text-sm transition-all duration-300 ${isVisible ? "opacity-100" : "opacity-0"}`}>L’IA se base sur votre note pour répondre à vos besoins. Vous pouvez baser votre prompt sur le contenu de votre note.</p>
-                <p className={`text-sm transition-all duration-300 ${isVisible ? "opacity-100" : "opacity-0"}`}><span className="font-semibold">Exemple :</span> Peux-tu réécrire ma note dans un langage plus soutenu ?</p>
+                <p className={`text-xs transition-all duration-300 ${isVisible ? "opacity-100" : "opacity-0"}`}>L’IA se base sur votre note pour répondre à vos besoins. Vous pouvez baser votre prompt sur le contenu de votre note.</p>
+                <p className={`text-xs transition-all duration-300 ${isVisible ? "opacity-100" : "opacity-0"}`}><span className="font-semibold">Exemple :</span> Peux-tu réécrire ma note dans un langage plus soutenu ?</p>
             </div>
         </div>
     );

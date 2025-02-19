@@ -12,7 +12,7 @@ const Leftbar = () => {
   const totalDeleteNotes = dataDeleteNotes.length
 
   return (
-    <div className="w-1/4 h-full bg-gray p-4 flex flex-col gap-8">
+    <div className="w-1/6 h-full bg-gray p-4 flex flex-col gap-8">
       <div className="nav-leftbar flex flex-row gap-2 items-center">
         <div className="bg-[#FF5F57] h-3 w-3 rounded-full"></div>
         <div className="bg-[#FFBD2F] h-3 w-3 rounded-full"></div>
@@ -23,7 +23,7 @@ const Leftbar = () => {
 
       </div>
       <div className="notes">
-        <h6 className="font-bold text-grayDark pb-[5px]">iCloud</h6>
+        <h6 className="font-bold text-xs text-grayDark pb-[5px]">iCloud</h6>
         <ul>
           <li className="flex flex-row justify-between w-full px-3 py-1 bg-yellowDark rounded-lg">
             <div className="flex flex-row gap-2 items-center">

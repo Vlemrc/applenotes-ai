@@ -1,0 +1,31 @@
+import ActionsNav from "@/components/ActionsNav"
+import AiButton from "@/components/AiButton"
+import LeftbarNav from "@/components/LeftbarNav"
+import Leftbar from "@/components/main/Leftbar"
+import NotesNav from "@/components/main/NotesNav"
+import { dataNotes } from "@/app/dataNotes"
+import Breadcrumb from "@/components/Breadcrumb"
+import FlashCard from "@/components/main/Flashcard"
+import AiHelpExtend from "@/components/AiHelpExtend"
+import AiInput from "@/components/AiInput"
+
+export default function AssistantIAPage({ params }: { params: { id: string } }) {
+  
+  const note = dataNotes.find((n) => n.id === Number.parseInt(params.id))
+  const date = new Date(note.date).toLocaleString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).replace("à ", "à ")
+
+  return (
+    <>
+      <p className="absolute top-14 left-1/2 -translate-x-1/2 text-center text-grayOpacity text-xs">{date}</p>
+      <h2 className="text-2xl font-bold">{note.title}</h2>
+      <AiHelpExtend />
+      <AiInput />
+    </>
+  )
+}

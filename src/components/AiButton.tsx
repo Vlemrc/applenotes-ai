@@ -6,9 +6,12 @@ import FlashCard from "./icons/FlashCard"
 import { useState } from "react"
 import LabelAiNav from "./LabelAiNav"
 import { AnimatePresence } from "framer-motion"
+import { usePathname } from "next/navigation"
+import Link from "next/link"
 
-const AiButton = () => {
+const AiButton = ({ noteId }: { noteId: string }) => {
     const [hoveredButton, setHoveredButton] = useState<string | null>(null)
+    const pathname = usePathname()
 
     return (
         <div
@@ -20,7 +23,8 @@ const AiButton = () => {
             `}
         >
             <div className="relative flex items-center justify-center">
-                <button 
+                <Link
+                    href={`/notes/${noteId}/quiz`}
                     id="icon-quiz" 
                     className={`
                         absolute w-10 h-10 rounded-full
@@ -34,8 +38,9 @@ const AiButton = () => {
                     <AnimatePresence>
                         {hoveredButton === 'quiz' && <LabelAiNav content="Générer un quiz" />}
                     </AnimatePresence>
-                </button>
-                <button 
+                </Link>
+                <Link 
+                    href={`/notes/${noteId}/assistant-ia`}
                     id="icon-brain" 
                     className="w-10 h-10 p-2 rounded-full"
                     aria-label="AI Assistant"
@@ -46,8 +51,9 @@ const AiButton = () => {
                     <AnimatePresence>
                         {hoveredButton === 'brain' && <LabelAiNav content="Utiliser l'IA pour enrichir cette note" />}
                     </AnimatePresence>
-                </button>
-                <button
+                </Link>
+                <Link
+                    href={`/notes/${noteId}/flashcards`}
                     id="icon-flashcard"
                     className={`
                         absolute -left-0 w-10 h-10 -translate-y-[3px] rounded-full
@@ -61,7 +67,7 @@ const AiButton = () => {
                     <AnimatePresence>
                         {hoveredButton === 'flashcard' && <LabelAiNav content="Créer des flashcards" />}
                     </AnimatePresence>
-                </button>
+                </Link>
             </div>
         </div>
     )

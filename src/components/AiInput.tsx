@@ -12,7 +12,7 @@ const AiInput = ({ value, onChange }) => {
     return (
         <>
             <div className="bg-grayLight relative w-full rounded-xl p-2.5 flex flex-col gap-2.5">
-                <h1 className="font-semibold">Besoin d'améliorer votre note ?</h1>
+                <h1 className="font-semibold">Besoin d&apos;améliorer votre note ?</h1>
                 <form action="">
                     <input
                         type="text"
