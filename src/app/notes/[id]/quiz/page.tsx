@@ -1,9 +1,15 @@
 import { dataNotes } from "@/app/dataNotes"
 import Quiz from "@/components/main/Quiz"
+import { use } from "react"
 
-export default function QuizPage({ params }: { params: { id: string } }) {
+export default function QuizPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params)
+  const note = dataNotes.find((n) => n.id === Number.parseInt(resolvedParams.id))
   
-  const note = dataNotes.find((n) => n.id === Number.parseInt(params.id))
+  if (!note) {
+    return null
+  }
+
   const date = new Date(note.date).toLocaleString("fr-FR", {
     day: "numeric",
     month: "long",

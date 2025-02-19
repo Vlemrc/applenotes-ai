@@ -1,17 +1,16 @@
-import ActionsNav from "@/components/ActionsNav"
-import AiButton from "@/components/AiButton"
-import LeftbarNav from "@/components/LeftbarNav"
-import Leftbar from "@/components/main/Leftbar"
-import NotesNav from "@/components/main/NotesNav"
 import { dataNotes } from "@/app/dataNotes"
-import Breadcrumb from "@/components/Breadcrumb"
-import FlashCard from "@/components/main/Flashcard"
 import AiHelpExtend from "@/components/AiHelpExtend"
 import AiInput from "@/components/AiInput"
+import { use } from "react"
 
-export default function AssistantIAPage({ params }: { params: { id: string } }) {
+export default function AssistantIAPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params)
+  const note = dataNotes.find((n) => n.id === Number.parseInt(resolvedParams.id))
   
-  const note = dataNotes.find((n) => n.id === Number.parseInt(params.id))
+  if (!note) {
+    return null
+  }
+
   const date = new Date(note.date).toLocaleString("fr-FR", {
     day: "numeric",
     month: "long",

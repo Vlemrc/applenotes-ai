@@ -2,7 +2,7 @@
 import { useState } from "react";
 import QuestionsFreq from "./icons/QuestionFreq";
 
-const AiInput = ({ value, onChange }) => {
+const AiInput = () => {
     const [ questionsVisible, setQuestionsVisible ] = useState(false);
 
     const handleQuestionsVisible = () => {
@@ -17,8 +17,6 @@ const AiInput = ({ value, onChange }) => {
                     <input
                         type="text"
                         placeholder="Votre message"
-                        value={value}
-                        onChange={onChange}
                         className="bg-white w-full rounded-lg p-2.5 text-sm placeholder:text-gray border border-gray pb-14 focus:outline-none focus:ring-1 focus:ring-yellowLight focus:border-yellow-400"
                     />
                     <button type="submit" className="hover:opacity-70 transition-all duration-300 h-8 w-8 bg-text rounded-full absolute right-5 bottom-5 flex items-center justify-center">
