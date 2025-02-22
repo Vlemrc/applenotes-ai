@@ -1,17 +1,26 @@
 "use client"
-
 import Brain from "./icons/Brain"
 import Dices from "./icons/Dices"
 import FlashCard from "./icons/FlashCard"
 import { useState } from "react"
 import LabelAiNav from "./LabelAiNav"
 import { AnimatePresence } from "framer-motion"
-import { usePathname } from "next/navigation"
-import Link from "next/link"
+import { useRouter, usePathname } from "next/navigation"
 
-const AiButton = ({ noteId }: { noteId: string }) => {
+interface AiButtonProps {
+  noteId: number; // Changé de string à number
+  onModeChange: (mode: 'quiz' | 'assistant' | 'flashcards' | null) => void;
+}
+
+const AiButton = ({ noteId, onModeChange }: AiButtonProps) => {
     const [hoveredButton, setHoveredButton] = useState<string | null>(null)
-    const pathname = usePathname()
+    const router = useRouter()
+
+    const handleClick = (mode: 'quiz' | 'assistant' | 'flashcards') => {
+        const path = `/notes/${noteId}/${mode === 'assistant' ? 'assistant-ia' : mode}`
+        window.history.pushState({}, '', path)
+        onModeChange(mode)
+    }
 
     return (
         <div
@@ -23,8 +32,8 @@ const AiButton = ({ noteId }: { noteId: string }) => {
             `}
         >
             <div className="relative flex items-center justify-center">
-                <Link
-                    href={`/notes/${noteId}/quiz`}
+                <button
+                    onClick={() => handleClick('quiz')}
                     id="icon-quiz" 
                     className={`
                         absolute w-10 h-10 rounded-full
@@ -38,9 +47,9 @@ const AiButton = ({ noteId }: { noteId: string }) => {
                     <AnimatePresence>
                         {hoveredButton === 'quiz' && <LabelAiNav content="Générer un quiz" />}
                     </AnimatePresence>
-                </Link>
-                <Link 
-                    href={`/notes/${noteId}/assistant-ia`}
+                </button>
+                <button 
+                    onClick={() => handleClick('assistant')}
                     id="icon-brain" 
                     className="w-10 h-10 p-2 rounded-full"
                     aria-label="AI Assistant"
@@ -51,9 +60,9 @@ const AiButton = ({ noteId }: { noteId: string }) => {
                     <AnimatePresence>
                         {hoveredButton === 'brain' && <LabelAiNav content="Utiliser l'IA pour enrichir cette note" />}
                     </AnimatePresence>
-                </Link>
-                <Link
-                    href={`/notes/${noteId}/flashcards`}
+                </button>
+                <button
+                    onClick={() => handleClick('flashcards')}
                     id="icon-flashcard"
                     className={`
                         absolute -left-0 w-10 h-10 -translate-y-[3px] rounded-full
@@ -67,7 +76,7 @@ const AiButton = ({ noteId }: { noteId: string }) => {
                     <AnimatePresence>
                         {hoveredButton === 'flashcard' && <LabelAiNav content="Créer des flashcards" />}
                     </AnimatePresence>
-                </Link>
+                </button>
             </div>
         </div>
     )

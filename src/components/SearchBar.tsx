@@ -1,3 +1,4 @@
+"use client";
 import Search from './icons/Search'
 
 const SearchBar = () => {

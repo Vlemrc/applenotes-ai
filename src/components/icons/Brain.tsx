@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 const Brain = () => {
   return (
     <motion.div
+      initial={{ x: 0, rotate: 0 }}
       whileHover={{
         x: [0, 2, -2, 2, -2, 2, -2, 0, 2, -2, 2, -2, 2, -2, 0],
         rotate: [0, 5, -5, 5, -5, 5, -5, 0, 5, -5, 0],

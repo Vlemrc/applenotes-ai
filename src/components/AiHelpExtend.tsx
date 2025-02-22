@@ -11,8 +11,8 @@ const AiHelpExtend = () => {
     return (
         <div className="flex flex-col ">
             <button onMouseEnter={HandleVisible} onMouseLeave={HandleVisible} className="flex flex-row items-center gap-2 w-fit">
-                <h1 className="text-yellowLight font-semibold uppercase">Enrichir ma note</h1>
-                <div className="flex items-center justify-center h-4 w-4 rounded-full bg-yellowLight">
+                <h1 className="text-yellowLight font-semibold uppercase -mt-1">Enrichir ma note</h1>
+                <div className="flex items-center justify-center h-4 w-4 rounded-full bg-yellowLight -mt-1">
                     <p className="text-white font-semibold text-[10px]">i</p>
                 </div>
             </button>

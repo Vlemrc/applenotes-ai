@@ -1,26 +1,44 @@
-import Link from "next/link"
+"use client";
 import { ChevronRight } from "lucide-react"
+import { Note } from "@/types/notes"
 
 interface BreadcrumbProps {
-  items: {
-    label: string
-    href: string
-  }[]
+  note: Note | null;
+  mode: 'quiz' | 'assistant' | 'flashcards' | null;
+  onResetMode: () => void;
 }
 
-export default function Breadcrumb({ items }: BreadcrumbProps) {
+const getModeLabel = (mode: string): string => {
+  switch (mode) {
+    case 'quiz':
+      return 'Quiz';
+    case 'assistant':
+      return 'Assistant IA';
+    case 'flashcards':
+      return 'Flashcards';
+    default:
+      return '';
+  }
+}
 
-  if (items.length <= 1) return null
+export default function Breadcrumb({ note, mode, onResetMode }: BreadcrumbProps) {
+  if (!note) return null;
+
+  const items = [
+    { label: note.title, onClick: onResetMode },
+    ...(mode ? [{ label: getModeLabel(mode) }] : [])
+  ];
 
   return (
     <nav className="flex flex-row group font-medium text-sm text-grayOpacity mb-1">
       {items.map((item, index) => (
-        <div key={item.href} className="flex items-center">
+        <div key={index} className="flex items-center">
           {index > 0 && <ChevronRight className="h-4 w-4 ml-1" />}
-          <Link 
-            href={item.href} 
+          <span 
+            onClick={item.onClick}
             className={`
               transition-colors duration-300
+              ${item.onClick ? 'cursor-pointer' : ''}
               ${index === items.length - 1 
                 ? "text-text group-hover:text-grayOpacity" 
                 : "hover:text-text animlinkunderline"
@@ -28,7 +46,7 @@ export default function Breadcrumb({ items }: BreadcrumbProps) {
             `}
           >
             {item.label}
-          </Link>
+          </span>
         </div>
       ))}
     </nav>

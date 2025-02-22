@@ -1,18 +1,21 @@
 "use client";
 import React from 'react';
-import { dataNotes, dataDeleteNotes} from '@/app/dataNotes';
 import Trash from '../icons/Trash';
 import Folder from '../icons/Folder';
 import Sidebar from '../icons/Sidebar';
 import IconHoverContainer from '../IconHoverContainer';
+import { useEffect, useState } from 'react';
+import useFolderStore from '@/stores/useFolderStore';
 
 const Leftbar = () => {
+  const { folders, activeFolderId, setActiveFolder, fetchFolders, isLoading } = useFolderStore()
 
-  const totalNotes = dataNotes.length
-  const totalDeleteNotes = dataDeleteNotes.length
+  useEffect(() => {
+    fetchFolders()
+  }, [fetchFolders])
 
   return (
-    <div className="w-1/6 h-full bg-gray p-4 flex flex-col gap-8">
+    <div className="w-1/6 h-full bg-gray p-4 pt-3 flex flex-col gap-8">
       <div className="nav-leftbar flex flex-row gap-2 items-center">
         <div className="bg-[#FF5F57] h-3 w-3 rounded-full"></div>
         <div className="bg-[#FFBD2F] h-3 w-3 rounded-full"></div>
@@ -25,20 +28,32 @@ const Leftbar = () => {
       <div className="notes">
         <h6 className="font-bold text-xs text-grayDark pb-[5px]">iCloud</h6>
         <ul>
-          <li className="flex flex-row justify-between w-full px-3 py-1 bg-yellowDark rounded-lg">
-            <div className="flex flex-row gap-2 items-center">
-              <Folder color="#6F6F6F" />
-              <p className="font-semibold text-white">Notes</p>
-            </div>
-            <p className="font-semibold text-white">{totalNotes}</p>
-          </li>
-          <li className="flex flex-row justify-between w-full px-3 py-2 rounded-lg">
-            <div className="flex flex-row gap-2 items-center">
-              <Trash color="#DC9F3A" height="18" width="18" />
-              <p className="font-semibold text-text">Suppr. récentes</p>
-            </div>
-            <p className="font-semibold text-grayOpacity">{totalDeleteNotes}</p>
-          </li>
+          {isLoading ? (
+            <div className="text-sm text-grayDark p-2">Chargement...</div>
+          ) : (
+            <>
+              {folders.map((folder) => (
+                <li
+                  key={folder.id}
+                  onClick={() => setActiveFolder(folder.id)}
+                  className={`flex flex-row justify-between w-full px-3 py-1 rounded-lg cursor-pointer transition-colors ${
+                    activeFolderId === folder.id ? "bg-yellowDark" : "hover:bg-gray-100"
+                  }`}
+                >
+                  <div className="flex flex-row gap-2 items-center">
+                    {folder.name === "Suppr. récentes" ? 
+                      (<Trash color={activeFolderId === folder.id ? "#FFFFFF" : "#DC9F3A"} height="18" width="18" />) : 
+                      (<Folder color={activeFolderId === folder.id ? "#FFFFFF" : "#DC9F3A"} />)
+                    }
+                    <p className={`font-semibold ${activeFolderId === folder.id ? "text-white" : "text-text"}`}>
+                      {folder.name}
+                    </p>
+                  </div>
+                  <p className={`font-semibold ${activeFolderId === folder.id ? "text-white" : "text-grayOpacity"}`}>{folder._count.notes}</p>
+                </li>
+              ))}
+            </>
+          )}
         </ul>
       </div>
     </div>

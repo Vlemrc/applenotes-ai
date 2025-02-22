@@ -1,10 +1,4 @@
-export interface Folder {
-  id: number
-  createdAt: string | Date
-  name: string
-  notes?: Note[]
-}
-
+import { Folder } from './folders'
 export interface Note {
   id: number
   createdAt: string | Date

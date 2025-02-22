@@ -1,3 +1,4 @@
+"use client";
 import Write from './icons/Write'
 import Text from './icons/Text'
 import CheckList from './icons/CheckList'
@@ -8,10 +9,15 @@ import IconHoverContainer from './IconHoverContainer'
 import Locker from './icons/Locker'
 import Link from './icons/Link'
 import SearchBar from './SearchBar'
+import useFolderStore from '@/stores/useFolderStore'
 
 const ActionsNav = () => {
+
+    const { activeFolderId, folders } = useFolderStore();
+    const currentFolder = folders?.find(folder => folder.id === activeFolderId);
+
     return (
-        <div className="h-[50px] border-b border-solid border-gray flex flex-row justify-between items-center px-2.5 py-4 w-full">
+        <div className={`${currentFolder && currentFolder._count.notes === 0 ? "" : "border-b border-solid border-gray"} h-[50px] flex flex-row justify-between items-center px-2.5 py-4 w-full`}>
             <div className="flex flex-row items-center justify-between w-full">
                 <IconHoverContainer>
                     <Write color="#6F6F6F" />

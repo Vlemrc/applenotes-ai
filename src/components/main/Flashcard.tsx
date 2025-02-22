@@ -1,3 +1,4 @@
+"use client";
 const FlashCard = () => {
     return (
         <div>
