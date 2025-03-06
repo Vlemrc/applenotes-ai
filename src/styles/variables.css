@@ -8,6 +8,7 @@
     --yellow: #DC9F3A;
     --yellow-dark: #BA951D;
     --yellow-light: #FFC300;
+    --alert: #FF4141;
     --yellow-gradient: linear-gradient(0deg, rgba(255, 195, 0, 1) 0%, rgba(255, 212, 73, 1) 100%);
     font-family: var(--font-dm-sans), sans-serif;
 }

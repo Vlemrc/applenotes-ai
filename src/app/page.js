@@ -58,12 +58,13 @@ export default function Home() {
             {activeMode !== null && <Breadcrumb note={activeNote} mode={activeMode} onResetMode={() => setActiveMode(null)}  />}
             {activeNote && <HeaderNote note={activeNote} />}
             {activeMode === null && <NoteContent note={activeNote} />}
-            {activeMode === 'quiz' && <Quiz note={activeNote} />}
+            {activeMode === 'quiz' && (<Quiz noteId={Number(activeNote.id)} onBackToNote={() => setActiveMode(null)} />)}
             {activeMode === 'assistant' && <><AiHelpExtend note={activeNote} /><AiInput /></>}
-            {activeMode === 'flashcards' && <FlashCard note={activeNote} />}
+            {activeMode === 'flashcards' && <FlashCard noteId={Number(activeNote.id)} />}
             {activeNote && (
               <AiButton 
                 noteId={Number(activeNote.id)}
+                noteContent={activeNote.content}
                 onModeChange={setActiveMode} 
               />
             )}

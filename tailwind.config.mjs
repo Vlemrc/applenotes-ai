@@ -18,7 +18,8 @@ export default {
   			yellow: 'var(--yellow)',
   			yellowDark: 'var(--yellow-dark)',
   			yellowLight: 'var(--yellow-light)',
-  			yellowGradient: 'var(--yellow-gradient)'
+  			yellowGradient: 'var(--yellow-gradient)',
+			alert: 'var(--alert)',
   		},
 		backgroundImage: {
 			'yellow-gradient': 'linear-gradient(0deg, rgba(255, 195, 0, 1) 0%, rgba(255, 212, 73, 1) 100%)',

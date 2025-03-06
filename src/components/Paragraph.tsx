@@ -23,7 +23,7 @@ const Paragraph = ({ content }: ParagraphProps) => {
       const spans = paragraph.querySelectorAll("span")
       let time = 0
       spans.forEach((span) => {
-        time += 0.02
+        time += 0.005
         span.style.transitionDelay = `${time}s`
       })
     }

@@ -97,3 +97,7 @@ body {
 .w-calc-minus-15 {
   width: calc(100% - 15px);
 }
+
+.bg-green {
+  background: linear-gradient(270deg, #27C72F 0%, #6EDF74 100%);
+}

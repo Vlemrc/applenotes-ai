@@ -11,7 +11,6 @@ const NoteContent = ({ note }: NoteContentProps) => {
   const { activeFolderId, folders } = useFolderStore()
 
   const currentFolder = folders?.find((folder) => folder.id === activeFolderId)
-  console.log(currentFolder)
   if (currentFolder && currentFolder._count.notes === 0) {
     return
   }
