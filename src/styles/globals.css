@@ -101,3 +101,20 @@ body {
 .bg-green {
   background: linear-gradient(270deg, #27C72F 0%, #6EDF74 100%);
 }
+
+.animate-gray-gradient {
+  color: #000;
+  background: linear-gradient(90deg, rgba(40, 40, 40, 1) 0%, rgba(161, 157, 153, 1) 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 1.5s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}

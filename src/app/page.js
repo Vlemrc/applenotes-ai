@@ -44,7 +44,7 @@ export default function Home() {
     <main className="flex flex-row h-full">
       <Leftbar />
       <div className="flex h-screen w-5/6">
-        <aside className="w-1/3 h-full border-r border-solid border-gray flex flex-col relative">
+        <aside className="min-w-1/3 w-1/3 h-full border-r border-solid border-gray flex flex-col relative">
           <LeftbarNav />
           <NotesNav 
             notes={notes} 

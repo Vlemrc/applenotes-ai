@@ -117,7 +117,7 @@ const Quiz = ({
       <div>
         <h1 className="font-semibold text-yellowLight uppercase -mt-1">Quiz</h1>
         <div className="relative bg-grayLight flex flex-col items-center p-6 rounded-xl mt-10">
-          <p>Chargement du quiz...</p>
+          <p>Votre note est trop courte pour demander un quiz.</p>
         </div>
       </div>
     )

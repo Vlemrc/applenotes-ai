@@ -13,42 +13,47 @@ interface AiButtonProps {
 
 const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
     const [hoveredButton, setHoveredButton] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(false); // 🔥 État de chargement
+    const [loading, setLoading] = useState<boolean>(false);
+    const [mode, setMode] = useState<"quiz" | "assistant" | "flashcards" | null>(null);
 
     const fetchAIResponse = async (mode: "quiz" | "flashcards") => {
         try {
-            if (!noteContent) throw new Error("Note vide");
+            if (!noteContent) throw new Error("Note vide")
 
-            setLoading(true); // 🟢 Démarrer le chargement
+            setLoading(true)
 
-            const response = await fetch("/api/openai", {
+            const endpoint = mode === "quiz" ? "/api/quiz" : "/api/flashcard"
+            const payload = mode === "quiz" ? { noteContent, questionCount: 8 } : { noteContent, flashcardsCount: 8 }
+
+            const response = await fetch(endpoint, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ noteContent, type: mode }),
-            });
+                body: JSON.stringify(payload),
+            })
 
             if (!response.ok) {
-                console.error("Erreur lors de la génération du quiz", await response.text());
-                return null;
+                console.error(`Erreur lors de la génération de ${mode}`, await response.text())
+                return null
             }
 
-            const data = await response.json();
-            return data;
+            const data = await response.json()
+            return data
         } catch (error) {
-            console.error("Erreur dans fetchAIResponse :", error);
-            return null;
+            console.error("Erreur dans fetchAIResponse :", error)
+            return null
         } finally {
-            setLoading(false); // 🔴 Arrêter le chargement
+            setLoading(false)
         }
-    };
+    }
 
-    const handleClick = async (mode: "quiz" | "assistant" | "flashcards") => {
-        if (loading) return; // 🔥 Empêcher le clic multiple
+    const handleClick = async (newMode: "quiz" | "assistant" | "flashcards") => {
+        if (loading) return;
+        setMode(newMode);
 
-        if (mode === "quiz" || mode === "flashcards") {
-            const generatedContent = await fetchAIResponse(mode);
+        if (newMode === "quiz" || newMode === "flashcards") {
+            const generatedContent = await fetchAIResponse(newMode);
             if (generatedContent) {
-                localStorage.setItem(`generated-${mode}-${noteId}`, JSON.stringify(generatedContent));
+                localStorage.setItem(`generated-${newMode}-${noteId}`, JSON.stringify(generatedContent));
             }
         }
 
@@ -58,6 +63,18 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
     };
 
     return (
+        <>
+        {loading && (
+            mode === "quiz" ? (
+                <div className="p-2 absolute top-1/2 left-1/2 -translate-x-1/2 animate-gray-gradient text-md whitespace-nowrap">
+                    Quiz en cours de création
+                </div>
+            ) : mode === "flashcards" ? (
+                <div className="p-2 absolute top-1/2 left-1/2 -translate-x-1/2 animate-gray-gradient text-md whitespace-nowrap">
+                    Flashcards en cours de création
+                </div>
+            ) : null
+        )}
         <div
             className={`
                 absolute left-1/2 bottom-20 -translate-x-1/2 
@@ -73,23 +90,17 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
                     className={`
                         absolute w-10 h-10 rounded-full flex items-center justify-center
                         transition-all duration-300 ease-in-out -translate-x-11 -translate-y-0.5 opacity-0 group-hover:opacity-100 delay-0 group-hover:delay-300
-                        ${loading ? "opacity-50 cursor-not-allowed" : ""}
                     `}
                     aria-label="Quiz"
                     onMouseEnter={() => setHoveredButton('quiz')}
                     onMouseLeave={() => setHoveredButton(null)}
-                    disabled={loading} // 🔥 Désactive le bouton pendant le chargement
+                    disabled={loading}
                 >
-                    {loading ? (
-                        <div className="animate-spin h-6 w-6 border-4 border-gray-300 border-t-transparent rounded-full"></div> // 🔄 Loader
-                    ) : (
-                        <Dices />
-                    )}
+                    <Dices />
                     <AnimatePresence>
                         {hoveredButton === 'quiz' && <LabelAiNav content="Générer un quiz" />}
                     </AnimatePresence>
                 </button>
-
                 <button 
                     onClick={() => handleClick('assistant')}
                     id="icon-brain" 
@@ -104,7 +115,6 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
                         {hoveredButton === 'brain' && <LabelAiNav content="Utiliser l'IA pour enrichir cette note" />}
                     </AnimatePresence>
                 </button>
-
                 <button
                     onClick={() => handleClick('flashcards')}
                     id="icon-flashcard"
@@ -123,6 +133,7 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
                 </button>
             </div>
         </div>
+        </>
     );
 };
 
