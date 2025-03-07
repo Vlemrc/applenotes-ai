@@ -42,14 +42,14 @@ const Leftbar = () => {
                 >
                   <div className="flex flex-row gap-2 items-center">
                     {folder.name === "Suppr. récentes" ? 
-                      (<Trash color={activeFolderId === folder.id ? "#FFFFFF" : "#DC9F3A"} height="18" width="18" />) : 
+                      (<Trash color={activeFolderId === folder.id ? "#FFFFFF" : "#DC9F3A"} height="20" width="20" />) : 
                       (<Folder color={activeFolderId === folder.id ? "#FFFFFF" : "#DC9F3A"} />)
                     }
-                    <p className={`font-semibold ${activeFolderId === folder.id ? "text-white" : "text-text"}`}>
+                    <p className={`font-medium ${activeFolderId === folder.id ? "text-white" : "text-text"}`}>
                       {folder.name}
                     </p>
                   </div>
-                  <p className={`font-semibold ${activeFolderId === folder.id ? "text-white" : "text-grayOpacity"}`}>{folder._count.notes}</p>
+                  <p className={`font-medium ${activeFolderId === folder.id ? "text-white" : "text-grayOpacity"}`}>{folder._count.notes}</p>
                 </li>
               ))}
             </>
