@@ -46,14 +46,14 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
         }
     }
 
-    const handleClick = async (newMode: "quiz" | "assistant" | "flashcards") => {
+    const handleClick = async (mode: "quiz" | "assistant" | "flashcards") => {
         if (loading) return;
-        setMode(newMode);
+        setMode(mode);
 
-        if (newMode === "quiz" || newMode === "flashcards") {
-            const generatedContent = await fetchAIResponse(newMode);
+        if (mode === "quiz" || mode === "flashcards") {
+            const generatedContent = await fetchAIResponse(mode);
             if (generatedContent) {
-                localStorage.setItem(`generated-${newMode}-${noteId}`, JSON.stringify(generatedContent));
+                localStorage.setItem(`generated-${mode}-${noteId}`, JSON.stringify(generatedContent));
             }
         }
 
