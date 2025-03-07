@@ -1,24 +1,42 @@
-"use client";
+"use client"
 import { useState, useEffect } from "react"
 import NoteItem from "../NoteItem"
-import { Note } from "@/types/notes"
-import useFolderStore from '@/stores/useFolderStore'
+import type { Note } from "@/types/notes"
+import useFolderStore from "@/stores/useFolderStore"
 
 interface NotesNavProps {
-  notes: Note[];
-  activeNote: Note | null;
-  onNoteSelect: (note: Note) => void;
+  notes: Note[]
+  activeNote: Note | null
+  onNoteSelect: (note: Note) => void
 }
 
 export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const { activeFolderId, folders } = useFolderStore();
+  const [isLoading, setIsLoading] = useState(true)
+  const { activeFolderId, folders } = useFolderStore()
 
-  const currentFolder = folders?.find(folder => folder.id === activeFolderId);
-  if (currentFolder && currentFolder._count.notes === 0) {
+  const currentFolder = folders?.find((folder) => folder.id === activeFolderId)
+  const isEmptyFolder = currentFolder && currentFolder._count.notes === 0
+
+  useEffect(() => {
+    setIsLoading(true) // Start loading immediately
+
+    if (notes.length > 0 || isEmptyFolder) {
+      setIsLoading(false)
+    }
+  }, [notes, isEmptyFolder])
+
+  if (isEmptyFolder) {
     return (
       <div className="h-full w-full flex items-center justify-center">
         <p className="font-medium text-2xl text-grayLightDark">Aucune note</p>
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className="h-full w-full flex items-center justify-center">
+        <p className="font-medium text-xl text-grayLightDark">Chargement...</p>
       </div>
     )
   }
@@ -32,16 +50,16 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  
+
   const yesterday = new Date(today)
   yesterday.setDate(today.getDate() - 1)
-  
+
   const lastWeek = new Date(today)
   lastWeek.setDate(today.getDate() - 7)
-  
+
   const lastMonth = new Date(today)
   lastMonth.setMonth(today.getMonth() - 1)
-  
+
   const lastYear = new Date(today)
   lastYear.setFullYear(today.getFullYear() - 1)
 
@@ -66,19 +84,22 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
 
   return (
     <ul className=" overflow-x-hidden h-full">
-      <div 
+      <div
         className={`${notes.length >= 7 ? "w-calc-minus-15" : ""} 
         absolute bg-gray top-[50px] w-full h-[33px] z-10`}
       />
       {todayNotes.length !== 0 && (
         <>
-          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">Aujourd&apos;hui</p>
+          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">
+            Aujourd&apos;hui
+          </p>
           <div className="p-2.5 pt-0">
-            {todayNotes.map((note) => (
-              <NoteItem 
-                key={note.id} 
-                note={note} 
+            {todayNotes.map((note, index) => (
+              <NoteItem
+                key={note.id}
+                note={note}
                 isActive={activeNote?.id === note.id}
+                nextIsActive={index < todayNotes.length - 1 ? activeNote?.id === todayNotes[index + 1].id : false}
                 onClick={() => onNoteSelect(note)}
               />
             ))}
@@ -90,11 +111,14 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
         <>
           <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">Hier</p>
           <div className="p-2.5 pt-0">
-            {yesterdayNotes.map((note) => (
-              <NoteItem 
-                key={note.id} 
-                note={note} 
+            {yesterdayNotes.map((note, index) => (
+              <NoteItem
+                key={note.id}
+                note={note}
                 isActive={activeNote?.id === note.id}
+                nextIsActive={
+                  index < yesterdayNotes.length - 1 ? activeNote?.id === yesterdayNotes[index + 1].id : false
+                }
                 onClick={() => onNoteSelect(note)}
               />
             ))}
@@ -103,13 +127,16 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
       )}
       {lastWeekNotes.length !== 0 && (
         <>
-          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">Semaine dernière</p>
+          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">
+            Semaine dernière
+          </p>
           <div className="p-2.5 pt-0">
-            {lastWeekNotes.map((note) => (
-              <NoteItem 
-                key={note.id} 
-                note={note} 
+            {lastWeekNotes.map((note, index) => (
+              <NoteItem
+                key={note.id}
+                note={note}
                 isActive={activeNote?.id === note.id}
+                nextIsActive={index < lastWeekNotes.length - 1 ? activeNote?.id === lastWeekNotes[index + 1].id : false}
                 onClick={() => onNoteSelect(note)}
               />
             ))}
@@ -120,11 +147,14 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
         <>
           <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">Mois dernier</p>
           <div className="p-2.5 pt-0">
-            {lastMonthNotes.map((note) => (
-              <NoteItem 
-                key={note.id} 
-                note={note} 
+            {lastMonthNotes.map((note, index) => (
+              <NoteItem
+                key={note.id}
+                note={note}
                 isActive={activeNote?.id === note.id}
+                nextIsActive={
+                  index < lastMonthNotes.length - 1 ? activeNote?.id === lastMonthNotes[index + 1].id : false
+                }
                 onClick={() => onNoteSelect(note)}
               />
             ))}
@@ -135,11 +165,12 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
         <>
           <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">Année dernière</p>
           <div className="p-2.5 pt-0">
-            {lastYearNotes.map((note) => (
-              <NoteItem 
-                key={note.id} 
-                note={note} 
+            {lastYearNotes.map((note, index) => (
+              <NoteItem
+                key={note.id}
+                note={note}
                 isActive={activeNote?.id === note.id}
+                nextIsActive={index < lastYearNotes.length - 1 ? activeNote?.id === lastYearNotes[index + 1].id : false}
                 onClick={() => onNoteSelect(note)}
               />
             ))}
@@ -150,11 +181,12 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
         <>
           <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">Plus ancien</p>
           <div className="p-2.5 pt-0">
-            {olderNotes.map((note) => (
-              <NoteItem 
-                key={note.id} 
-                note={note} 
+            {olderNotes.map((note, index) => (
+              <NoteItem
+                key={note.id}
+                note={note}
                 isActive={activeNote?.id === note.id}
+                nextIsActive={index < olderNotes.length - 1 ? activeNote?.id === olderNotes[index + 1].id : false}
                 onClick={() => onNoteSelect(note)}
               />
             ))}
@@ -164,3 +196,4 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
     </ul>
   )
 }
+
