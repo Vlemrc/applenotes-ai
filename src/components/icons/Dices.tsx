@@ -13,7 +13,7 @@ const Dices = () => {
     },
     hovered: {
       rotate: [0, 100, 230, 540, 720],
-      y: [0, 240, 10],
+      y: [0, 240, 0],
       transition: {
         rotate: { repeat: Number.POSITIVE_INFINITY, duration: 1.2, ease: "easeInOut" },
         y: { repeat: Number.POSITIVE_INFINITY, duration: 0.8, ease: "easeOut" },
@@ -28,7 +28,7 @@ const Dices = () => {
     },
     hovered: {
       rotate: [0, 100, 230, 540, 720],
-      y: [10, -150, 10],
+      y: [0, -150, 0],
       transition: {
         rotate: { repeat: Number.POSITIVE_INFINITY, duration: 1, ease: "easeInOut" },
         y: { repeat: Number.POSITIVE_INFINITY, duration: 0.7, ease: "easeOut" },
@@ -42,6 +42,7 @@ const Dices = () => {
         viewBox="-200 -200 800 800"
         height="44"
         width="44"
+        className="translate-y-0.5 translate-x-0.5"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
