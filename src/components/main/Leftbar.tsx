@@ -1,18 +1,28 @@
 "use client";
 import React from 'react';
 import Trash from '../icons/Trash';
-import Folder from '../icons/Folder';
+import FolderIcon from '../icons/FolderIcon';
 import Sidebar from '../icons/Sidebar';
 import IconHoverContainer from '../IconHoverContainer';
 import { useEffect, useState } from 'react';
 import useFolderStore from '@/stores/useFolderStore';
+import { Folder } from '@/types/folders';
 
-const Leftbar = () => {
+interface LeftbarProps {
+  onBackToNote: () => void;
+}
+
+const Leftbar = ({ onBackToNote }: LeftbarProps) => {
   const { folders, activeFolderId, setActiveFolder, fetchFolders, isLoading } = useFolderStore()
 
   useEffect(() => {
     fetchFolders()
   }, [fetchFolders])
+
+  const handleFolderClick = (folder: Folder) => {
+    setActiveFolder(folder.id);
+    onBackToNote();
+  };
 
   return (
     <div className="w-1/6 h-full bg-gray p-4 pt-3 flex flex-col gap-8">
@@ -35,7 +45,7 @@ const Leftbar = () => {
               {folders.map((folder) => (
                 <li
                   key={folder.id}
-                  onClick={() => setActiveFolder(folder.id)}
+                  onClick={() => handleFolderClick(folder)}
                   className={`flex flex-row justify-between w-full px-3 py-1 rounded-lg cursor-pointer transition-colors ${
                     activeFolderId === folder.id ? "bg-yellowDark" : "hover:bg-gray-100"
                   }`}
@@ -43,7 +53,7 @@ const Leftbar = () => {
                   <div className="flex flex-row gap-2 items-center">
                     {folder.name === "Suppr. récentes" ? 
                       (<Trash color={activeFolderId === folder.id ? "#FFFFFF" : "#DC9F3A"} height="18" width="18" />) : 
-                      (<Folder color={activeFolderId === folder.id ? "#FFFFFF" : "#DC9F3A"} />)
+                      (<FolderIcon color={activeFolderId === folder.id ? "#FFFFFF" : "#DC9F3A"} />)
                     }
                     <p className={`font-medium text-sm ${activeFolderId === folder.id ? "text-white" : "text-text"}`}>
                       {folder.name}

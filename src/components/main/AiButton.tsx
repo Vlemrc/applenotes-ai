@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import Brain from "./icons/Brain";
-import Dices from "./icons/Dices";
-import FlashCard from "./icons/FlashCard";
-import LabelAiNav from "./LabelAiNav";
+import Brain from "../icons/Brain";
+import Dices from "../icons/Dices";
+import FlashCard from "../icons/FlashCard";
+import LabelAiNav from "../LabelAiNav";
+import useFolderStore from "@/stores/useFolderStore"
 
 interface AiButtonProps {
   noteId: number;
@@ -56,11 +57,24 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
                 localStorage.setItem(`generated-${mode}-${noteId}`, JSON.stringify(generatedContent));
             }
         }
-
-        const path = `/notes/${noteId}/${mode === "assistant" ? "assistant-ia" : mode}`;
-        window.history.pushState({}, "", path);
         onModeChange(mode);
     };
+
+    const { activeFolderId, folders } = useFolderStore()
+    
+    // Si le dossier actif n'a pas de notes, on ne peut pas générer de quiz ou de flashcards
+    const activeFolder = folders.find(folder => folder.id === activeFolderId);
+
+    let shouldShowButton = false;
+    if (activeFolder._count.notes) {
+        shouldShowButton = activeFolder._count.notes === 0 || noteContent.trim().length <= 0
+    } else {
+        shouldShowButton = true
+    }
+
+    if (shouldShowButton) {
+        return null;
+    }
 
     return (
         <>

@@ -8,9 +8,10 @@ interface NotesNavProps {
   notes: Note[]
   activeNote: Note | null
   onNoteSelect: (note: Note) => void
+  onBackToNote?: (noteId: number) => void
 }
 
-export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavProps) {
+export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote }: NotesNavProps) {
   const [isLoading, setIsLoading] = useState(true)
   const { activeFolderId, folders } = useFolderStore()
 
@@ -18,12 +19,17 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
   const isEmptyFolder = currentFolder && currentFolder._count.notes === 0
 
   useEffect(() => {
-    setIsLoading(true) // Start loading immediately
+    setIsLoading(true)
 
     if (notes.length > 0 || isEmptyFolder) {
       setIsLoading(false)
     }
   }, [notes, isEmptyFolder])
+
+  const handleNoteClick = (note: Note) => {
+    onNoteSelect(note);
+    onBackToNote && onBackToNote(note.id);
+  };
 
   if (isEmptyFolder) {
     return (
@@ -82,6 +88,21 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
     }
   })
 
+  const firstNonEmptyCategory =
+    todayNotes.length > 0
+      ? "today"
+      : yesterdayNotes.length > 0
+        ? "yesterday"
+        : lastWeekNotes.length > 0
+          ? "lastWeek"
+          : lastMonthNotes.length > 0
+            ? "lastMonth"
+            : lastYearNotes.length > 0
+              ? "lastYear"
+              : olderNotes.length > 0
+                ? "older"
+                : null
+
   return (
     <ul className=" overflow-x-hidden h-full">
       <div
@@ -100,7 +121,8 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
                 note={note}
                 isActive={activeNote?.id === note.id}
                 nextIsActive={index < todayNotes.length - 1 ? activeNote?.id === todayNotes[index + 1].id : false}
-                onClick={() => onNoteSelect(note)}
+                isTopNote={firstNonEmptyCategory === "today" && index === 0}
+                onClick={() => handleNoteClick(note)}
               />
             ))}
           </div>
@@ -119,7 +141,8 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
                 nextIsActive={
                   index < yesterdayNotes.length - 1 ? activeNote?.id === yesterdayNotes[index + 1].id : false
                 }
-                onClick={() => onNoteSelect(note)}
+                isTopNote={firstNonEmptyCategory === "yesterday" && index === 0}
+                onClick={() => handleNoteClick(note)}
               />
             ))}
           </div>
@@ -137,7 +160,8 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
                 note={note}
                 isActive={activeNote?.id === note.id}
                 nextIsActive={index < lastWeekNotes.length - 1 ? activeNote?.id === lastWeekNotes[index + 1].id : false}
-                onClick={() => onNoteSelect(note)}
+                isTopNote={firstNonEmptyCategory === "lastWeek" && index === 0}
+                onClick={() => handleNoteClick(note)}
               />
             ))}
           </div>
@@ -155,7 +179,8 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
                 nextIsActive={
                   index < lastMonthNotes.length - 1 ? activeNote?.id === lastMonthNotes[index + 1].id : false
                 }
-                onClick={() => onNoteSelect(note)}
+                isTopNote={firstNonEmptyCategory === "lastMonth" && index === 0}
+                onClick={() => handleNoteClick(note)}
               />
             ))}
           </div>
@@ -171,7 +196,8 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
                 note={note}
                 isActive={activeNote?.id === note.id}
                 nextIsActive={index < lastYearNotes.length - 1 ? activeNote?.id === lastYearNotes[index + 1].id : false}
-                onClick={() => onNoteSelect(note)}
+                isTopNote={firstNonEmptyCategory === "lastYear" && index === 0}
+                onClick={() => handleNoteClick(note)}
               />
             ))}
           </div>
@@ -187,7 +213,8 @@ export default function NotesNav({ notes, activeNote, onNoteSelect }: NotesNavPr
                 note={note}
                 isActive={activeNote?.id === note.id}
                 nextIsActive={index < olderNotes.length - 1 ? activeNote?.id === olderNotes[index + 1].id : false}
-                onClick={() => onNoteSelect(note)}
+                isTopNote={firstNonEmptyCategory === "older" && index === 0}
+                onClick={() => handleNoteClick(note)}
               />
             ))}
           </div>

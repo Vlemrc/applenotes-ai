@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import ActionsNav from "@/components/ActionsNav";
-import AiButton from "@/components/AiButton";
+import AiButton from "@/components/main/AiButton";
 import Breadcrumb from "@/components/Breadcrumb";
 import Leftbar from "@/components/main/Leftbar";
 import NoteContent from "@/components/main/NoteContent";
@@ -42,7 +42,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-row h-full">
-      <Leftbar />
+      <Leftbar onBackToNote={() => setActiveMode(null)} />
       <div className="flex h-screen w-5/6">
         <aside className="min-w-1/3 w-1/3 h-full border-r border-solid border-gray flex flex-col relative">
           <LeftbarNav />
@@ -50,6 +50,7 @@ export default function Home() {
             notes={notes} 
             activeNote={activeNote}
             onNoteSelect={setActiveNote}
+            onBackToNote={() => setActiveMode(null)}
           />
         </aside>
         <main className="w-full relative">
@@ -60,7 +61,7 @@ export default function Home() {
             {activeMode === null && <NoteContent note={activeNote} />}
             {activeMode === 'quiz' && (<Quiz noteId={Number(activeNote.id)} onBackToNote={() => setActiveMode(null)} />)}
             {activeMode === 'assistant' && <><AiHelpExtend note={activeNote} /><AiInput /></>}
-            {activeMode === 'flashcards' && <FlashCard noteId={Number(activeNote.id)} />}
+            {activeMode === 'flashcards' && <FlashCard noteId={Number(activeNote.id)} onBackToNote={() => setActiveMode(null)} />}
             {activeNote && (
               <AiButton 
                 noteId={Number(activeNote.id)}
