@@ -34,7 +34,6 @@ const FlashCard = ({
     }
   }, [noteId])
 
-  // Variantes pour l'animation de slide horizontal
   const slideVariants = {
     initial: (direction: number) => ({
       x: direction > 0 ? "calc(100% + 20px)" : "calc(-100% - 20px)",
@@ -53,7 +52,6 @@ const FlashCard = ({
   }
 
   const changeFlashcard = (newIndex: number, dir: number) => {
-    // Réinitialiser le flip avant de changer de carte
     setIsFlipped(false)
     setDirection(dir)
     setCurrentCardIndex(newIndex)
@@ -97,14 +95,8 @@ const FlashCard = ({
 
       {/* Conteneur pour l'animation de transition entre flashcards */}
       <div className="relative w-full mt-10 min-h-[340px] perspective-1000">
-        <AnimatePresence custom={direction} initial={false}>
           <motion.div
             key={currentCardIndex}
-            custom={direction}
-            variants={slideVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
             className="absolute top-0 left-0 w-full h-full"
           >
             {/* Composant contenant l'animation de flip */}
@@ -140,16 +132,16 @@ const FlashCard = ({
                   animate={{ opacity: isFlipped ? 0 : 1 }}
                   transition={{ duration: 0.3, delay: isFlipped ? 0 : 0.3 }}
                 >
-                  Press to flip
+                  Appuie pour retourner
                 </motion.p>
               </motion.div>
 
-              {/* Face arrière (réponse) - avec rotation supplémentaire pour corriger l'orientation */}
+              {/* Face arrière (réponse) */}
               <motion.div
                 className="absolute w-full h-full flex flex-col justify-center items-center p-6 rounded-xl"
                 style={{
                   backfaceVisibility: "hidden",
-                  transform: "rotateX(180deg) rotateZ(0deg)", // Ajout de rotateZ pour corriger l'orientation
+                  transform: "rotateX(180deg) rotateZ(0deg)",
                 }}
               >
                 <motion.h1
@@ -171,7 +163,6 @@ const FlashCard = ({
               </motion.div>
             </motion.div>
           </motion.div>
-        </AnimatePresence>
       </div>
 
       <div className="flex flex-row justify-between mt-2.5">
@@ -188,26 +179,26 @@ const FlashCard = ({
           >
             &lt; Précédente
           </button>
-          <button
-            onClick={handleNextCard}
-            className={`font-medium text-text animlinkunderline ${
-              currentCardIndex === totalFlashcards - 1 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={currentCardIndex === totalFlashcards - 1}
-          >
-            Suivante &gt;
-          </button>
+          {currentCardIndex === totalFlashcards - 1 ? (
+            <button
+              onClick={() => onBackToNote && onBackToNote(noteId)}
+              className="font-medium text-text animlinkunderline"
+            >
+              Revenir sur ma note
+            </button>
+          ) : (
+            <button
+              onClick={handleNextCard}
+              className={`font-medium text-text animlinkunderline ${
+                currentCardIndex === totalFlashcards - 1 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={currentCardIndex === totalFlashcards - 1}
+            >
+              Suivante &gt;
+            </button>
+          )}
         </div>
       </div>
-
-      {onBackToNote && (
-        <button
-          onClick={() => onBackToNote(noteId)}
-          className="mt-4 bg-gray text-text font-semibold py-1 px-5 rounded-lg hover:opacity-90 transition-opacity"
-        >
-          Revenir sur ma note
-        </button>
-      )}
     </div>
   )
 }
