@@ -1,6 +1,6 @@
 const Text = ({color}) => {
     return (
-        <p style={{ color: color }} className="text-xl">Aa</p>
+        <p style={{ color: color }} className="text-lg">Aa</p>
     )
 }
 
