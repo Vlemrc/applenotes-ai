@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       - La langue du quiz doit être identique à celle de la note.
       - Chaque question doit avoir exactement 4 réponses possibles.
       - Une seule réponse correcte par question.
-      - Les réponses incorrectes doivent être plausibles.
+      - Les réponses incorrectes doivent être plausibles et pertinentes.
       - Réponds **uniquement** en JSON valide sous la forme suivante :
       
       {
