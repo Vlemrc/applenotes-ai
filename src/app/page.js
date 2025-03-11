@@ -53,9 +53,9 @@ export default function Home() {
             onBackToNote={() => setActiveMode(null)}
           />
         </aside>
-        <main className="w-full relative">
+        <main className="w-full relative overflow-y-hidden">
           <ActionsNav />
-          <div className="pt-10 px-8 pb-8">
+          <div className="pt-10 px-8 pb-8 overflow-y-scroll h-calc-minus-50">
             {activeMode !== null && <Breadcrumb note={activeNote} mode={activeMode} onResetMode={() => setActiveMode(null)}  />}
             {activeNote && <HeaderNote note={activeNote} />}
             {activeMode === null && <NoteContent note={activeNote} />}

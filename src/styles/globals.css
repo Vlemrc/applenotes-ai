@@ -98,6 +98,10 @@ body {
   width: calc(100% - 15px);
 }
 
+.h-calc-minus-50 {
+  height: calc(100% - 50px);
+}
+
 .bg-green {
   background: linear-gradient(270deg, #27C72F 0%, #6EDF74 100%);
 }

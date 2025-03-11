@@ -25,8 +25,8 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
   };
 
   return (
-    <div className="w-1/6 h-full bg-gray p-4 pt-3 flex flex-col gap-8">
-      <div className="nav-leftbar flex flex-row gap-2 items-center">
+    <div className="w-1/6 h-full bg-[#E9E5E1] p-3 pt-3 flex flex-col gap-4 border-r border-solid border-gray">
+      <div className="nav-leftbar flex flex-row gap-2 pl-1 items-center">
         <div className="bg-[#FF5F57] h-3 w-3 rounded-full"></div>
         <div className="bg-[#FFBD2F] h-3 w-3 rounded-full"></div>
         <div className="bg-[#28C840] h-3 w-3 rounded-full mr-2"></div>
@@ -46,20 +46,20 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
                 <li
                   key={folder.id}
                   onClick={() => handleFolderClick(folder)}
-                  className={`flex flex-row justify-between w-full px-3 py-1 rounded-lg cursor-pointer transition-colors ${
-                    activeFolderId === folder.id ? "bg-yellowDark" : "hover:bg-gray-100"
+                  className={`flex flex-row justify-between w-full px-2 py-1 rounded-md cursor-pointer transition-colors ${
+                    activeFolderId === folder.id ? "bg-[#D2CDC9]" : "hover:bg-gray-100"
                   }`}
                 >
                   <div className="flex flex-row gap-2 items-center">
                     {folder.name === "Suppr. récentes" ? 
-                      (<Trash color={activeFolderId === folder.id ? "#FFFFFF" : "#DC9F3A"} height="18" width="18" />) : 
-                      (<FolderIcon color={activeFolderId === folder.id ? "#FFFFFF" : "#DC9F3A"} />)
+                      (<Trash color="#DC9F3A" height="18" width="18" />) : 
+                      (<FolderIcon color="#DC9F3A" />)
                     }
-                    <p className={`font-medium text-sm ${activeFolderId === folder.id ? "text-white" : "text-text"}`}>
+                    <p className={`font-medium text-sm text-text`}>
                       {folder.name}
                     </p>
                   </div>
-                  <p className={`font-medium text-sm ${activeFolderId === folder.id ? "text-white" : "text-grayOpacity"}`}>{folder._count.notes}</p>
+                  <p className={`font-medium text-sm text-grayOpacity`}>{folder._count.notes}</p>
                 </li>
               ))}
             </>
