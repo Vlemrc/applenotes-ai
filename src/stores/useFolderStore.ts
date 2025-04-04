@@ -7,10 +7,11 @@ type FolderStore = {
   activeFolderId: number | null
   setActiveFolder: (id: number) => void
   fetchFolders: () => Promise<void>
+  deleteFolder: (id: number) => void
   isLoading: boolean
 }
 
-const useFolderStore = create<FolderStore>((set) => ({
+const useFolderStore = create<FolderStore>((set, get) => ({
   folders: [],
   activeFolderId: 1,
   isLoading: false,
@@ -25,7 +26,24 @@ const useFolderStore = create<FolderStore>((set) => ({
       set({ isLoading: false })
     }
   },
+  deleteFolder: (id) => {
+    const { folders, activeFolderId, setActiveFolder } = get()
+
+    // Supprime le dossier de la liste
+    const updatedFolders = folders.filter((folder) => folder.id !== id)
+
+    // Met à jour les dossiers
+    set({ folders: updatedFolders })
+
+    // Si le dossier actif est supprimé, définir un nouveau dossier actif
+    if (activeFolderId === id) {
+      if (updatedFolders.length > 0) {
+        setActiveFolder(updatedFolders[0].id) // Définit le premier dossier comme actif
+      } else {
+        setActiveFolder(null) // Aucun dossier disponible
+      }
+    }
+  },
 }))
 
 export default useFolderStore
-

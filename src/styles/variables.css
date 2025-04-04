@@ -5,9 +5,11 @@
     --gray-opacity: #A19D99;
     --gray-dark: #6F6F6F;
     --text: #282828;
+    --yellow-input: #F9D597;
     --yellow: #DC9F3A;
     --yellow-dark: #BA951D;
     --yellow-light: #FFC300;
+    --yellow-button: #EEC335;
     --alert: #FF4141;
     --yellow-gradient: linear-gradient(0deg, rgba(255, 195, 0, 1) 0%, rgba(255, 212, 73, 1) 100%);
     font-family: var(--font-dm-sans), sans-serif;

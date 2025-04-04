@@ -16,3 +16,40 @@ export async function GET() {
   }
 }
 
+export async function POST(req) {
+  try {
+    const { name } = await req.json();
+    
+    if (!name) {
+      return NextResponse.json({ error: "Folder name is required" }, { status: 400 });
+    }
+
+    const newFolder = await prisma.folder.create({
+      data: { name },
+    });
+
+    return NextResponse.json(newFolder, { status: 201 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Error creating folder" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req) {
+  try {
+    const { id } = await req.json()
+
+    if (!id) {
+      return NextResponse.json({ error: "Folder ID is required" }, { status: 400 })
+    }
+
+    const deletedFolder = await prisma.folder.delete({
+      where: { id },
+    })
+
+    return NextResponse.json({ message: "Folder deleted successfully", folder: deletedFolder })
+  } catch (error) {
+    console.error(error)
+    return NextResponse.json({ error: "Error deleting folder" }, { status: 500 })
+  }
+}

@@ -66,10 +66,14 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
     const activeFolder = folders.find(folder => folder.id === activeFolderId);
 
     let shouldShowButton = false;
-    if (activeFolder._count.notes) {
-        shouldShowButton = activeFolder._count.notes === 0 || noteContent.trim().length <= 0
+    if (activeFolder && activeFolder._count) {
+        if (activeFolder._count.notes) {
+            shouldShowButton = activeFolder._count.notes === 0 || noteContent.trim().length <= 0;
+        } else {
+            shouldShowButton = true;
+        }
     } else {
-        shouldShowButton = true
+        shouldShowButton = true;
     }
 
     if (shouldShowButton) {

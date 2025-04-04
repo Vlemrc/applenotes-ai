@@ -19,6 +19,8 @@ export default {
   			yellowDark: 'var(--yellow-dark)',
   			yellowLight: 'var(--yellow-light)',
   			yellowGradient: 'var(--yellow-gradient)',
+			yellowInput: 'var(--yellow-input)',
+			yellowButton: 'var(--yellow-button)',
 			alert: 'var(--alert)',
   		},
 		backgroundImage: {
