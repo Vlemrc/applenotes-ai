@@ -1,10 +1,9 @@
-"use client";
 import { useState } from "react";
 import useFolderStore from "@/stores/useFolderStore";
 
-export default function ButtonDeleteFolder({ folderId }) {
-  const [actionsVisible, setActionsVisible] = useState(false);
-  const { deleteFolder } = useFolderStore(); // Récupère la méthode deleteFolder du store
+export default function ButtonDeleteFolder({ folderId, setEditingFolderId }) {
+  const { deleteFolder } = useFolderStore();
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleDeleteFolder = async () => {
     try {
@@ -17,7 +16,7 @@ export default function ButtonDeleteFolder({ folderId }) {
       });
 
       if (response.ok) {
-        deleteFolder(folderId); // Supprime le dossier dans le store
+        deleteFolder(folderId); 
       } else {
         console.error("Erreur lors de la suppression du dossier");
       }
@@ -29,26 +28,27 @@ export default function ButtonDeleteFolder({ folderId }) {
   return (
     <div className="relative">
       <button
-        onClick={() => setActionsVisible(!actionsVisible)}
-        className="flex items-center justify-center h-3 w-3 bg-grayOpacity rounded-full"
+        onClick={() => setIsHovered(!isHovered)}
+        className="flex items-center justify-center h-3 w-3 bg-grayOpacity rounded-full hover:bg-grayDark"
       >
         <p className="text-xs -translate-y-[3px] text-gray">...</p>
       </button>
 
-      {actionsVisible && (
-        <div className="bg-white absolute -bottom-4 -right-4 p-2 shadow-lg rounded-md">
-          <button
-            className="block w-full text-left text-sm text-gray-600 hover:text-gray-900"
-            onClick={() => console.log("Renommer le dossier")}
-          >
+      {isHovered && (
+        <div className="bg-grayLight absolute -bottom-2O -right-30 px-4 py-2 shadow-lg rounded-md translate-y-[4px] border border-gray flex flex-col gap-1">
+            <button
+            className="block w-full text-left text-sm text-gray-600 hover:text-gray-900 whitespace-nowrap pr-10"
+            onClick={() => setEditingFolderId(folderId)}
+            >
             Renommer le dossier
-          </button>
-          <button
-            className="block w-full text-left text-sm text-red-600 hover:text-red-800"
+            </button>
+            <div className="w-full h-[1px] bg-gray"></div>
+            <button
+            className="block w-full text-left text-sm whitespace-nowrap"
             onClick={handleDeleteFolder}
-          >
+            >
             Supprimer le dossier
-          </button>
+            </button>
         </div>
       )}
     </div>

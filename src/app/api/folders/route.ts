@@ -53,3 +53,26 @@ export async function DELETE(req) {
     return NextResponse.json({ error: "Error deleting folder" }, { status: 500 })
   }
 }
+
+export async function PATCH(req) {
+  try {
+    const { id, name } = await req.json();
+
+    if (!id || !name) {
+      return NextResponse.json(
+        { error: "Folder ID and new name are required" },
+        { status: 400 }
+      );
+    }
+
+    const updatedFolder = await prisma.folder.update({
+      where: { id },
+      data: { name },
+    });
+
+    return NextResponse.json({ message: "Folder updated successfully", folder: updatedFolder });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Error updating folder" }, { status: 500 });
+  }
+}

@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect } from "react";
 import Trash from "../icons/Trash";
 import FolderIcon from "../icons/FolderIcon";
@@ -17,7 +16,9 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
   const { folders, activeFolderId, setActiveFolder, fetchFolders, isLoading } =
     useFolderStore();
   const [addFolder, setAddFolder] = useState(false);
-  const [hoveredFolderId, setHoveredFolderId] = useState<number | null>(null); // Correction du type
+  const [hoveredFolderId, setHoveredFolderId] = useState<number | null>(null);
+  const [editingFolderId, setEditingFolderId] = useState<number | null>(null); // État pour suivre quel dossier est en mode édition
+  const [newFolderName, setNewFolderName] = useState<string>("");
 
   useEffect(() => {
     fetchFolders();
@@ -30,6 +31,33 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
 
   const handleFolderAdded = () => {
     fetchFolders();
+  };
+
+  const handleRenameFolder = async (folderId: number) => {
+    try {
+      const response = await fetch(`/api/folders`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: folderId, name: newFolderName }),
+      });
+
+      if (response.ok) {
+        setEditingFolderId(null); // Désactive le mode édition après la mise à jour
+        fetchFolders(); // Rafraîchit la liste des dossiers
+      } else {
+        console.error("Erreur lors de la mise à jour du dossier");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du dossier", error);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent, folderId: number) => {
+    if (e.key === "Enter") {
+      handleRenameFolder(folderId); // Appelle la fonction de mise à jour si "Enter" est pressé
+    }
   };
 
   return (
@@ -59,8 +87,8 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
                 <li
                   key={folder.id}
                   onClick={() => handleFolderClick(folder)}
-                  onMouseOver={() => setHoveredFolderId(folder.id)} // Mise à jour du dossier survolé
-                  onMouseLeave={() => setHoveredFolderId(null)} // Réinitialisation lorsque la souris quitte le dossier
+                  onMouseOver={() => setHoveredFolderId(folder.id)}
+                  onMouseLeave={() => setHoveredFolderId(null)}
                   className={`flex flex-row justify-between w-full px-2 py-1 rounded-md cursor-pointer transition-colors ${
                     activeFolderId === folder.id
                       ? "bg-[#D2CDC9]"
@@ -73,18 +101,24 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
                     ) : (
                       <FolderIcon color="#DC9F3A" />
                     )}
-                    <p className={`font-medium text-sm text-text`}>
-                      {folder.name}
-                    </p>
+                    {editingFolderId === folder.id ? (
+                      <input
+                        type="text"
+                        value={newFolderName}
+                        onChange={(e) => setNewFolderName(e.target.value)}
+                        onKeyDown={(e) => handleKeyDown(e, folder.id)}
+                        className="h-[20px] text-sm pl-1 border-2 border-yellowInput"
+                      />
+                    ) : (
+                      <p className="font-medium text-sm text-text">{folder.name}</p>
+                    )}
                   </div>
 
                   <div className="flex flex-row gap-2 items-center">
-                    {hoveredFolderId === folder.id && ( // Vérifie si le dossier est celui survolé
-                      <ButtonDeleteFolder folderId={folder.id} />
+                    {hoveredFolderId === folder.id && folder.name !== "Notes" && folder.name !== "Suppr. récentes" && (
+                      <ButtonDeleteFolder folderId={folder.id} setEditingFolderId={setEditingFolderId} />
                     )}
-                    <p className={`font-medium text-sm text-grayOpacity`}>
-                      {folder._count?.notes ?? 0}
-                    </p>
+                    <p className="font-medium text-sm text-grayOpacity">{folder._count?.notes ?? 0}</p>
                   </div>
                 </li>
               ))
@@ -107,10 +141,7 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
       </button>
 
       {addFolder && (
-        <AddFolderInput
-          setAddFolder={setAddFolder}
-          onFolderAdded={handleFolderAdded}
-        />
+        <AddFolderInput setAddFolder={setAddFolder} onFolderAdded={handleFolderAdded} />
       )}
     </div>
   );
