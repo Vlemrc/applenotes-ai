@@ -8,7 +8,7 @@ interface HeaderNoteProps {
 }
 
 const HeaderNote = ({ note }: HeaderNoteProps) => {
-  const date = formatDate(note.createdAt)
+  const date = formatDate(note.updatedAt)
   const { activeFolderId, folders } = useFolderStore()
   const [isScrolled, setIsScrolled] = useState(false)
 

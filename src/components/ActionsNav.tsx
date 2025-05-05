@@ -12,14 +12,41 @@ import SearchBar from './SearchBar'
 import useFolderStore from '@/stores/useFolderStore'
 
 const ActionsNav = () => {
-
     const { activeFolderId, folders } = useFolderStore();
     const currentFolder = folders?.find(folder => folder.id === activeFolderId);
+
+    const handleCreateNote = async () => {
+        if (!activeFolderId) {
+            console.error("Aucun dossier actif sélectionné");
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/notes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ folderId: activeFolderId }),
+            });
+
+            if (!response.ok) {
+                console.error("Erreur lors de la création de la note");
+                return;
+            }
+
+            const newNote = await response.json();
+            console.log("Nouvelle note créée :", newNote);
+            // Vous pouvez ajouter ici une logique pour mettre à jour l'état ou rediriger l'utilisateur
+        } catch (error) {
+            console.error("Erreur lors de l'appel à l'API :", error);
+        }
+    };
 
     return (
         <div className={`${currentFolder && currentFolder._count.notes === 0 ? "" : "border-b border-solid border-gray"} h-[50px] flex flex-row justify-between items-center px-2.5 py-4 w-full`}>
             <div className="flex flex-row items-center justify-between w-full">
-                <IconHoverContainer>
+                <IconHoverContainer onClick={handleCreateNote}>
                     <Write color="#6F6F6F" />
                 </IconHoverContainer>
 
@@ -55,7 +82,7 @@ const ActionsNav = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default ActionsNav
+export default ActionsNav;
