@@ -4,13 +4,14 @@ import MenuGrid from "./icons/MenuGrid";
 import MenuNotes from "./icons/MenuNotes";
 import useFolderStore from '@/stores/useFolderStore';
 
-const LeftbarNav = () => {
+const LeftbarNav = ({ activeNote }) => {
     const { activeFolderId, folders, fetchFolders } = useFolderStore(); // Ajout de fetchFolders pour rafraîchir les dossiers après suppression
     const currentFolder = folders?.find(folder => folder.id === activeFolderId);
+    const noteId = activeNote?.id;
 
     const handleTrashClick = async () => {
-        if (!activeFolderId) {
-            console.error("Aucun dossier actif sélectionné.");
+        if (!activeNote || !activeNote.id) {
+            console.error("Aucune note active sélectionnée.");
             return;
         }
 
@@ -20,13 +21,13 @@ const LeftbarNav = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ id: activeFolderId }), // Utilisation de l'ID du dossier actif
+                body: JSON.stringify({ id: noteId }), 
             });
 
             if (response.ok) {
                 const result = await response.json();
-                console.log(result.message); // Affiche le message de succès
-                fetchFolders(); // Rafraîchit les dossiers après suppression ou déplacement
+                console.log(result.message); 
+                fetchFolders(); 
             } else {
                 console.error("Erreur lors de la suppression ou du déplacement de la note.");
             }
