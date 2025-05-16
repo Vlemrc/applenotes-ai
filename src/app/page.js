@@ -45,7 +45,7 @@ export default function Home() {
       <Leftbar onBackToNote={() => setActiveMode(null)} />
       <div className="flex h-screen w-5/6">
         <aside className="min-w-1/3 w-1/3 h-full border-r border-solid border-gray flex flex-col relative">
-          <LeftbarNav />
+          <LeftbarNav activeNote={activeNote} />
           <NotesNav 
             notes={notes} 
             activeNote={activeNote}

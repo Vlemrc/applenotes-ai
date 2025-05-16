@@ -43,11 +43,48 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "Folder ID is required" }, { status: 400 })
     }
 
+    // Vérifier si le dossier contient des notes
+    const folder = await prisma.folder.findUnique({
+      where: { id },
+      include: {
+        notes: true,
+      },
+    })
+
+    if (!folder) {
+      return NextResponse.json({ error: "Folder not found" }, { status: 404 })
+    }
+
+    // Si le dossier contient des notes, les déplacer vers "Suppr. récentes"
+    if (folder.notes.length > 0) {
+      // Trouver ou créer le dossier "Suppr. récentes"
+      let recentlyDeletedFolder = await prisma.folder.findFirst({
+        where: { name: "Suppr. récentes" },
+      })
+
+      if (!recentlyDeletedFolder) {
+        recentlyDeletedFolder = await prisma.folder.create({
+          data: { name: "Suppr. récentes" },
+        })
+      }
+
+      // Déplacer toutes les notes vers le dossier "Suppr. récentes"
+      await prisma.note.updateMany({
+        where: { folderId: id },
+        data: { folderId: recentlyDeletedFolder.id },
+      })
+    }
+
+    // Maintenant que le dossier est vide, on peut le supprimer
     const deletedFolder = await prisma.folder.delete({
       where: { id },
     })
 
-    return NextResponse.json({ message: "Folder deleted successfully", folder: deletedFolder })
+    return NextResponse.json({
+      message: "Folder deleted successfully",
+      folder: deletedFolder,
+      notesMovedCount: folder.notes.length,
+    })
   } catch (error) {
     console.error(error)
     return NextResponse.json({ error: "Error deleting folder" }, { status: 500 })
