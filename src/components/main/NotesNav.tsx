@@ -70,7 +70,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
   lastYear.setFullYear(today.getFullYear() - 1)
 
   notes.forEach((note) => {
-    const noteDate = new Date(note.createdAt)
+    const noteDate = new Date(note.updatedAt)
     noteDate.setHours(0, 0, 0, 0)
 
     if (noteDate.getTime() === today.getTime()) {

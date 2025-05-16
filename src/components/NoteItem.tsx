@@ -10,8 +10,7 @@ interface NoteItemProps {
 }
 
 const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick }: NoteItemProps) => {
-  // Formatage de la date
-  const date = new Date(note.createdAt).toLocaleDateString("fr-FR", {
+  const date = new Date(note.updatedAt).toLocaleDateString("fr-FR", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -26,7 +25,7 @@ const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick }: NoteItem
         <h6 className="font-black text-sm text-left">{note.title}</h6>
         <div className="flex flex-row gap-2.5 pb-[12px] pr-7">
           <p className="text-medium text-xs">{date}</p>
-          <p className="truncate-text text-grayDark text-xs">{note.content}</p>
+          <p className="truncate-text text-grayDark text-xs">{note.content ? note.content : "Pas d'autre texte"}</p>
         </div>
       </li>
     </div>
