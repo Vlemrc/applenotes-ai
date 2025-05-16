@@ -36,8 +36,7 @@ const ActionsNav = () => {
             }
 
             const newNote = await response.json();
-            console.log("Nouvelle note créée :", newNote);
-            // Vous pouvez ajouter ici une logique pour mettre à jour l'état ou rediriger l'utilisateur
+            window.location.reload()
         } catch (error) {
             console.error("Erreur lors de l'appel à l'API :", error);
         }

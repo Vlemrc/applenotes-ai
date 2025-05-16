@@ -28,6 +28,7 @@ const LeftbarNav = ({ activeNote }) => {
                 const result = await response.json();
                 console.log(result.message); 
                 fetchFolders(); 
+                window.location.reload()
             } else {
                 console.error("Erreur lors de la suppression ou du déplacement de la note.");
             }
