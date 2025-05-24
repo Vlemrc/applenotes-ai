@@ -84,7 +84,7 @@ const NoteContent = ({ note }: NoteContentProps) => {
       <textarea
         value={content}
         onChange={handleContentChange}
-        className="w-full h-full resize-none outline-none bg-transparent text-sm"
+        className="w-full h-full resize-none outline-none bg-transparent text-sm pb-6"
         placeholder="Note..."
         autoFocus
       />

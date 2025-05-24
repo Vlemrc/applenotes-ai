@@ -55,12 +55,12 @@ export default function Home() {
         </aside>
         <main className="w-full relative overflow-y-hidden">
           <ActionsNav />
-          <div className="pt-10 px-8 pb-8 overflow-y-scroll h-calc-minus-50">
+          <div className="pt-10 px-8 pb-8 h-calc-minus-50">
             {activeMode !== null && <Breadcrumb note={activeNote} mode={activeMode} onResetMode={() => setActiveMode(null)}  />}
             {activeNote && <HeaderNote note={activeNote} />}
             {activeMode === null && <NoteContent note={activeNote} />}
             {activeMode === 'quiz' && (<Quiz noteId={Number(activeNote.id)} onBackToNote={() => setActiveMode(null)} />)}
-            {activeMode === 'assistant' && <><AiHelpExtend note={activeNote} /><AiInput /></>}
+            {activeMode === 'assistant' && <><AiHelpExtend /><AiInput folderId={activeFolderId} noteContent={activeNote.content} /></>}
             {activeMode === 'flashcards' && <FlashCard noteId={Number(activeNote.id)} onBackToNote={() => setActiveMode(null)} />}
             {activeNote && (
               <AiButton 
