@@ -14,18 +14,40 @@ datasource db {
 }
 
 model Note {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  content   String   @db.Text
-  folder    Folder   @relation(fields: [folderId], references: [id])
-  folderId  Int
+  id           Int           @id @default(autoincrement())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  title        String
+  content      String        @db.Text
+  folder       Folder        @relation(fields: [folderId], references: [id])
+  folderId     Int
+  roadmapItems RoadmapItem[]
 }
 
 model Folder {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
   name      String
   notes     Note[]
+  roadmaps  Roadmap[]
+}
+
+model Roadmap {
+  id        Int           @id @default(autoincrement())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  title     String
+  folder    Folder        @relation(fields: [folderId], references: [id])
+  folderId  Int
+  items     RoadmapItem[]
+}
+
+model RoadmapItem {
+  id        Int     @id @default(autoincrement())
+  roadmap   Roadmap @relation(fields: [roadmapId], references: [id])
+  roadmapId Int
+  note      Note    @relation(fields: [noteId], references: [id])
+  noteId    Int
+  position  Int
+  checked   Boolean @default(false)
 }
