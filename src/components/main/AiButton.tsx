@@ -3,6 +3,7 @@ import { AnimatePresence } from "framer-motion";
 import Brain from "../icons/Brain";
 import Dices from "../icons/Dices";
 import FlashCard from "../icons/FlashCard";
+import Roadmap from "../icons/Roadmap";
 import LabelAiNav from "../LabelAiNav";
 import useFolderStore from "@/stores/useFolderStore"
 
@@ -16,6 +17,7 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
     const [hoveredButton, setHoveredButton] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [mode, setMode] = useState<"quiz" | "assistant" | "flashcards" | null>(null);
+    const [bottomBar, setBottomBar] = useState<boolean>(false);
 
     const fetchAIResponse = async (mode: "quiz" | "flashcards") => {
         try {
@@ -60,6 +62,11 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
         onModeChange(mode);
     };
 
+    const handleShowBottomBar = () => {
+        setBottomBar(!bottomBar);
+        console.log("Bottom bar affichée");
+    };
+
     const { activeFolderId, folders } = useFolderStore()
     
     // Si le dossier actif n'a pas de notes, on ne peut pas générer de quiz ou de flashcards
@@ -95,19 +102,32 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
         )}
         <div
             className={`
-                absolute left-1/2 bottom-20 -translate-x-1/2 
-                bg-grayLight py-[6px] rounded-lg 
+                absolute left-1/2 ${bottomBar ? "bottom-0" :"-bottom-[113px]"} -translate-x-1/2 
+                border-t border-solid border-gray w-full
                 flex flex-row items-center justify-center gap-5
-                transition-all duration-300 ease-in-out delay-500 hover:delay-0 w-[70px] hover:w-[146px] group
+                transition-all duration-300 ease-in-out group
             `}
         >
-            <div className="relative flex items-center justify-center">
+            <button
+                className={`
+                    absolute -top-6 left-1/2 -translate-x-1/2
+                    transition-transform duration-400
+                    ${bottomBar ? "rotate-180" : ""}
+                `}
+                onClick={handleShowBottomBar}
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" id="arrow-up" data-name="arrow-up" height="16px" width="16px" viewBox="0 0 234.61 204.66">
+                    <path fill="#A19D99" d="M114.67.27c3.08-.64,6.38-.2,8.73,1.98l108.96,108.96c7.18,8.88-4.2,20.84-13.44,14.05L117.5,23.98,15.64,125.26c-9.02,6.63-20.15-4.57-13.74-13.74L110.85,2.55c1-.93,2.49-2.01,3.82-2.28Z"/>
+                    <path fill="#A19D99" d="M114.67,77.67c3.08-.64,6.38-.2,8.73,1.98l108.96,108.96c7.18,8.88-4.2,20.84-13.44,14.05l-101.41-101.28L15.64,202.66c-9.02,6.63-20.15-4.57-13.74-13.74l108.95-108.97c1-.93,2.49-2.01,3.82-2.28Z"/>
+                </svg>
+            </button>
+            <div className="relative flex items-center justify-between w-full gap-4 m-4">
                 <button
                     onClick={() => handleClick('quiz')}
                     id="icon-quiz" 
                     className={`
-                        absolute w-10 h-10 rounded-full flex items-center justify-center
-                        transition-all duration-300 ease-in-out -translate-x-11 -translate-y-0.5 opacity-0 group-hover:opacity-100 delay-0 group-hover:delay-300
+                       flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
+                        transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
                     `}
                     aria-label="Quiz"
                     onMouseEnter={() => setHoveredButton('quiz')}
@@ -115,39 +135,47 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
                     disabled={loading}
                 >
                     <Dices />
-                    <AnimatePresence>
-                        {hoveredButton === 'quiz' && <LabelAiNav content="Générer un quiz" />}
-                    </AnimatePresence>
+                    <LabelAiNav content="Générer un quiz" />
                 </button>
                 <button 
                     onClick={() => handleClick('assistant')}
                     id="icon-brain" 
-                    className="w-10 h-10 p-2 rounded-full"
+                    className="flex items-center justify-center flex-col h-full min-h-20 p-2 w-1/4 bg-grayLight rounded-lg"
                     aria-label="AI Assistant"
                     onMouseEnter={() => setHoveredButton('brain')}
                     onMouseLeave={() => setHoveredButton(null)}
                     disabled={loading}
                 >
                     <Brain />
-                    <AnimatePresence>
-                        {hoveredButton === 'brain' && <LabelAiNav content="Utiliser l'IA pour enrichir cette note" />}
-                    </AnimatePresence>
+                    <LabelAiNav content="Enrichir cette note" />
+                </button>
+                <button
+                    onClick={() => handleClick('roadmaps')}
+                    id="icon-roadmap"
+                    className={`
+                        flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
+                        transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
+                    `}
+                    aria-label="Roadmaps"
+                    onMouseEnter={() => setHoveredButton('Roadmap')}
+                    onMouseLeave={() => setHoveredButton(null)}
+                >
+                    <Roadmap />
+                    <LabelAiNav content="Accéder à la roadmap" />
                 </button>
                 <button
                     onClick={() => handleClick('flashcards')}
                     id="icon-flashcard"
                     className={`
-                        absolute -left-0 w-10 h-10 -translate-y-[3px] rounded-full
-                        transition-all duration-300 ease-in-out translate-x-10 opacity-0 group-hover:opacity-100 delay-0 group-hover:delay-300
+                        flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
+                        transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
                     `}
                     aria-label="Flashcards"
                     onMouseEnter={() => setHoveredButton('flashcard')}
                     onMouseLeave={() => setHoveredButton(null)}
                 >
                     <FlashCard />
-                    <AnimatePresence>
-                        {hoveredButton === 'flashcard' && <LabelAiNav content="Créer des flashcards" />}
-                    </AnimatePresence>
+                    <LabelAiNav content="Créer des flashcards" />
                 </button>
             </div>
         </div>
