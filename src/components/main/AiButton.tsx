@@ -10,14 +10,16 @@ import useFolderStore from "@/stores/useFolderStore"
 interface AiButtonProps {
   noteId: number;
   noteContent: string;
-  onModeChange: (mode: 'quiz' | 'assistant' | 'flashcards' | null) => void;
+  onModeChange: (mode: 'quiz' | 'assistant' | 'flashcards' | 'roadmap' | null) => void;
 }
 
 const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
     const [hoveredButton, setHoveredButton] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [mode, setMode] = useState<"quiz" | "assistant" | "flashcards" | null>(null);
+    const [mode, setMode] = useState<"quiz" | "assistant" | "flashcards" | 'roadmap' | null>(null);
     const [bottomBar, setBottomBar] = useState<boolean>(false);
+
+    const { activeFolderId, folders } = useFolderStore()
 
     const fetchAIResponse = async (mode: "quiz" | "flashcards") => {
         try {
@@ -35,21 +37,64 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
             })
 
             if (!response.ok) {
-                console.error(`Erreur lors de la génération de ${mode}`, await response.text())
                 return null
             }
 
             const data = await response.json()
             return data
         } catch (error) {
-            console.error("Erreur dans fetchAIResponse :", error)
             return null
         } finally {
             setLoading(false)
         }
     }
 
-    const handleClick = async (mode: "quiz" | "assistant" | "flashcards") => {
+    const generateRoadmap = async () => {
+        if (!activeFolderId) {
+            return null
+        }
+
+        try {
+            setLoading(true)
+
+            const response = await fetch("/api/roadmap", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    action: "generate",
+                    folderId: activeFolderId.toString()
+                }),
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: "Erreur inconnue" }))
+                
+                if (response.status === 409 && errorData.code === "ROADMAP_ALREADY_EXISTS") {
+                    alert("Une roadmap existe déjà pour ce dossier. Consultez la roadmap existante.")
+                } else {
+                    alert(`Erreur: ${errorData.error}`)
+                }
+                return null
+            }
+
+            // Vérifier le type de contenu avant de parser en JSON
+            const contentType = response.headers.get("content-type")
+
+            if (!contentType || !contentType.includes("application/json")) {
+                const textResponse = await response.text()
+                return null
+            }
+
+            const data = await response.json()
+            return data
+        } catch (error) {
+            return null
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleClick = async (mode: "quiz" | "assistant" | "flashcards" | 'roadmap') => {
         if (loading) return;
         setMode(mode);
 
@@ -58,16 +103,21 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
             if (generatedContent) {
                 localStorage.setItem(`generated-${mode}-${noteId}`, JSON.stringify(generatedContent));
             }
+        } else if (mode === "roadmap") {
+            // Générer la roadmap avant de changer de mode
+            const roadmapData = await generateRoadmap();
+            if (roadmapData) {
+                // Optionnel : stocker la roadmap générée
+                localStorage.setItem(`generated-roadmap-${activeFolderId}`, JSON.stringify(roadmapData));
+            }
         }
+        
         onModeChange(mode);
     };
 
     const handleShowBottomBar = () => {
         setBottomBar(!bottomBar);
-        console.log("Bottom bar affichée");
     };
-
-    const { activeFolderId, folders } = useFolderStore()
     
     // Si le dossier actif n'a pas de notes, on ne peut pas générer de quiz ou de flashcards
     const activeFolder = folders.find(folder => folder.id === activeFolderId);
@@ -98,6 +148,10 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
                 <div className="p-2 absolute top-1/2 left-1/2 -translate-x-1/2 animate-gray-gradient text-md whitespace-nowrap">
                     Flashcards en cours de création
                 </div>
+            ) : mode === "roadmap" ? (
+                <div className="p-2 absolute top-1/2 left-1/2 -translate-x-1/2 animate-gray-gradient text-md whitespace-nowrap">
+                    Roadmap en cours de création
+                </div>
             ) : null
         )}
         <div
@@ -105,7 +159,7 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
                 absolute left-1/2 ${bottomBar ? "bottom-0" :"-bottom-[113px]"} -translate-x-1/2 
                 border-t border-solid border-gray w-full
                 flex flex-row items-center justify-center gap-5
-                transition-all duration-300 ease-in-out group
+                transition-all duration-300 ease-in-out group bg-white
             `}
         >
             <button
@@ -150,15 +204,16 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
                     <LabelAiNav content="Enrichir cette note" />
                 </button>
                 <button
-                    onClick={() => handleClick('roadmaps')}
+                    onClick={() => handleClick('roadmap')}
                     id="icon-roadmap"
                     className={`
                         flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
                         transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
                     `}
                     aria-label="Roadmaps"
-                    onMouseEnter={() => setHoveredButton('Roadmap')}
+                    onMouseEnter={() => setHoveredButton('roadmap')}
                     onMouseLeave={() => setHoveredButton(null)}
+                    disabled={loading}
                 >
                     <Roadmap />
                     <LabelAiNav content="Accéder à la roadmap" />
@@ -173,6 +228,7 @@ const AiButton = ({ noteId, noteContent, onModeChange }: AiButtonProps) => {
                     aria-label="Flashcards"
                     onMouseEnter={() => setHoveredButton('flashcard')}
                     onMouseLeave={() => setHoveredButton(null)}
+                    disabled={loading}
                 >
                     <FlashCard />
                     <LabelAiNav content="Créer des flashcards" />

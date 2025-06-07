@@ -5,8 +5,6 @@ export default function ButtonDeleteFolder({ folderId, setEditingFolderId }) {
   const { deleteFolder } = useFolderStore();
   const [isHovered, setIsHovered] = useState(false);
 
-  console.log("folderId", folderId);
-
   const handleDeleteFolder = async () => {
     try {
       const response = await fetch(`/api/folders`, {

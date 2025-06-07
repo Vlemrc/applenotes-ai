@@ -10,6 +10,7 @@ import Locker from './icons/Locker'
 import Link from './icons/Link'
 import SearchBar from './SearchBar'
 import useFolderStore from '@/stores/useFolderStore'
+import Education from './icons/Education';
 
 const ActionsNav = () => {
     const { activeFolderId, folders } = useFolderStore();
@@ -45,9 +46,14 @@ const ActionsNav = () => {
     return (
         <div className={`${currentFolder && currentFolder._count.notes === 0 ? "" : "border-b border-solid border-gray"} h-[50px] flex flex-row justify-between items-center px-2.5 py-4 w-full`}>
             <div className="flex flex-row items-center justify-between w-full">
-                <IconHoverContainer onClick={handleCreateNote}>
-                    <Write color="#6F6F6F" />
-                </IconHoverContainer>
+                <div className="flex flex-row items-center gap-0.5">
+                    <IconHoverContainer onClick={handleCreateNote}>
+                        <Write color="#6F6F6F" />
+                    </IconHoverContainer>
+                    <IconHoverContainer onClick={handleCreateNote}>
+                        <Education color="#6F6F6F" />
+                    </IconHoverContainer>
+                </div>
 
                 <div className="flex flex-row items-center gap-2">
                     <IconHoverContainer>

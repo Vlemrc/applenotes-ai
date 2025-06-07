@@ -27,30 +27,24 @@ export default function Component() {
           r="22.19"
           fill="#000"
           initial={{
-            offsetDistance: "0%",
-            x: 22.19,
-            y: 22.19,
+            cx: 22.19,
+            cy: 22.19,
           }}
           animate={
             isHovered
               ? {
-                  offsetDistance: ["0%", "20%", "40%", "60%", "70%", "85%", "100%"],
-                  x: [22.19, 145, 145, 15, 15, 131.76],
-                  y: [22.19, 50, 110, 80, 140, 168.56],
+                  cx: [22.19, 145, 145, 15, 15, 131.76],
+                  cy: [22.19, 50, 110, 80, 140, 168.56],
                 }
               : {
-                  offsetDistance: "0%",
-                  x: 22.19,
-                  y: 22.19,
+                  cx: 22.19,
+                  cy: 22.19,
                 }
           }
           transition={{
-            duration: 1,
+            duration: 2, // ralentir l'animation
             repeat: isHovered ? Number.POSITIVE_INFINITY : 0,
             ease: "linear",
-          }}
-          style={{
-            offsetPath: isHovered ? "path('M22.19,22.19 Q78,95 131.76,168.56')" : undefined,
           }}
         />
 
@@ -59,30 +53,24 @@ export default function Component() {
           r="22.19"
           fill="#000"
           initial={{
-            offsetDistance: "100%",
-            x: 131.76,
-            y: 168.56,
+            cx: 131.76,
+            cy: 168.56,
           }}
           animate={
             isHovered
               ? {
-                  offsetDistance: ["100%", "85%", "70%", "60%", "40%", "20%", "0%"],
-                  x: [131.76, 15, 15, 145, 145, 22.19],
-                  y: [168.56, 140, 80, 110, 50, 22.19],
+                  cx: [131.76, 15, 15, 145, 145, 22.19],
+                  cy: [168.56, 140, 80, 110, 50, 22.19],
                 }
               : {
-                  offsetDistance: "100%",
-                  x: 131.76,
-                  y: 168.56,
+                  cx: 131.76,
+                  cy: 168.56,
                 }
           }
           transition={{
-            duration: 1,
+            duration: 2,
             repeat: isHovered ? Number.POSITIVE_INFINITY : 0,
             ease: "linear",
-          }}
-          style={{
-            offsetPath: isHovered ? "path('M131.76,168.56 Q78,95 22.19,22.19')" : undefined,
           }}
         />
       </motion.svg>

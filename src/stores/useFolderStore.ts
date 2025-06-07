@@ -7,6 +7,7 @@ type FolderStore = {
   activeFolderId: number | null
   setActiveFolder: (id: number) => void
   fetchFolders: () => Promise<void>
+  getActiveFolder: () => Folder | undefined;
   deleteFolder: (id: number) => void
   isLoading: boolean
 }
@@ -44,6 +45,10 @@ const useFolderStore = create<FolderStore>((set, get) => ({
       }
     }
   },
+  getActiveFolder: () => {
+    const { folders, activeFolderId } = get();
+    return folders.find(folder => folder.id === activeFolderId);
+  }
 }))
 
 export default useFolderStore

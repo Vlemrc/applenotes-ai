@@ -15,6 +15,7 @@ import AiHelpExtend from "@/components/AiHelpExtend";
 import FlashCard from "@/components/main/Flashcard";
 import AiInput from "@/components/AiInput";
 import HeaderNote from "@/components/HeaderNote";
+import Roadmap from "@/components/main/Roadmap";
 
 
 export default function Home() {
@@ -62,6 +63,7 @@ export default function Home() {
             {activeMode === 'quiz' && (<Quiz noteId={Number(activeNote.id)} onBackToNote={() => setActiveMode(null)} />)}
             {activeMode === 'assistant' && <><AiHelpExtend /><AiInput folderId={activeFolderId} noteContent={activeNote.content} /></>}
             {activeMode === 'flashcards' && <FlashCard noteId={Number(activeNote.id)} onBackToNote={() => setActiveMode(null)} />}
+            {activeMode === 'roadmap' && <Roadmap folderId={activeFolderId} onBackToNote={() => setActiveMode(null)} />}
             {activeNote && (
               <AiButton 
                 noteId={Number(activeNote.id)}

@@ -17,7 +17,7 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
     useFolderStore();
   const [addFolder, setAddFolder] = useState(false);
   const [hoveredFolderId, setHoveredFolderId] = useState<number | null>(null);
-  const [editingFolderId, setEditingFolderId] = useState<number | null>(null); // État pour suivre quel dossier est en mode édition
+  const [editingFolderId, setEditingFolderId] = useState<number | null>(null); 
   const [newFolderName, setNewFolderName] = useState<string>("");
 
   useEffect(() => {
