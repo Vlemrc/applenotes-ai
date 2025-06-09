@@ -7,6 +7,8 @@ import useFolderStore from "@/stores/useFolderStore";
 import { Folder } from "@/types/folders";
 import AddFolderInput from "../AddFolderInput";
 import ButtonDeleteFolder from "../ButtonDeleteFolder";
+import { useLearningModeStore } from '@/stores/learningModeStore';
+import PercentRoadMap from "../PercentRoadMap";
 
 interface LeftbarProps {
   onBackToNote: () => void;
@@ -19,6 +21,7 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
   const [hoveredFolderId, setHoveredFolderId] = useState<number | null>(null);
   const [editingFolderId, setEditingFolderId] = useState<number | null>(null); 
   const [newFolderName, setNewFolderName] = useState<string>("");
+  const { isLearningMode } = useLearningModeStore();
 
   useEffect(() => {
     fetchFolders();
@@ -101,17 +104,20 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
                     ) : (
                       <FolderIcon color="#DC9F3A" />
                     )}
-                    {editingFolderId === folder.id ? (
-                      <input
-                        type="text"
-                        value={newFolderName}
-                        onChange={(e) => setNewFolderName(e.target.value)}
-                        onKeyDown={(e) => handleKeyDown(e, folder.id)}
-                        className="h-[20px] text-sm pl-1 border-2 border-yellowInput"
-                      />
-                    ) : (
-                      <p className="font-medium text-sm text-text">{folder.name}</p>
-                    )}
+                    <div className="flex flex-col">
+                      {editingFolderId === folder.id ? (
+                        <input
+                          type="text"
+                          value={newFolderName}
+                          onChange={(e) => setNewFolderName(e.target.value)}
+                          onKeyDown={(e) => handleKeyDown(e, folder.id)}
+                          className="h-[20px] text-sm pl-1 border-2 border-yellowInput"
+                        />
+                      ) : (
+                        <p className="font-medium text-sm text-text">{folder.name}</p>
+                      )}
+                      {isLearningMode && <PercentRoadMap roadmapItems={folder.roadmaps[0]?.items} />}
+                    </div>
                   </div>
 
                   <div className="flex flex-row gap-2 items-center">

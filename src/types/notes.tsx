@@ -1,4 +1,5 @@
 import { Folder } from './folders'
+import { RoadmapItem } from './roadmapItems'
 export interface Note {
   id: number
   createdAt: string | Date
@@ -7,6 +8,7 @@ export interface Note {
   content: string
   folderId: number
   folder?: Folder
+  roadmapItems?: RoadmapItem[]
 }
 
 export interface NotesLayoutProps {

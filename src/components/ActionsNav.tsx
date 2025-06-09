@@ -11,10 +11,12 @@ import Link from './icons/Link'
 import SearchBar from './SearchBar'
 import useFolderStore from '@/stores/useFolderStore'
 import Education from './icons/Education';
+import { useLearningModeStore } from '@/stores/learningModeStore';
 
 const ActionsNav = () => {
     const { activeFolderId, folders } = useFolderStore();
     const currentFolder = folders?.find(folder => folder.id === activeFolderId);
+    const { toggleLearningMode } = useLearningModeStore();
 
     const handleCreateNote = async () => {
         if (!activeFolderId) {
@@ -43,6 +45,10 @@ const ActionsNav = () => {
         }
     };
 
+    const handleChangeMode = () => {
+        toggleLearningMode();
+    }
+
     return (
         <div className={`${currentFolder && currentFolder._count.notes === 0 ? "" : "border-b border-solid border-gray"} h-[50px] flex flex-row justify-between items-center px-2.5 py-4 w-full`}>
             <div className="flex flex-row items-center justify-between w-full">
@@ -50,7 +56,7 @@ const ActionsNav = () => {
                     <IconHoverContainer onClick={handleCreateNote}>
                         <Write color="#6F6F6F" />
                     </IconHoverContainer>
-                    <IconHoverContainer onClick={handleCreateNote}>
+                    <IconHoverContainer onClick={handleChangeMode}>
                         <Education color="#6F6F6F" />
                     </IconHoverContainer>
                 </div>

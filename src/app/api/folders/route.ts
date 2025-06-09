@@ -6,8 +6,20 @@ export async function GET() {
     const folders = await prisma.folder.findMany({
       include: {
         _count: {
-          select: { notes: true },
+          select: { 
+            notes: true,
+            roadmaps: true
+          },
         },
+        roadmaps: {
+          include: {
+            items: {
+              include: {
+                note: true  // Inclut aussi les notes liées aux items de roadmap
+              }
+            }
+          }
+        }
       },
     })
     return NextResponse.json(folders)

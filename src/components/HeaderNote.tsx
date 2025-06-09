@@ -9,9 +9,10 @@ import type React from "react"
 
 interface HeaderNoteProps {
   note: Note
+  mode: 'quiz' | 'assistant' | 'flashcards' | 'roadmap' | null;
 }
 
-const HeaderNote = ({ note }: HeaderNoteProps) => {
+const HeaderNote = ({ note, mode }: HeaderNoteProps) => {
   const date = formatDate(note.updatedAt)
   const { activeFolderId, folders } = useFolderStore()
   const [isScrolled, setIsScrolled] = useState(false)
@@ -66,13 +67,15 @@ const HeaderNote = ({ note }: HeaderNoteProps) => {
       >
         {date}
       </p>
-      <input
-        type="text"
-        value={title}
-        onChange={handleTitleChange}
-        className="text-2xl font-bold w-full bg-transparent outline-none"
-        placeholder="Titre de la note..."
-      />
+      {mode !== 'roadmap' && 
+        <input
+          type="text"
+          value={title}
+          onChange={handleTitleChange}
+          className="text-2xl font-bold w-full bg-transparent outline-none"
+          placeholder="Titre de la note..."
+        />
+      }
     </div>
   )
 }

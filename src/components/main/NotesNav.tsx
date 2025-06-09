@@ -15,6 +15,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
   const [isLoading, setIsLoading] = useState(true)
   const { activeFolderId, folders } = useFolderStore()
 
+
   const currentFolder = folders?.find((folder) => folder.id === activeFolderId)
   const isEmptyFolder = currentFolder && currentFolder._count.notes === 0
 
@@ -30,6 +31,8 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
     onNoteSelect(note);
     onBackToNote && onBackToNote(note.id);
   };
+
+  console.log(notes)
 
   if (isEmptyFolder) {
     return (
@@ -106,7 +109,8 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
   return (
     <ul className=" overflow-x-hidden h-full">
       <div
-        className={`${notes.length >= 7 ? "w-calc-minus-15" : ""} 
+      // ${notes.length >= 7 ? "w-calc-minus-15" : ""}
+        className={` 
         absolute bg-gray top-[50px] w-full h-[33px] z-10`}
       />
       {todayNotes.length !== 0 && (
@@ -116,14 +120,17 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
           </p>
           <div className="p-2.5 pt-0">
             {todayNotes.map((note, index) => (
-              <NoteItem
-                key={note.id}
-                note={note}
-                isActive={activeNote?.id === note.id}
-                nextIsActive={index < todayNotes.length - 1 ? activeNote?.id === todayNotes[index + 1].id : false}
-                isTopNote={firstNonEmptyCategory === "today" && index === 0}
-                onClick={() => handleNoteClick(note)}
-              />
+              <>
+                <NoteItem
+                  key={note.id}
+                  note={note}
+                  isActive={activeNote?.id === note.id}
+                  nextIsActive={index < todayNotes.length - 1 ? activeNote?.id === todayNotes[index + 1].id : false}
+                  isTopNote={firstNonEmptyCategory === "today" && index === 0}
+                  onClick={() => handleNoteClick(note)}
+                  isChecked={note?.roadmapItems?.[0]?.checked ?? false}
+                />
+              </>
             ))}
           </div>
         </>
@@ -143,6 +150,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 }
                 isTopNote={firstNonEmptyCategory === "yesterday" && index === 0}
                 onClick={() => handleNoteClick(note)}
+                isChecked={note?.roadmapItems?.[0]?.checked ?? false}
               />
             ))}
           </div>
@@ -162,6 +170,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 nextIsActive={index < lastWeekNotes.length - 1 ? activeNote?.id === lastWeekNotes[index + 1].id : false}
                 isTopNote={firstNonEmptyCategory === "lastWeek" && index === 0}
                 onClick={() => handleNoteClick(note)}
+                isChecked={note?.roadmapItems?.[0]?.checked ?? false}
               />
             ))}
           </div>
@@ -181,6 +190,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 }
                 isTopNote={firstNonEmptyCategory === "lastMonth" && index === 0}
                 onClick={() => handleNoteClick(note)}
+                isChecked={note?.roadmapItems?.[0]?.checked ?? false}
               />
             ))}
           </div>
@@ -198,6 +208,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 nextIsActive={index < lastYearNotes.length - 1 ? activeNote?.id === lastYearNotes[index + 1].id : false}
                 isTopNote={firstNonEmptyCategory === "lastYear" && index === 0}
                 onClick={() => handleNoteClick(note)}
+                isChecked={note?.roadmapItems?.[0]?.checked ?? false}
               />
             ))}
           </div>
@@ -215,6 +226,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 nextIsActive={index < olderNotes.length - 1 ? activeNote?.id === olderNotes[index + 1].id : false}
                 isTopNote={firstNonEmptyCategory === "older" && index === 0}
                 onClick={() => handleNoteClick(note)}
+                isChecked={note?.roadmapItems?.[0]?.checked ?? false}
               />
             ))}
           </div>

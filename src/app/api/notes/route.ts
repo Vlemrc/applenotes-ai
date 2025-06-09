@@ -6,13 +6,20 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const folderId = searchParams.get("folderId");
-    const noteId = searchParams.get("id"); // Récupérer l'id de la note
+    const noteId = searchParams.get("id");
 
     if (noteId) {
       // Si un id de note est fourni, récupérer cette note spécifique
       const note = await prisma.note.findUnique({
         where: { id: Number.parseInt(noteId) },
-        include: { folder: true },
+        include: { 
+          folder: true,
+          roadmapItems: {
+            include: {
+              roadmap: true  // Inclut aussi la roadmap liée
+            }
+          }
+        },
       });
 
       if (!note) {
@@ -34,6 +41,11 @@ export async function GET(request: NextRequest) {
         : undefined,
       include: {
         folder: true,
+        roadmapItems: {
+          include: {
+            roadmap: true  // Inclut aussi la roadmap liée
+          }
+        }
       },
       orderBy: {
         createdAt: "desc",

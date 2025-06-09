@@ -58,7 +58,7 @@ export default function Home() {
           <ActionsNav />
           <div className="pt-10 px-8 pb-8 h-calc-minus-50">
             {activeMode !== null && <Breadcrumb note={activeNote} mode={activeMode} onResetMode={() => setActiveMode(null)}  />}
-            {activeNote && <HeaderNote note={activeNote} />}
+            {activeNote && <HeaderNote note={activeNote} mode={activeMode} />}
             {activeMode === null && <NoteContent note={activeNote} />}
             {activeMode === 'quiz' && (<Quiz noteId={Number(activeNote.id)} onBackToNote={() => setActiveMode(null)} />)}
             {activeMode === 'assistant' && <><AiHelpExtend /><AiInput folderId={activeFolderId} noteContent={activeNote.content} /></>}

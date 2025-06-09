@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,9 +12,9 @@ model Note {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   title        String
-  content      String        @db.Text
-  folder       Folder        @relation(fields: [folderId], references: [id])
+  content      String
   folderId     Int
+  folder       Folder        @relation(fields: [folderId], references: [id])
   roadmapItems RoadmapItem[]
 }
 
@@ -37,17 +31,17 @@ model Roadmap {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
   title     String
-  folder    Folder        @relation(fields: [folderId], references: [id])
   folderId  Int
+  folder    Folder        @relation(fields: [folderId], references: [id])
   items     RoadmapItem[]
 }
 
 model RoadmapItem {
   id        Int     @id @default(autoincrement())
-  roadmap   Roadmap @relation(fields: [roadmapId], references: [id])
   roadmapId Int
-  note      Note    @relation(fields: [noteId], references: [id])
   noteId    Int
   position  Int
   checked   Boolean @default(false)
+  note      Note    @relation(fields: [noteId], references: [id])
+  roadmap   Roadmap @relation(fields: [roadmapId], references: [id])
 }
