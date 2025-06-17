@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import { useLearningModeStore } from "@/stores/learningModeStore"
 interface RoadmapItem {
   id: number
   position: number
@@ -29,6 +30,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
   const [roadmaps, setRoadmaps] = useState<Roadmap[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { isLearningMode } = useLearningModeStore()
 
   useEffect(() => {
     if (folderId) {
@@ -120,10 +122,18 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
     )
   }
 
+  const roadmapItemsCount = roadmaps[0].items.length
+  const checkedItemsCount = roadmaps[0].items.filter((item) => item.checked).length
+
+  const percentItems = roadmapItemsCount > 0 ? Math.round((checkedItemsCount / roadmapItemsCount) * 100) : 0
+
   return (
     <div className="">
-      <h1 className="font-bold text-2xl uppercase mb-4">Roadmap</h1>
-
+      <h1 className="font-bold text-2xl uppercase">Roadmap</h1>
+      <div className="flex flex-row gap-2 items-center mb-5">
+        <p className="bg-yellow-gradient p-[2px] px-[6px] text-sm rounded-md ">{percentItems}%</p>
+        <p className="text-sm">{checkedItemsCount} sur {roadmapItemsCount} maitrisés</p>
+      </div>
       {roadmaps.length === 0 ? (
         <div className="text-center py-8 bg-gray-50 rounded">
           <p className="text-gray-600">Aucune roadmap trouvée pour ce dossier</p>
