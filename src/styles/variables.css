@@ -22,3 +22,7 @@
 .hover\:bg-yellow-gradient:hover {
     background: var(--yellow-gradient);
 }
+
+.text-yellowGradient {
+    color: var(--yellow-gradient);
+}

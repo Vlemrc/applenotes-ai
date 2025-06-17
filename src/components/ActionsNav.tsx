@@ -13,7 +13,7 @@ import useFolderStore from '@/stores/useFolderStore'
 import Education from './icons/Education';
 import { useLearningModeStore } from '@/stores/learningModeStore';
 
-const ActionsNav = () => {
+const ActionsNav = ({ bottomBar, setBottomBar }) => {
     const { activeFolderId, folders } = useFolderStore();
     const currentFolder = folders?.find(folder => folder.id === activeFolderId);
     const { toggleLearningMode } = useLearningModeStore();
@@ -47,6 +47,7 @@ const ActionsNav = () => {
 
     const handleChangeMode = () => {
         toggleLearningMode();
+        setBottomBar(true);
     }
 
     return (

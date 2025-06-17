@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import type React from "react"
 
 import type { Note } from "@/types/notes"
@@ -15,6 +15,7 @@ const NoteContent = ({ note }: NoteContentProps) => {
   const [content, setContent] = useState(note?.content || "")
   const [isSaving, setIsSaving] = useState(false)
   const [fetchedNote, setFetchedNote] = useState<Note | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // Refetch la note à partir de l'API
   useEffect(() => {
@@ -64,11 +65,17 @@ const NoteContent = ({ note }: NoteContentProps) => {
     }
   }, 500)
 
-  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newContent = e.target.value
-    setContent(newContent)
-    saveNote(newContent)
+  const autoResizeTextarea = () => {
+    const textarea = textareaRef.current
+    if (textarea) {
+      textarea.style.height = "auto"
+      textarea.style.height = `${textarea.scrollHeight}px`
+    }
   }
+
+  useEffect(() => {
+    autoResizeTextarea()
+  }, [content])
 
   const currentFolder = folders?.find((folder) => folder.id === activeFolderId)
   if (currentFolder && currentFolder._count.notes === 0) {
@@ -79,14 +86,24 @@ const NoteContent = ({ note }: NoteContentProps) => {
     return null
   }
 
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newContent = e.target.value
+    setContent(newContent)
+    saveNote(newContent)
+    // Optionnel : autoResizeTextarea() ici pour une meilleure réactivité
+  }
+
   return (
     <div className="relative h-full w-full">
       <textarea
+        ref={textareaRef}
         value={content}
         onChange={handleContentChange}
-        className="w-full h-full resize-none outline-none bg-transparent text-sm pb-6"
+        className="w-full resize-none outline-none bg-transparent text-sm pb-6 overflow-hidden"
         placeholder="Note..."
         autoFocus
+        rows={1}
+        style={{ minHeight: "2.5rem" }}
       />
       {isSaving && <div className="absolute bottom-2 right-2 text-xs text-gray-400">Enregistrement...</div>}
     </div>

@@ -23,6 +23,7 @@ export default function Home() {
   const [activeNote, setActiveNote] = useState(null);
   const { activeFolderId } = useFolderStore();
   const [activeMode, setActiveMode] = useState(null);
+  const [bottomBar, setBottomBar] = useState(false);
 
   // Charger les notes quand le dossier actif change
   useEffect(() => {
@@ -55,10 +56,12 @@ export default function Home() {
           />
         </aside>
         <main className="w-full relative overflow-y-hidden">
-          <ActionsNav />
-          <div className="pt-10 px-8 pb-8 h-calc-minus-50">
-            {activeMode !== null && <Breadcrumb note={activeNote} mode={activeMode} onResetMode={() => setActiveMode(null)}  />}
-            {activeNote && <HeaderNote note={activeNote} mode={activeMode} />}
+          <ActionsNav 
+            bottomBar={bottomBar}
+            setBottomBar={setBottomBar} 
+          />
+          <div className="pt-2 px-8 pb-8 h-calc-minus-50 overflow-y-scroll">
+            {activeNote && <HeaderNote note={activeNote} mode={activeMode} onResetMode={() => setActiveMode(null)} />}
             {activeMode === null && <NoteContent note={activeNote} />}
             {activeMode === 'quiz' && (<Quiz noteId={Number(activeNote.id)} onBackToNote={() => setActiveMode(null)} />)}
             {activeMode === 'assistant' && <><AiHelpExtend /><AiInput folderId={activeFolderId} noteContent={activeNote.content} /></>}
@@ -68,7 +71,9 @@ export default function Home() {
               <AiButton 
                 noteId={Number(activeNote.id)}
                 noteContent={activeNote.content}
-                onModeChange={setActiveMode} 
+                onModeChange={setActiveMode}
+                bottomBar={bottomBar}
+                setBottomBar={setBottomBar}
               />
             )}
           </div>

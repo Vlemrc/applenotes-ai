@@ -32,8 +32,6 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
     onBackToNote && onBackToNote(note.id);
   };
 
-  console.log(notes)
-
   if (isEmptyFolder) {
     return (
       <div className="h-full w-full flex items-center justify-center">

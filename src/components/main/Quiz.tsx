@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { Progress } from "@/components/ui/progress"
+import { useLearningModeStore } from "@/stores/learningModeStore"
 
 interface Answer {
   text: string
@@ -16,12 +17,12 @@ interface QuizData {
   questions: Question[]
 }
 
-const Quiz = ({ 
-  noteId, 
-  onBackToNote 
-}: { 
+const Quiz = ({
+  noteId,
+  onBackToNote,
+}: {
   noteId: number
-  onBackToNote: (noteId: number) => void 
+  onBackToNote: (noteId: number) => void
 }) => {
   const [quizData, setQuizData] = useState<QuizData | null>(null)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -30,6 +31,11 @@ const Quiz = ({
   const [showResults, setShowResults] = useState(false)
   const [score, setScore] = useState(0)
   const [feedback, setFeedback] = useState<{ message: string; isCorrect: boolean } | null>(null)
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number | null>(null)
+  const { isLearningMode } = useLearningModeStore()
+  const [roadmapItemId, setRoadmapItemId] = useState<number | null>(null)
+  const [isUpdatingRoadmap, setIsUpdatingRoadmap] = useState(false)
+  const [isRoadmapItemChecked, setIsRoadmapItemChecked] = useState<boolean>(false)
 
   useEffect(() => {
     const storedQuiz = localStorage.getItem(`generated-quiz-${noteId}`)
@@ -40,6 +46,9 @@ const Quiz = ({
         console.error("Erreur de parsing JSON :", error)
       }
     }
+
+    // Récupérer les infos du roadmapItem
+    fetchNoteRoadmapInfo()
   }, [noteId])
 
   const handleBackToNote = () => {
@@ -47,11 +56,12 @@ const Quiz = ({
   }
 
   const handleAnswerClick = (answerIndex: number) => {
-    if (selectedAnswerIndex !== null) return // Prevent changing answer after selection
+    if (selectedAnswerIndex !== null) return
 
     setSelectedAnswerIndex(answerIndex)
+    const correctIndex = quizData?.questions[currentQuestionIndex].answers.findIndex((a) => a.correct) ?? null
+    setCorrectAnswerIndex(correctIndex)
 
-    // Show feedback
     const isCorrect = quizData?.questions[currentQuestionIndex].answers[answerIndex].correct
     setFeedback({
       message: isCorrect ? "Bonne réponse !" : "Mauvaise réponse !",
@@ -74,6 +84,7 @@ const Quiz = ({
 
     // Reset feedback
     setFeedback(null)
+    setCorrectAnswerIndex(null)
 
     // Move to next question or show results
     if (quizData && currentQuestionIndex < quizData.questions.length - 1) {
@@ -110,6 +121,56 @@ const Quiz = ({
     setShowResults(false)
     setScore(0)
     setFeedback(null)
+    setCorrectAnswerIndex(null)
+  }
+
+  const fetchNoteRoadmapInfo = async () => {
+    try {
+      const response = await fetch(`/api/notes?id=${noteId}`)
+      if (response.ok) {
+        const note = await response.json()
+        // Récupérer le premier roadmapItem associé à cette note
+        if (note.roadmapItems && note.roadmapItems.length > 0) {
+          const roadmapItem = note.roadmapItems[0]
+          setRoadmapItemId(roadmapItem.id)
+          setIsRoadmapItemChecked(roadmapItem.checked)
+        }
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération des infos de la note:", error)
+    }
+  }
+
+  const updateRoadmapItemStatus = async () => {
+    if (!roadmapItemId) return
+
+    setIsUpdatingRoadmap(true)
+    const newCheckedState = !isRoadmapItemChecked
+
+    try {
+      const response = await fetch("/api/roadmap", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "updateItem",
+          itemId: roadmapItemId,
+          checked: newCheckedState,
+        }),
+      })
+
+      if (response.ok) {
+        setIsRoadmapItemChecked(newCheckedState)
+        console.log(`Roadmap item ${newCheckedState ? "marqué comme appris" : "marqué comme non-appris"}`)
+      } else {
+        console.error("Erreur lors de la mise à jour du roadmap item")
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour:", error)
+    } finally {
+      setIsUpdatingRoadmap(false)
+    }
   }
 
   if (!quizData) {
@@ -145,13 +206,19 @@ const Quiz = ({
                   <li
                     key={index}
                     onClick={() => handleAnswerClick(index)}
-                    className={`font-semibold text-center text-sm w-1/3 flex items-center justify-center px-4 py-5 rounded-lg cursor-pointer transition-all duration-300 ${
-                      selectedAnswerIndex === index
-                        ? answer.correct
-                          ? "bg-green text-white"
-                          : "bg-alert text-white"
+                    className={`font-semibold text-center text-sm w-1/3 flex items-center justify-center px-4 py-5 rounded-lg cursor-pointer transition-all duration-300
+                    ${
+                      selectedAnswerIndex !== null
+                        ? index === selectedAnswerIndex
+                          ? answer.correct
+                            ? "bg-green text-white"
+                            : "bg-alert text-white"
+                          : index === correctAnswerIndex
+                            ? "bg-green text-white"
+                            : "bg-white text-yellow"
                         : "bg-white text-yellow hover:text-white hover:bg-yellow-gradient"
-                    }`}
+                    }
+                  `}
                     style={{ height: "110px" }}
                   >
                     {answer.text}
@@ -217,9 +284,10 @@ const Quiz = ({
                   : "Tu peux encore t'améliorer ne lâche pas !"}
             </p>
             <div className="flex flex-row gap-5">
-              <button 
-                onClick={handleBackToNote} 
-                className="bg-gray text-text font-semibold py-1 px-5 rounded-lg hover:opacity-90 transition-opacity">
+              <button
+                onClick={handleBackToNote}
+                className="bg-gray text-text font-semibold py-1 px-5 rounded-lg hover:opacity-90 transition-opacity"
+              >
                 Revenir sur ma note
               </button>
               <button
@@ -228,6 +296,21 @@ const Quiz = ({
               >
                 On réessaye ?
               </button>
+              {isLearningMode && roadmapItemId && (
+                <button
+                  onClick={updateRoadmapItemStatus}
+                  disabled={isUpdatingRoadmap}
+                  className={`font-semibold py-1 px-5 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 ${
+                    isRoadmapItemChecked ? "bg-orange-500 text-white" : "bg-green text-white"
+                  }`}
+                >
+                  {isUpdatingRoadmap
+                    ? "Mise à jour..."
+                    : isRoadmapItemChecked
+                      ? "Marquer comme à explorer"
+                      : "Marquer comme maitrisé"}
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -237,4 +320,3 @@ const Quiz = ({
 }
 
 export default Quiz
-

@@ -29,7 +29,7 @@ export default function Breadcrumb({ note, mode, onResetMode }: BreadcrumbProps)
   const { activeFolderId } = useFolderStore();
 
   const activeFolder = useFolderStore(state => state.getActiveFolder());
-  const folderTitle = activeFolder?.name || "Dossier";
+  const folderTitle = activeFolder?.name;
   if (!note) return null;
 
   const items = [
@@ -37,10 +37,12 @@ export default function Breadcrumb({ note, mode, onResetMode }: BreadcrumbProps)
     ...(mode ? [{ label: getModeLabel(mode) }] : [])
   ];
 
+  if (!mode) return null;
+
   return (
     <>
       {mode !== 'roadmap' && (
-        <nav className="flex flex-row group font-medium text-sm text-grayOpacity mb-1">
+        <nav className="flex flex-row group font-medium text-sm text-grayOpacity mt-4">
           {items.map((item, index) => (
             <div key={index} className="flex items-center">
               {index > 0 && <ChevronRight className="h-4 w-4 ml-1" />}
@@ -62,7 +64,7 @@ export default function Breadcrumb({ note, mode, onResetMode }: BreadcrumbProps)
         </nav>
       )}
       {mode === 'roadmap' && (
-        <div className="flex items-center text-sm text-grayOpacity mb-1">
+        <div className="flex items-center text-sm text-grayOpacity mt-8">
           <span className="cursor-pointer" onClick={onResetMode}>
             {folderTitle}
           </span>

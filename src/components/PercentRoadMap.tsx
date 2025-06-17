@@ -5,7 +5,6 @@ interface PercentRoadMapProps {
   }
   
 export default function PercentRoadMap ({ roadmapItems }: PercentRoadMapProps) {
-    // Calculer le pourcentage
 
     if (!roadmapItems) {
         return 

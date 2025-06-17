@@ -134,3 +134,32 @@ body {
 .bg-gray__container {
   background:rgba(182, 183, 188, 0.7)
 }
+
+.roadmap-checkdiv {
+  position:relative;
+}
+
+.roadmap-checkdiv::after {
+  content:"";
+  width:2px;
+  height:60px;
+  position:absolute;
+  left:50%;
+  bottom:-60px;
+  transform:translateX(-50%);
+  background-color: rgb(254 246 201);
+}
+
+@keyframes spin-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 10s linear infinite;
+}

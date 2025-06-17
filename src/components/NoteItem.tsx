@@ -32,9 +32,9 @@ const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick, isChecked 
         </div>
         {isLearningMode && (
           isChecked ? (
-            <p className="text-medium text-xs text-green-600 pb-[12px] pt-0.5">Maitrisé</p>
+            <p className="text-medium text-xs text-yellowLight font-semibold pb-[12px] pt-0.5">Maitrisé</p>
           ) : (
-            <p className="text-medium text-xs text-red-800 pb-[12px] pt-0.5">À explorer</p>
+            <p className="text-medium text-xs text-grayOpacity font-semibold pb-[12px] pt-0.5">À explorer</p>
           )
         )}
       </li>

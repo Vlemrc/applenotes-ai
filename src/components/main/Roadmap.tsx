@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-
+import Image from "next/image"
 interface RoadmapItem {
   id: number
   position: number
@@ -97,9 +97,9 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
   if (isLoading) {
     return (
       <div className="p-4">
-        <h1 className="font-semibold text-yellow-500 uppercase mb-4">Roadmap - Chargement...</h1>
-        <p>Folder ID: {folderId}</p>
-        <p>Chargement en cours...</p>
+        <div className="p-2 absolute top-1/2 left-1/2 -translate-x-1/2 animate-gray-gradient text-md whitespace-nowrap">
+          Chargement de votre roadmap...
+        </div>
       </div>
     )
   }
@@ -121,8 +121,8 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
   }
 
   return (
-    <div className="p-4 overflow-scroll">
-      <h1 className="font-semibold text-yellow-500 uppercase mb-4">Roadmap</h1>
+    <div className="">
+      <h1 className="font-bold text-2xl uppercase mb-4">Roadmap</h1>
 
       {roadmaps.length === 0 ? (
         <div className="text-center py-8 bg-gray-50 rounded">
@@ -132,22 +132,37 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
       ) : (
         <div className="space-y-4">
           {roadmaps.map((roadmap) => (
-            <div key={roadmap.id} className="border rounded p-4 bg-white shadow">
+            <div key={roadmap.id}>
               {roadmap.items && roadmap.items.length > 0 ? (
-                <div className="space-y-3">
-                  {roadmap.items.map((item) => (
-                    <div key={item.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded border">
-                      <input
-                        type="checkbox"
-                        checked={item.checked}
-                        onChange={(e) => toggleItemCheck(item.id, e.target.checked)}
-                        className="mt-1"
-                      />
+                <div className="flex flex-col gap-8">
+                  {roadmap.items.map((item, idx) => (
+                    <div key={item.id} className="flex justify-between flex-row">
                       <div className="flex-1">
                         <div className="font-medium">
                           {item.position}. {item.note?.title || "Titre manquant"}
                         </div>
-                        {item.reasoning && <div className="text-sm text-gray-600 mt-1">{item.reasoning}</div>}
+                        {item.checked ? (
+                          <p className="text-xs">Note maitrisée</p>
+                        ) : (
+                          <p className="text-xs">Note à explorer</p>
+                        )}
+                        <div className="w-full h-[1px] bg-[#F6F6F6] mt-2"></div>
+                      </div>
+                      <div
+                        className={`${
+                          idx !== roadmap.items.length - 1
+                            ? `roadmap-checkdiv ${item.checked ? "bg-yellowLight" : "bg-grayLight"}`
+                            : `${item.checked ? "bg-yellowLight" : "bg-grayLight"}`
+                        } h-6 w-6 rounded-full cursor-pointer flex items-center justify-center absolute right-1/2 translate-y-2`}
+                        onClick={() => toggleItemCheck(item.id, !item.checked)}
+                      >
+                        {item.checked ? (
+                          <Image src="/checkmark.svg" width={10} height={10} alt="acquis" />
+                        ) : (
+                          <div className="animate-spin-slow">
+                            <Image src="/encours.svg" width={10} height={10} alt="en cours d'acquisition" />
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
