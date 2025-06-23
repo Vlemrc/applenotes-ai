@@ -283,24 +283,25 @@ const Quiz = ({
                   ? "Pas mal mais on veut toujours plus !"
                   : "Tu peux encore t'améliorer ne lâche pas !"}
             </p>
-            <div className="flex flex-row gap-5">
+            <div className="flex flex-row gap-2">
               <button
                 onClick={handleBackToNote}
-                className="bg-gray text-text font-semibold py-1 px-5 rounded-lg hover:opacity-90 transition-opacity"
+                className="text-sm border border-solid border-grayLight shadow-sm px-2 bg-white rounded-md font-medium hover:bg-grayLight transition-colors duration-300"
               >
                 Revenir sur ma note
               </button>
               <button
                 onClick={restartQuiz}
-                className="bg-yellow-gradient text-white font-semibold py-1 px-5 rounded-lg hover:opacity-90 transition-opacity"
+                className="text-sm bg-yellowLight text-white px-4 rounded-md font-medium hover:bg-yellow transition-colors duration-300"
               >
                 On réessaye ?
               </button>
-              {isLearningMode && roadmapItemId && (
+            </div>
+            {isLearningMode && roadmapItemId && (
                 <button
                   onClick={updateRoadmapItemStatus}
                   disabled={isUpdatingRoadmap}
-                  className={`font-semibold py-1 px-5 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 ${
+                  className={`text-sm text-white px-4 rounded-md font-medium hover:bg-yellow transition-colors duration-300 mt-2 ${
                     isRoadmapItemChecked ? "bg-orange-500 text-white" : "bg-green text-white"
                   }`}
                 >
@@ -311,7 +312,6 @@ const Quiz = ({
                       : "Marquer comme maitrisé"}
                 </button>
               )}
-            </div>
           </div>
         )}
       </div>

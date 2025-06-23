@@ -235,27 +235,26 @@ const FlashCard = ({
             &lt; Précédente
           </button>
 
-          {/* Bouton de gestion de l'état d'apprentissage - affiché seulement sur la dernière carte */}
           {isLastCard && isLearningMode && roadmapItemId && (
             <button
               onClick={updateRoadmapItemStatus}
               disabled={isUpdatingRoadmap}
-              className={`font-semibold py-1 px-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 text-sm ${
+              className={`text-sm text-white px-4 rounded-md font-medium hover:bg-yellow transition-colors duration-300 ${
                 isRoadmapItemChecked ? "bg-orange-500 text-white" : "bg-green text-white"
               }`}
             >
               {isUpdatingRoadmap
                 ? "Mise à jour..."
                 : isRoadmapItemChecked
-                  ? "Marquer comme non-appris"
-                  : "Marquer comme appris"}
+                  ? "Marquer comme à explorer"
+                  : "Marquer comme maitrisé"}
             </button>
           )}
 
           {isLastCard ? (
             <button
               onClick={() => onBackToNote && onBackToNote(noteId)}
-              className="font-medium text-text animlinkunderline"
+              className="text-sm border border-solid border-grayLight shadow-sm px-2 bg-white rounded-md font-medium hover:bg-grayLight transition-colors duration-300"
             >
               Revenir sur ma note
             </button>

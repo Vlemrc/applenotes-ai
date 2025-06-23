@@ -154,20 +154,6 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
 
   return (
     <>
-      {loading &&
-        (mode === "quiz" ? (
-          <div className="p-2 absolute top-1/2 left-1/2 -translate-x-1/2 animate-gray-gradient text-md whitespace-nowrap">
-            Quiz en cours de création
-          </div>
-        ) : mode === "flashcards" ? (
-          <div className="p-2 absolute top-1/2 left-1/2 -translate-x-1/2 animate-gray-gradient text-md whitespace-nowrap">
-            Flashcards en cours de création
-          </div>
-        ) : mode === "roadmap" ? (
-          <div className="p-2 absolute top-1/2 left-1/2 -translate-x-1/2 animate-gray-gradient text-md whitespace-nowrap">
-            Roadmap en cours de création
-          </div>
-        ) : null)}
       <div
         className={`
                 absolute left-1/2 ${bottomBar ? "bottom-0" : "-bottom-[113px]"} -translate-x-1/2 
@@ -203,63 +189,81 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
           </svg>
         </button>
         <div className="relative flex items-center justify-between w-full gap-4 m-4">
-          <button
-            onClick={() => handleClick("quiz")}
-            id="icon-quiz"
-            className={`
-                       flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
-                        transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
-                    `}
-            aria-label="Quiz"
-            onMouseEnter={() => setHoveredButton("quiz")}
-            onMouseLeave={() => setHoveredButton(null)}
-            disabled={loading}
-          >
-            <Dices />
-            <LabelAiNav content="Générer un quiz" />
-          </button>
-          <button
-            onClick={() => handleClick("assistant")}
-            id="icon-brain"
-            className="flex items-center justify-center flex-col h-full min-h-20 p-2 w-1/4 bg-grayLight rounded-lg"
-            aria-label="AI Assistant"
-            onMouseEnter={() => setHoveredButton("brain")}
-            onMouseLeave={() => setHoveredButton(null)}
-            disabled={loading}
-          >
-            <Brain />
-            <LabelAiNav content="Enrichir cette note" />
-          </button>
-          <button
-            onClick={() => handleClick("roadmap")}
-            id="icon-roadmap"
-            className={`
-                        flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
-                        transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
-                    `}
-            aria-label="Roadmaps"
-            onMouseEnter={() => setHoveredButton("roadmap")}
-            onMouseLeave={() => setHoveredButton(null)}
-            disabled={loading}
-          >
-            <Roadmap />
-            <LabelAiNav content="Accéder à la roadmap" />
-          </button>
-          <button
-            onClick={() => handleClick("flashcards")}
-            id="icon-flashcard"
-            className={`
-                        flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
-                        transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
-                    `}
-            aria-label="Flashcards"
-            onMouseEnter={() => setHoveredButton("flashcard")}
-            onMouseLeave={() => setHoveredButton(null)}
-            disabled={loading}
-          >
-            <FlashCard />
-            <LabelAiNav content="Créer des flashcards" />
-          </button>
+          {!loading && (
+            <>
+              <button
+                onClick={() => handleClick("quiz")}
+                id="icon-quiz"
+                className={`
+                          flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
+                            transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
+                        `}
+                aria-label="Quiz"
+                onMouseEnter={() => setHoveredButton("quiz")}
+                onMouseLeave={() => setHoveredButton(null)}
+                disabled={loading}
+              >
+                <Dices />
+                <LabelAiNav content="Générer un quiz" />
+              </button>
+              <button
+                onClick={() => handleClick("assistant")}
+                id="icon-brain"
+                className="flex items-center justify-center flex-col h-full min-h-20 p-2 w-1/4 bg-grayLight rounded-lg"
+                aria-label="AI Assistant"
+                onMouseEnter={() => setHoveredButton("brain")}
+                onMouseLeave={() => setHoveredButton(null)}
+                disabled={loading}
+              >
+                <Brain />
+                <LabelAiNav content="Enrichir cette note" />
+              </button>
+              <button
+                onClick={() => handleClick("roadmap")}
+                id="icon-roadmap"
+                className={`
+                            flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
+                            transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
+                        `}
+                aria-label="Roadmaps"
+                onMouseEnter={() => setHoveredButton("roadmap")}
+                onMouseLeave={() => setHoveredButton(null)}
+                disabled={loading}
+              >
+                <Roadmap />
+                <LabelAiNav content="Accéder à la roadmap" />
+              </button>
+              <button
+                onClick={() => handleClick("flashcards")}
+                id="icon-flashcard"
+                className={`
+                            flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
+                            transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
+                        `}
+                aria-label="Flashcards"
+                onMouseEnter={() => setHoveredButton("flashcard")}
+                onMouseLeave={() => setHoveredButton(null)}
+                disabled={loading}
+              >
+                <FlashCard />
+                <LabelAiNav content="Créer des flashcards" />
+              </button>
+            </>
+          )}
+          {loading &&
+            (mode === "quiz" ? (
+              <div className="w-full text-center h-20 animate-gray-gradient text-md whitespace-nowrap flex items-center justify-center">
+                Quiz en cours de création
+              </div>
+            ) : mode === "flashcards" ? (
+              <div className="w-full text-center h-20 animate-gray-gradient text-md whitespace-nowrap flex items-center justify-center">
+                Flashcards en cours de création
+              </div>
+            ) : mode === "roadmap" ? (
+              <div className="w-full text-center h-20 animate-gray-gradient text-md whitespace-nowrap flex items-center justify-center">
+                Roadmap en cours de création
+              </div>
+            ) : null)}
         </div>
       </div>
     </>

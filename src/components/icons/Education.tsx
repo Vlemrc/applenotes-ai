@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface EducationProps {
   color: string;
@@ -7,8 +7,18 @@ interface EducationProps {
 const Education = ({ color }: EducationProps) => {
   const [isShining, setIsShining] = useState(true);
 
+  useEffect(() => {
+    // Vérifier si l'icône a déjà été cliquée
+    const hasBeenClicked = localStorage.getItem('education-icon-clicked');
+    if (hasBeenClicked === 'true') {
+      setIsShining(false);
+    }
+  }, []);
+
   const handleClick = () => {
     setIsShining(false);
+    // Stocker dans le localStorage que l'icône a été cliquée
+    localStorage.setItem('education-icon-clicked', 'true');
   };
 
   return (
