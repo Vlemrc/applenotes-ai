@@ -32,7 +32,6 @@ async function generateRoadmap(folderId: string) {
     return new Response(JSON.stringify({ error: "No folder ID provided" }), { status: 400 })
   }
 
-  // Vérifier si une roadmap existe déjà pour ce dossier
   const existingRoadmap = await prisma.roadmap.findFirst({
     where: { folderId: Number.parseInt(folderId) },
   })
@@ -48,7 +47,7 @@ async function generateRoadmap(folderId: string) {
           createdAt: existingRoadmap.createdAt,
         },
       }),
-      { status: 409 }, // 409 Conflict
+      { status: 409 },
     )
   }
 
@@ -62,7 +61,6 @@ async function generateRoadmap(folderId: string) {
     return new Response(JSON.stringify({ error: "No notes found in this folder" }), { status: 404 })
   }
 
-  // Récupérer le nom du dossier
   const folder = await prisma.folder.findUnique({
     where: { id: Number.parseInt(folderId) },
     select: { name: true },
@@ -107,7 +105,6 @@ async function generateRoadmap(folderId: string) {
 
   const aiResponse = JSON.parse(response.choices[0].message.content || "{}")
 
-  // Créer la roadmap en base de données
   const roadmap = await prisma.roadmap.create({
     data: {
       title: aiResponse.roadmapTitle || `Roadmap - ${folder?.name}`,
@@ -115,7 +112,6 @@ async function generateRoadmap(folderId: string) {
     },
   })
 
-  // Créer les items de la roadmap
   const roadmapItems = []
   for (const item of aiResponse.items) {
     const note = notes.find((n) => n.title === item.noteTitle)
@@ -140,7 +136,6 @@ async function generateRoadmap(folderId: string) {
     }
   }
 
-  // Trier les items par position
   roadmapItems.sort((a, b) => a.position - b.position)
 
   const result = {
@@ -211,12 +206,10 @@ async function deleteRoadmap(roadmapId: number) {
       )
     }
 
-    // Supprimer d'abord tous les items de la roadmap
     await prisma.roadmapItem.deleteMany({
       where: { roadmapId: roadmapId },
     })
 
-    // Ensuite supprimer la roadmap elle-même
     const deletedRoadmap = await prisma.roadmap.delete({
       where: { id: roadmapId },
     })
@@ -256,24 +249,20 @@ async function regenerateRoadmap(folderId: string) {
   }
 
   try {
-    // Supprimer l'ancienne roadmap si elle existe
     const existingRoadmap = await prisma.roadmap.findFirst({
       where: { folderId: Number.parseInt(folderId) },
     })
 
     if (existingRoadmap) {
-      // Supprimer d'abord tous les items de l'ancienne roadmap
       await prisma.roadmapItem.deleteMany({
         where: { roadmapId: existingRoadmap.id },
       })
 
-      // Ensuite supprimer l'ancienne roadmap
       await prisma.roadmap.delete({
         where: { id: existingRoadmap.id },
       })
     }
 
-    // Récupérer toutes les notes du dossier
     const notes = await prisma.note.findMany({
       where: { folderId: Number.parseInt(folderId) },
       select: { id: true, title: true },
@@ -283,7 +272,6 @@ async function regenerateRoadmap(folderId: string) {
       return new Response(JSON.stringify({ error: "No notes found in this folder" }), { status: 404 })
     }
 
-    // Récupérer le nom du dossier
     const folder = await prisma.folder.findUnique({
       where: { id: Number.parseInt(folderId) },
       select: { name: true },
@@ -328,7 +316,6 @@ async function regenerateRoadmap(folderId: string) {
 
     const aiResponse = JSON.parse(response.choices[0].message.content || "{}")
 
-    // Créer la nouvelle roadmap en base de données
     const roadmap = await prisma.roadmap.create({
       data: {
         title: aiResponse.roadmapTitle || `Roadmap - ${folder?.name}`,
@@ -336,7 +323,6 @@ async function regenerateRoadmap(folderId: string) {
       },
     })
 
-    // Créer les items de la roadmap
     const roadmapItems = []
     for (const item of aiResponse.items) {
       const note = notes.find((n) => n.title === item.noteTitle)
@@ -361,7 +347,6 @@ async function regenerateRoadmap(folderId: string) {
       }
     }
 
-    // Trier les items par position
     roadmapItems.sort((a, b) => a.position - b.position)
 
     const result = {

@@ -33,6 +33,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
   const [isLoading, setIsLoading] = useState(true)
   const [isRegenerating, setIsRegenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [deletingItemId, setDeletingItemId] = useState<number | null>(null)
   const { isLearningMode } = useLearningModeStore()
 
   useEffect(() => {
@@ -98,6 +99,45 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
       }
     } catch (error) {
       console.error("Erreur lors de la requête:", error)
+    }
+  }
+
+  // Nouvelle fonction pour supprimer un item
+  const deleteRoadmapItem = async (itemId: number) => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cet élément ?")) {
+      return
+    }
+
+    try {
+      setDeletingItemId(itemId)
+
+      const response = await fetch("/api/roadmapitem", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ itemId }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // Mettre à jour l'état local en supprimant l'item
+        setRoadmaps((prev) =>
+          prev.map((roadmap) => ({
+            ...roadmap,
+            items: roadmap.items.filter((item) => item.id !== itemId),
+          })),
+        )
+      } else {
+        console.error("Erreur lors de la suppression:", data.error)
+        alert(`Erreur: ${data.error}`)
+      }
+    } catch (error) {
+      console.error("Erreur lors de la requête de suppression:", error)
+      alert("Erreur de connexion lors de la suppression")
+    } finally {
+      setDeletingItemId(null)
     }
   }
 
@@ -207,13 +247,20 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
                   <div key={item.id} className="flex justify-between flex-row relative">
                     <div>
                       <div className="font-medium">
-                        {item.position}. {item.note?.title || "Titre manquant"}
+                        {idx + 1}. {item.note?.title || "Titre manquant"}
                       </div>
                       {item.checked ? (
                         <p className="text-xs">Note maitrisée</p>
                       ) : (
                         <p className="text-xs">Note à explorer</p>
                       )}
+                      <button
+                        className="text-xs font-medium transform -translate-y-[3px] hover:text-red-600 transition duration-300 disabled:opacity-50"
+                        onClick={() => deleteRoadmapItem(item.id)}
+                        disabled={deletingItemId === item.id}
+                      >
+                        {deletingItemId === item.id ? "Suppression..." : "Supprimer"}
+                      </button>
                       <div className="w-full h-[1px] bg-[#F6F6F6] mt-2"></div>
                     </div>
                     <div
