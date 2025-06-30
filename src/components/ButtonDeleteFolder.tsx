@@ -35,7 +35,7 @@ export default function ButtonDeleteFolder({ folderId, setEditingFolderId }) {
       </button>
 
       {isHovered && (
-        <div className="z-10 bg-grayLight absolute -bottom-2O -right-30 px-4 py-2 shadow-lg rounded-md translate-y-[4px] border border-gray flex flex-col gap-1">
+        <div className="z-[100] bg-grayLight absolute -bottom-2O -right-30 px-4 py-2 shadow-lg rounded-md translate-y-[4px] border border-gray flex flex-col gap-1">
             <button
             className="block w-full text-left text-sm text-gray-600 hover:text-gray-900 whitespace-nowrap pr-10"
             onClick={() => setEditingFolderId(folderId)}
