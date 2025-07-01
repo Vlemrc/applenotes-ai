@@ -9,15 +9,17 @@ interface NoteItemProps {
   isTopNote?: boolean
   onClick: () => void
   isChecked?: boolean
+  isRoadmapItem?: boolean
 }
 
-const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick, isChecked }: NoteItemProps) => {
+const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick, isChecked, isRoadmapItem }: NoteItemProps) => {
   const { isLearningMode } = useLearningModeStore()
   const date = new Date(note.updatedAt).toLocaleDateString("fr-FR", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
   })
+  console.log(isRoadmapItem)
 
   return (
     <ul
@@ -25,12 +27,16 @@ const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick, isChecked 
       className={`cursor-pointer ${isActive || nextIsActive ? "" : "border-nav-note"} ${isTopNote ? "mt-3" : ""}`}
     >
       <li className={`${isActive ? "bg-gray" : "bg-white"} pt-3 pl-7 w-full rounded-md transition-colors`}>
-        <h6 className="font-black text-sm text-left">{note.title}</h6>
-        <div className={`flex flex-row gap-2.5 pr-7 ${isLearningMode ? "" : "pb-[12px]"}`}>
+      <h6 className="font-black text-sm text-left">
+        {note.title.length > 30 ? note.title.slice(0, 30) + "…" : note.title}
+      </h6>
+        <div className={`flex flex-row gap-2.5 pr-7 ${isRoadmapItem ? "" : "pb-[12px]"} ${isLearningMode ? "" : "pb-[12px]"}`}>
           <p className="text-medium text-xs">{date}</p>
-          <p className="truncate-text text-grayDark text-xs">{note.content ? note.content : "Pas d'autre texte"}</p>
+          <p className="truncate-text text-grayDark text-xs">
+            {note.content ? (note.content.length > 30 ? note.content.slice(0, 30) + "…" : note.content) : "Pas d'autre texte"}
+          </p>
         </div>
-        {isLearningMode && (
+        {isLearningMode && isRoadmapItem && (
           isChecked ? (
             <p className="text-medium text-xs text-yellowLight font-semibold pb-[12px] pt-0.5">Maitrisé</p>
           ) : (

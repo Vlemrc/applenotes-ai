@@ -113,7 +113,7 @@ const HeaderNote = ({ note, mode, onResetMode }: HeaderNoteProps) => {
           placeholder="Titre de la note..."
         />
       )}
-      {isLearningMode && mode !== "roadmap" && (
+      {isLearningMode && mode !== "roadmap" && note.roadmapItems[0] && (
         <button className="flex flex-row items-center gap-2 absolute right-4 top-16" onClick={toggleItemCheck}>
           <div
             className={`${isChecked ? "bg-yellow-gradient" : "bg-grayLight"} h-4 w-4 rounded-full cursor-pointer flex items-center justify-center`}

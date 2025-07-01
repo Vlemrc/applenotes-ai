@@ -244,7 +244,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
             {roadmap.items && roadmap.items.length > 0 ? (
               <div className="flex flex-col gap-8">
                 {roadmap.items.map((item, idx) => (
-                  <div key={item.id} className="flex justify-between flex-row relative">
+                  <div key={item.id} className="flex justify-between flex-row relative border-b border-grayLight pb-1">
                     <div>
                       <div className="font-medium">
                         {idx + 1}. {item.note?.title || "Titre manquant"}
@@ -261,7 +261,6 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
                       >
                         {deletingItemId === item.id ? "Suppression..." : "Supprimer"}
                       </button>
-                      <div className="w-full h-[1px] bg-[#F6F6F6] mt-2"></div>
                     </div>
                     <div
                       className={`${
