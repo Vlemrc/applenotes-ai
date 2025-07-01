@@ -4,24 +4,9 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import { useLearningModeStore } from "@/stores/learningModeStore"
 import ModifyRoadmap from "../ModifyRoadmap"
-
-interface RoadmapItem {
-  id: number
-  position: number
-  checked: boolean
-  note: {
-    id: number
-    title: string
-  }
-  reasoning?: string
-}
-
-interface Roadmap {
-  id: number
-  title: string
-  createdAt: string
-  items: RoadmapItem[]
-}
+import { useRoadmapStore } from "@/stores/roadmapStore"
+import { RoadmapItem } from "@/types/roadmapItems"
+import { Roadmap } from "@/types/roadmaps"
 
 interface RoadmapProps {
   folderId: number
@@ -29,12 +14,46 @@ interface RoadmapProps {
 }
 
 const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
-  const [roadmaps, setRoadmaps] = useState<Roadmap[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isRegenerating, setIsRegenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [deletingItemId, setDeletingItemId] = useState<number | null>(null)
   const { isLearningMode } = useLearningModeStore()
+
+  const {
+    roadmaps: allRoadmaps,
+    setRoadmaps,
+    updateRoadmapItem: updateStoreItem,
+    removeRoadmapItem,
+  } = useRoadmapStore()
+  const roadmaps = allRoadmaps[folderId] || []
+
+  const roadmapItemsCount = roadmaps[0]?.items.length
+  const checkedItemsCount = roadmaps[0]?.items.filter((item) => item.checked).length
+  const percentItems = roadmapItemsCount > 0 ? Math.round((checkedItemsCount / roadmapItemsCount) * 100) : 0
+  const [animatedPercent, setAnimatedPercent] = useState(percentItems)
+
+  useEffect(() => {
+    let frameId: number
+    const duration = 500
+    const start = performance.now()
+    const startValue = animatedPercent
+    const change = percentItems - startValue
+
+    const animate = (time: number) => {
+      const progress = Math.min((time - start) / duration, 1)
+      const value = Math.round(startValue + change * progress)
+      setAnimatedPercent(value)
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(animate)
+      }
+    }
+
+    frameId = requestAnimationFrame(animate)
+
+    return () => cancelAnimationFrame(frameId)
+  }, [percentItems])
 
   useEffect(() => {
     if (folderId) {
@@ -61,7 +80,8 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
       })
       const data = await response.json()
       if (response.ok) {
-        setRoadmaps(Array.isArray(data) ? data : [])
+        const roadmapsArray = Array.isArray(data) ? data : []
+        setRoadmaps(folderId, roadmapsArray) // Utilise le store
       } else {
         setError(data.error || "Erreur inconnue")
       }
@@ -87,12 +107,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
       })
 
       if (response.ok) {
-        setRoadmaps((prev) =>
-          prev.map((roadmap) => ({
-            ...roadmap,
-            items: roadmap.items.map((item) => (item.id === itemId ? { ...item, checked } : item)),
-          })),
-        )
+        updateStoreItem(folderId, itemId, checked) // Utilise le store
       } else {
         const errorData = await response.json()
         console.error("Erreur lors de la mise à jour:", errorData)
@@ -102,7 +117,6 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
     }
   }
 
-  // Nouvelle fonction pour supprimer un item
   const deleteRoadmapItem = async (itemId: number) => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cet élément ?")) {
       return
@@ -122,13 +136,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
       const data = await response.json()
 
       if (response.ok) {
-        // Mettre à jour l'état local en supprimant l'item
-        setRoadmaps((prev) =>
-          prev.map((roadmap) => ({
-            ...roadmap,
-            items: roadmap.items.filter((item) => item.id !== itemId),
-          })),
-        )
+        removeRoadmapItem(folderId, itemId) // Utilise le store
       } else {
         console.error("Erreur lors de la suppression:", data.error)
         alert(`Erreur: ${data.error}`)
@@ -141,12 +149,10 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
     }
   }
 
-  // Callback pour rafraîchir après suppression
   const handleRoadmapDeleted = () => {
     fetchRoadmaps()
   }
 
-  // Callback pour gérer la régénération
   const handleRegenerationStart = () => {
     setIsRegenerating(true)
   }
@@ -184,7 +190,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
 
   if (roadmaps.length === 0) {
     return (
-      <div className="p-4">
+      <div>
         <div className="flex flex-row gap-2 items-center mb-4">
           <h1 className="font-bold text-2xl uppercase">Roadmap</h1>
         </div>
@@ -198,10 +204,6 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
       </div>
     )
   }
-
-  const roadmapItemsCount = roadmaps[0].items.length
-  const checkedItemsCount = roadmaps[0].items.filter((item) => item.checked).length
-  const percentItems = roadmapItemsCount > 0 ? Math.round((checkedItemsCount / roadmapItemsCount) * 100) : 0
 
   return (
     <div className="relative">
@@ -232,7 +234,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
         />
       </div>
       <div className="flex flex-row gap-2 items-center mb-5">
-        <p className="bg-yellow-gradient p-[2px] px-[6px] text-sm rounded-md ">{percentItems}%</p>
+        <p className="bg-yellow-gradient p-[2px] px-[6px] text-sm rounded-md ">{animatedPercent}%</p>
         <p className="text-sm">
           {checkedItemsCount} sur {roadmapItemsCount} maitrisés
         </p>

@@ -1,40 +1,42 @@
-import React, { useState, useEffect } from "react";
-import Trash from "../icons/Trash";
-import FolderIcon from "../icons/FolderIcon";
-import Sidebar from "../icons/Sidebar";
-import IconHoverContainer from "../IconHoverContainer";
-import useFolderStore from "@/stores/useFolderStore";
-import { Folder } from "@/types/folders";
-import AddFolderInput from "../AddFolderInput";
-import ButtonDeleteFolder from "../ButtonDeleteFolder";
-import { useLearningModeStore } from '@/stores/learningModeStore';
-import PercentRoadMap from "../PercentRoadMap";
+"use client"
+
+import type React from "react"
+import { useState, useEffect } from "react"
+import Trash from "../icons/Trash"
+import FolderIcon from "../icons/FolderIcon"
+import Sidebar from "../icons/Sidebar"
+import IconHoverContainer from "../IconHoverContainer"
+import useFolderStore from "@/stores/useFolderStore"
+import type { Folder } from "@/types/folders"
+import AddFolderInput from "../AddFolderInput"
+import ButtonDeleteFolder from "../ButtonDeleteFolder"
+import { useLearningModeStore } from "@/stores/learningModeStore"
+import PercentRoadMap from "../PercentRoadMap"
 
 interface LeftbarProps {
-  onBackToNote: () => void;
+  onBackToNote: () => void
 }
 
 const Leftbar = ({ onBackToNote }: LeftbarProps) => {
-  const { folders, activeFolderId, setActiveFolder, fetchFolders, isLoading } =
-    useFolderStore();
-  const [addFolder, setAddFolder] = useState(false);
-  const [hoveredFolderId, setHoveredFolderId] = useState<number | null>(null);
-  const [editingFolderId, setEditingFolderId] = useState<number | null>(null); 
-  const [newFolderName, setNewFolderName] = useState<string>("");
-  const { isLearningMode } = useLearningModeStore();
+  const { folders, activeFolderId, setActiveFolder, fetchFolders, isLoading } = useFolderStore()
+  const [addFolder, setAddFolder] = useState(false)
+  const [hoveredFolderId, setHoveredFolderId] = useState<number | null>(null)
+  const [editingFolderId, setEditingFolderId] = useState<number | null>(null)
+  const [newFolderName, setNewFolderName] = useState<string>("")
+  const { isLearningMode } = useLearningModeStore()
 
   useEffect(() => {
-    fetchFolders();
-  }, [fetchFolders]);
+    fetchFolders()
+  }, [fetchFolders])
 
   const handleFolderClick = (folder: Folder) => {
-    setActiveFolder(folder.id);
-    onBackToNote();
-  };
+    setActiveFolder(folder.id)
+    onBackToNote()
+  }
 
   const handleFolderAdded = () => {
-    fetchFolders();
-  };
+    fetchFolders()
+  }
 
   const handleRenameFolder = async (folderId: number) => {
     try {
@@ -44,24 +46,24 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ id: folderId, name: newFolderName }),
-      });
+      })
 
       if (response.ok) {
-        setEditingFolderId(null); // Désactive le mode édition après la mise à jour
-        fetchFolders(); // Rafraîchit la liste des dossiers
+        setEditingFolderId(null) // Désactive le mode édition après la mise à jour
+        fetchFolders() // Rafraîchit la liste des dossiers
       } else {
-        console.error("Erreur lors de la mise à jour du dossier");
+        console.error("Erreur lors de la mise à jour du dossier")
       }
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du dossier", error);
+      console.error("Erreur lors de la mise à jour du dossier", error)
     }
-  };
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent, folderId: number) => {
     if (e.key === "Enter") {
-      handleRenameFolder(folderId); // Appelle la fonction de mise à jour si "Enter" est pressé
+      handleRenameFolder(folderId) // Appelle la fonction de mise à jour si "Enter" est pressé
     }
-  };
+  }
 
   return (
     <div className="w-1/6 h-full bg-[#E9E5E1] p-3 pt-3 flex flex-col gap-4 border-r border-solid border-gray">
@@ -82,9 +84,9 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
           ) : (
             folders
               .sort((a, b) => {
-                if (a.name === "Suppr. récentes") return 1;
-                if (b.name === "Suppr. récentes") return -1;
-                return 0;
+                if (a.name === "Suppr. récentes") return 1
+                if (b.name === "Suppr. récentes") return -1
+                return 0
               })
               .map((folder) => (
                 <li
@@ -93,9 +95,7 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
                   onMouseOver={() => setHoveredFolderId(folder.id)}
                   onMouseLeave={() => setHoveredFolderId(null)}
                   className={`flex flex-row justify-between w-full px-2 py-1 rounded-md cursor-pointer transition-colors ${
-                    activeFolderId === folder.id
-                      ? "bg-[#D2CDC9]"
-                      : "hover:bg-gray-100"
+                    activeFolderId === folder.id ? "bg-[#D2CDC9]" : "hover:bg-gray-100"
                   }`}
                 >
                   <div className="flex flex-row gap-2 items-center">
@@ -116,7 +116,7 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
                       ) : (
                         <p className="font-medium text-sm text-text">{folder.name}</p>
                       )}
-                      {isLearningMode && <PercentRoadMap roadmapItems={folder.roadmaps[0]?.items} />}
+                      {isLearningMode && <PercentRoadMap folderId={folder.id} />}
                     </div>
                   </div>
 
@@ -146,11 +146,9 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
         </p>
       </button>
 
-      {addFolder && (
-        <AddFolderInput setAddFolder={setAddFolder} onFolderAdded={handleFolderAdded} />
-      )}
+      {addFolder && <AddFolderInput setAddFolder={setAddFolder} onFolderAdded={handleFolderAdded} />}
     </div>
-  );
-};
+  )
+}
 
-export default Leftbar;
+export default Leftbar
