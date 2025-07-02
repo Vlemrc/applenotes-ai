@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { useLearningModeStore } from "@/stores/learningModeStore"
-import ModifyRoadmap from "../ModifyRoadmap"
+import ModifyRoadmapComponent from "../ModifyRoadmap"
 import { useRoadmapStore } from "@/stores/roadmapStore"
-import { RoadmapItem } from "@/types/roadmapItems"
-import { Roadmap } from "@/types/roadmaps"
+import { useRoadmapItemStore } from "@/stores/roadmapItemStore"
 
 interface RoadmapProps {
   folderId: number
@@ -20,12 +19,17 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
   const [deletingItemId, setDeletingItemId] = useState<number | null>(null)
   const { isLearningMode } = useLearningModeStore()
 
+  // Store existant pour les roadmaps
   const {
     roadmaps: allRoadmaps,
     setRoadmaps,
     updateRoadmapItem: updateStoreItem,
     removeRoadmapItem,
   } = useRoadmapStore()
+
+  // Nouveau store pour les roadmap items (synchronisation)
+  const { setRoadmapItems, updateItemChecked, removeRoadmapItem: removeFromItemStore } = useRoadmapItemStore()
+
   const roadmaps = allRoadmaps[folderId] || []
 
   const roadmapItemsCount = roadmaps[0]?.items.length
@@ -63,6 +67,21 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
     }
   }, [folderId])
 
+  // Synchroniser les deux stores quand les roadmaps changent
+  useEffect(() => {
+    if (roadmaps.length > 0 && roadmaps[0]?.items) {
+      console.log("Synchronizing roadmap items with item store")
+
+      // Pour chaque item, on l'ajoute au store des items par noteId
+      roadmaps[0].items.forEach((item) => {
+        if (item.note?.id) {
+          // Créer un tableau avec cet item pour cette note
+          setRoadmapItems(item.note.id, [item])
+        }
+      })
+    }
+  }, [roadmaps, setRoadmapItems])
+
   const fetchRoadmaps = async () => {
     try {
       setIsLoading(true)
@@ -81,7 +100,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
       const data = await response.json()
       if (response.ok) {
         const roadmapsArray = Array.isArray(data) ? data : []
-        setRoadmaps(folderId, roadmapsArray) // Utilise le store
+        setRoadmaps(folderId, roadmapsArray) // Utilise le store existant
       } else {
         setError(data.error || "Erreur inconnue")
       }
@@ -94,6 +113,12 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
 
   const toggleItemCheck = async (itemId: number, checked: boolean) => {
     try {
+      // Mise à jour optimiste des deux stores
+      updateStoreItem(folderId, itemId, checked) // Store existant
+      updateItemChecked(itemId, checked) // Nouveau store
+
+      console.log(`Toggling item ${itemId} to ${checked} in both stores`)
+
       const response = await fetch("/api/roadmap", {
         method: "POST",
         headers: {
@@ -106,13 +131,21 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
         }),
       })
 
-      if (response.ok) {
-        updateStoreItem(folderId, itemId, checked) // Utilise le store
-      } else {
+      if (!response.ok) {
+        // Rollback en cas d'erreur
+        updateStoreItem(folderId, itemId, !checked)
+        updateItemChecked(itemId, !checked)
+
         const errorData = await response.json()
         console.error("Erreur lors de la mise à jour:", errorData)
+      } else {
+        console.log(`Successfully updated item ${itemId} to ${checked}`)
       }
     } catch (error) {
+      // Rollback en cas d'erreur
+      updateStoreItem(folderId, itemId, !checked)
+      updateItemChecked(itemId, !checked)
+
       console.error("Erreur lors de la requête:", error)
     }
   }
@@ -136,7 +169,16 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
       const data = await response.json()
 
       if (response.ok) {
-        removeRoadmapItem(folderId, itemId) // Utilise le store
+        // Supprimer des deux stores
+        removeRoadmapItem(folderId, itemId) // Store existant
+
+        // Pour le nouveau store, on doit trouver la noteId associée à cet item
+        const item = roadmaps[0]?.items.find((item) => item.id === itemId)
+        if (item?.note?.id) {
+          removeFromItemStore(item.note.id, itemId) // Nouveau store
+        }
+
+        console.log(`Removed item ${itemId} from both stores`)
       } else {
         console.error("Erreur lors de la suppression:", data.error)
         alert(`Erreur: ${data.error}`)
@@ -224,7 +266,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
 
       <div className="flex flex-row gap-2 items-center">
         <h1 className="font-bold text-2xl uppercase">Roadmap</h1>
-        <ModifyRoadmap
+        <ModifyRoadmapComponent
           folderId={folderId}
           roadmapId={roadmaps[0]?.id}
           onRoadmapDeleted={handleRoadmapDeleted}
@@ -269,7 +311,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
                         idx !== roadmap.items.length - 1
                           ? `roadmap-checkdiv ${item.checked ? "bg-yellowLight" : "bg-grayLight"}`
                           : `${item.checked ? "bg-yellowLight" : "bg-grayLight"}`
-                      } h-6 w-6 rounded-full cursor-pointer flex items-center justify-center absolute right-1/2 translate-y-2`}
+                      } h-6 w-6 rounded-full cursor-pointer flex items-center justify-center absolute right-1/2 translate-y-2 transition-colors duration-200`}
                       onClick={() => toggleItemCheck(item.id, !item.checked)}
                     >
                       {item.checked ? (

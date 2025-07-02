@@ -3,16 +3,16 @@ import { RoadmapItem } from "@/types/roadmapItems"
 import { Roadmap } from "@/types/roadmaps"
 
 interface RoadmapStore {
-  roadmaps: Record<number, Roadmap[]> // folderId -> roadmaps
-  loadedFolders: Set<number> // Nouveau : pour tracker les dossiers déjà chargés
+  roadmaps: Record<number, Roadmap[]>
+  loadedFolders: Set<number>
   setRoadmaps: (folderId: number, roadmaps: Roadmap[]) => void
   updateRoadmapItem: (folderId: number, itemId: number, checked: boolean) => void
   removeRoadmapItem: (folderId: number, itemId: number) => void
   clearRoadmaps: (folderId: number) => void
   getRoadmapItems: (folderId: number) => RoadmapItem[]
   getCompletionPercentage: (folderId: number) => number
-  hasRoadmapData: (folderId: number) => boolean // Nouveau : pour vérifier si on a des données
-  isDataLoaded: (folderId: number) => boolean // Nouveau : pour vérifier si les données ont été chargées
+  hasRoadmapData: (folderId: number) => boolean
+  isDataLoaded: (folderId: number) => boolean
 }
 
 export const useRoadmapStore = create<RoadmapStore>((set, get) => ({

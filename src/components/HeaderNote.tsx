@@ -9,11 +9,13 @@ import type React from "react"
 import { useLearningModeStore } from "@/stores/learningModeStore"
 import Image from "next/image"
 import Breadcrumb from "./Breadcrumb"
+import { useRoadmapItem } from "@/utils/useRoadmapItem"
+import { useRoadmapItemStore } from "@/stores/roadmapItemStore"
 
 interface HeaderNoteProps {
   note: Note
   mode: "quiz" | "assistant" | "flashcards" | "roadmap" | null
-  onResetMode: () => void;
+  onResetMode: () => void
 }
 
 const HeaderNote = ({ note, mode, onResetMode }: HeaderNoteProps) => {
@@ -22,7 +24,10 @@ const HeaderNote = ({ note, mode, onResetMode }: HeaderNoteProps) => {
   const [title, setTitle] = useState(note?.title || "")
   const [isSaving, setIsSaving] = useState(false)
   const { isLearningMode } = useLearningModeStore()
-  const [isChecked, setIsChecked] = useState(note.roadmapItems[0]?.checked || false)
+
+  const { setRoadmapItems, hasItemsForNote, refreshItemsFromAPI } = useRoadmapItemStore()
+
+  const { item, isChecked, updateChecked } = useRoadmapItem(note.id)
 
   useEffect(() => {
     setTitle(note?.title || "")
@@ -30,9 +35,14 @@ const HeaderNote = ({ note, mode, onResetMode }: HeaderNoteProps) => {
 
   useEffect(() => {
     if (note.roadmapItems && note.roadmapItems.length > 0) {
-      setIsChecked(note.roadmapItems[0].checked)
+      if (!hasItemsForNote(note.id)) {
+        console.log("Initializing store with fresh roadmap items for note", note.id)
+        setRoadmapItems(note.id, note.roadmapItems)
+      } else {
+        console.log("Store already has data for note", note.id, "- skipping initialization")
+      }
     }
-  }, [note.roadmapItems])
+  }, [note.id, note.roadmapItems, setRoadmapItems, hasItemsForNote, refreshItemsFromAPI])
 
   const saveTitle = debounce(async (newTitle: string) => {
     if (!note) return
@@ -67,32 +77,22 @@ const HeaderNote = ({ note, mode, onResetMode }: HeaderNoteProps) => {
   }
 
   const toggleItemCheck = async () => {
-    if (!note.roadmapItems || note.roadmapItems.length === 0) return
-
-    const itemId = note.roadmapItems[0].id
-    const newCheckedState = !isChecked
-
-    try {
-      const response = await fetch("/api/roadmap", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          action: "updateItem",
-          itemId: itemId,
-          checked: newCheckedState,
-        }),
-      })
-
-      if (response.ok) {
-        setIsChecked(newCheckedState)
-      } else {
-        console.error("Failed to update item status")
-      }
-    } catch (error) {
-      console.error("Error updating item status:", error)
+    if (!item) {
+      console.log("No item to toggle")
+      return
     }
+
+    console.log(`Toggling item from ${isChecked} to ${!isChecked}`)
+    const success = await updateChecked(!isChecked)
+
+    if (!success) {
+      console.error("Failed to toggle item check")
+    }
+  }
+
+  const handleRefreshData = async () => {
+    console.log("Manually refreshing roadmap data for note", note.id)
+    await refreshItemsFromAPI(note.id)
   }
 
   const currentFolder = folders?.find((folder) => folder.id === activeFolderId)
@@ -100,10 +100,11 @@ const HeaderNote = ({ note, mode, onResetMode }: HeaderNoteProps) => {
     return null
   }
 
+
   return (
     <div>
       <p className={`text-center text-grayOpacity text-xs`}>{date}</p>
-      <Breadcrumb note={note} mode={mode} onResetMode={onResetMode}  />
+      <Breadcrumb note={note} mode={mode} onResetMode={onResetMode} />
       {mode !== "roadmap" && (
         <input
           type="text"
@@ -113,23 +114,25 @@ const HeaderNote = ({ note, mode, onResetMode }: HeaderNoteProps) => {
           placeholder="Titre de la note..."
         />
       )}
-      {isLearningMode && mode !== "roadmap" && note.roadmapItems[0] && (
-        <button className="flex flex-row items-center gap-2 absolute right-4 top-16" onClick={toggleItemCheck}>
-          <div
-            className={`${isChecked ? "bg-yellow-gradient" : "bg-grayLight"} h-4 w-4 rounded-full cursor-pointer flex items-center justify-center`}
-          >
+      {isLearningMode && mode !== "roadmap" && item && (
+        <div className="flex items-center gap-2 absolute right-4 top-16">
+          <button className="flex flex-row items-center gap-2" onClick={toggleItemCheck}>
+            <div
+              className={`${isChecked ? "bg-yellow-gradient" : "bg-grayLight"} h-4 w-4 rounded-full cursor-pointer flex items-center justify-center transition-colors duration-200`}
+            >
+              {isChecked ? (
+                <Image src="/checkmark.svg" width={7} height={7} alt="acquis" />
+              ) : (
+                <Image src="/encours.svg" width={7} height={7} alt="en cours d'acquisition" />
+              )}
+            </div>
             {isChecked ? (
-              <Image src="/checkmark.svg" width={7} height={7} alt="acquis" />
+              <p className="text-sm font-semibold text-yellowLight translate-y-[0.5px]">Maitrisé</p>
             ) : (
-              <Image src="/encours.svg" width={7} height={7} alt="en cours d'acquisition" />
+              <p className="text-sm font-semibold text-grayOpacity translate-y-[0.5px]">À explorer</p>
             )}
-          </div>
-          {isChecked ? (
-            <p className="text-sm font-semibold text-yellowLight translate-y-[0.5px]">Maitrisé</p>
-          ) : (
-            <p className="text-sm font-semibold text-grayOpacity translate-y-[0.5px]">À explorer</p>
-          )}
-        </button>
+          </button>
+        </div>
       )}
     </div>
   )

@@ -127,7 +127,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                   isTopNote={firstNonEmptyCategory === "today" && index === 0}
                   onClick={() => handleNoteClick(note)}
                   isRoadmapItem={note.roadmapItems?.[0]}
-                  isChecked={note?.roadmapItems?.[0]?.checked ?? false}
+                  roadmapItemId={note.roadmapItems?.[0]?.id}
                 />
               </>
             ))}
@@ -150,7 +150,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 isTopNote={firstNonEmptyCategory === "yesterday" && index === 0}
                 onClick={() => handleNoteClick(note)}
                 isRoadmapItem={note.roadmapItems?.[0]}
-                isChecked={note?.roadmapItems?.[0]?.checked ?? false}
+                roadmapItemId={note.roadmapItems?.[0]?.id}
               />
             ))}
           </div>
@@ -171,7 +171,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 isTopNote={firstNonEmptyCategory === "lastWeek" && index === 0}
                 onClick={() => handleNoteClick(note)}
                 isRoadmapItem={note.roadmapItems?.[0]}
-                isChecked={note?.roadmapItems?.[0]?.checked ?? false}
+                roadmapItemId={note.roadmapItems?.[0]?.id}
               />
             ))}
           </div>
@@ -192,7 +192,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 isTopNote={firstNonEmptyCategory === "lastMonth" && index === 0}
                 onClick={() => handleNoteClick(note)}
                 isRoadmapItem={note.roadmapItems?.[0]}
-                isChecked={note?.roadmapItems?.[0]?.checked ?? false}
+                roadmapItemId={note.roadmapItems?.[0]?.id}
               />
             ))}
           </div>
@@ -211,7 +211,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 isTopNote={firstNonEmptyCategory === "lastYear" && index === 0}
                 onClick={() => handleNoteClick(note)}
                 isRoadmapItem={note.roadmapItems?.[0]}
-                isChecked={note?.roadmapItems?.[0]?.checked ?? false}
+                roadmapItemId={note.roadmapItems?.[0]?.id}
               />
             ))}
           </div>
@@ -230,7 +230,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 isTopNote={firstNonEmptyCategory === "older" && index === 0}
                 onClick={() => handleNoteClick(note)}
                 isRoadmapItem={note.roadmapItems?.[0]}
-                isChecked={note?.roadmapItems?.[0]?.checked ?? false}
+                roadmapItemId={note.roadmapItems?.[0]?.id}
               />
             ))}
           </div>
