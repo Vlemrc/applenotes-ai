@@ -13,11 +13,12 @@ import useFolderStore from '@/stores/useFolderStore'
 import Education from './icons/Education';
 import { useLearningModeStore } from '@/stores/learningModeStore';
 import Image from 'next/image';
+import { useEffect } from 'react';
 
 const ActionsNav = ({ bottomBar, setBottomBar }) => {
     const { activeFolderId, folders } = useFolderStore();
     const currentFolder = folders?.find(folder => folder.id === activeFolderId);
-    const { toggleLearningMode, isLearningMode } = useLearningModeStore();
+    const { toggleLearningMode, deactivateLearningMode, isLearningMode } = useLearningModeStore();
 
     const handleCreateNote = async () => {
         if (!activeFolderId) {
@@ -49,7 +50,53 @@ const ActionsNav = ({ bottomBar, setBottomBar }) => {
     const handleChangeMode = () => {
         toggleLearningMode();
         setBottomBar(true);
+    
+        if (!document.fullscreenElement) {
+            const elem = document.documentElement as HTMLElement & {
+                webkitRequestFullscreen?: () => Promise<void>;
+                msRequestFullscreen?: () => Promise<void>;
+            };
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+        } else {
+            const doc = document as Document & {
+                webkitExitFullscreen?: () => Promise<void>;
+                msExitFullscreen?: () => Promise<void>;
+            };
+            if (doc.exitFullscreen) {
+                doc.exitFullscreen();
+            } else if (doc.webkitExitFullscreen) {
+                doc.webkitExitFullscreen();
+            } else if (doc.msExitFullscreen) {
+                doc.msExitFullscreen();
+            }
+        }
     }
+
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+          if (!document.fullscreenElement && isLearningMode) {
+            console.log("Sortie du plein écran détectée, désactivation du LearningMode")
+            deactivateLearningMode();
+          }
+        }
+
+        document.addEventListener("fullscreenchange", handleFullscreenChange)
+        document.addEventListener("webkitfullscreenchange", handleFullscreenChange)
+        document.addEventListener("mozfullscreenchange", handleFullscreenChange)
+    
+        return () => {
+          document.removeEventListener("fullscreenchange", handleFullscreenChange)
+          document.removeEventListener("webkitfullscreenchange", handleFullscreenChange)
+          document.removeEventListener("mozfullscreenchange", handleFullscreenChange)
+        }
+      }, [isLearningMode, deactivateLearningMode]);
+    
 
     return (
         <div className={`${currentFolder && currentFolder._count.notes === 0 ? "" : "border-b border-solid border-gray"} h-[50px] flex flex-row justify-between items-center px-2.5 py-4 w-full`}>

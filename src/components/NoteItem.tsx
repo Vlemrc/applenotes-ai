@@ -13,6 +13,8 @@ interface NoteItemProps {
   nextIsActive?: boolean
   isTopNote?: boolean
   onClick: () => void
+  isRoadmapItem?: boolean
+  roadmapItemId?: number
 }
 
 const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick }: NoteItemProps) => {
@@ -22,7 +24,6 @@ const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick }: NoteItem
 
   const { item, isChecked } = useRoadmapItem(note.id)
   const currentFolder = folders?.find((folder) => folder.id === activeFolderId)
-  console.log(currentFolder.roadmaps.length)
 
   useEffect(() => {
     if (note.roadmapItems && note.roadmapItems.length > 0) {

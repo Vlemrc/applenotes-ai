@@ -126,7 +126,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                   nextIsActive={index < todayNotes.length - 1 ? activeNote?.id === todayNotes[index + 1].id : false}
                   isTopNote={firstNonEmptyCategory === "today" && index === 0}
                   onClick={() => handleNoteClick(note)}
-                  isRoadmapItem={note.roadmapItems?.[0]}
+                  isRoadmapItem={!!note.roadmapItems?.[0]}
                   roadmapItemId={note.roadmapItems?.[0]?.id}
                 />
               </>
@@ -149,7 +149,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 }
                 isTopNote={firstNonEmptyCategory === "yesterday" && index === 0}
                 onClick={() => handleNoteClick(note)}
-                isRoadmapItem={note.roadmapItems?.[0]}
+                isRoadmapItem={!!note.roadmapItems?.[0]}
                 roadmapItemId={note.roadmapItems?.[0]?.id}
               />
             ))}
@@ -170,7 +170,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 nextIsActive={index < lastWeekNotes.length - 1 ? activeNote?.id === lastWeekNotes[index + 1].id : false}
                 isTopNote={firstNonEmptyCategory === "lastWeek" && index === 0}
                 onClick={() => handleNoteClick(note)}
-                isRoadmapItem={note.roadmapItems?.[0]}
+                isRoadmapItem={!!note.roadmapItems?.[0]}
                 roadmapItemId={note.roadmapItems?.[0]?.id}
               />
             ))}
@@ -191,7 +191,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 }
                 isTopNote={firstNonEmptyCategory === "lastMonth" && index === 0}
                 onClick={() => handleNoteClick(note)}
-                isRoadmapItem={note.roadmapItems?.[0]}
+                isRoadmapItem={!!note.roadmapItems?.[0]}
                 roadmapItemId={note.roadmapItems?.[0]?.id}
               />
             ))}
@@ -210,7 +210,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 nextIsActive={index < lastYearNotes.length - 1 ? activeNote?.id === lastYearNotes[index + 1].id : false}
                 isTopNote={firstNonEmptyCategory === "lastYear" && index === 0}
                 onClick={() => handleNoteClick(note)}
-                isRoadmapItem={note.roadmapItems?.[0]}
+                isRoadmapItem={!!note.roadmapItems?.[0]}
                 roadmapItemId={note.roadmapItems?.[0]?.id}
               />
             ))}
@@ -229,7 +229,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
                 nextIsActive={index < olderNotes.length - 1 ? activeNote?.id === olderNotes[index + 1].id : false}
                 isTopNote={firstNonEmptyCategory === "older" && index === 0}
                 onClick={() => handleNoteClick(note)}
-                isRoadmapItem={note.roadmapItems?.[0]}
+                isRoadmapItem={!!note.roadmapItems?.[0]}
                 roadmapItemId={note.roadmapItems?.[0]?.id}
               />
             ))}
