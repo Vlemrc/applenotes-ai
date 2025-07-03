@@ -179,7 +179,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
       )}
       {lastMonthNotes.length !== 0 && (
         <>
-          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">Mois dernier</p>
+          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">30 jours précédents</p>
           <div className="p-2.5 pt-0">
             {lastMonthNotes.map((note, index) => (
               <NoteItem

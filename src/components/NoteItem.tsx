@@ -4,6 +4,7 @@ import type { Note } from "@/types/notes"
 import { useLearningModeStore } from "@/stores/learningModeStore"
 import { useRoadmapItem } from "@/utils/useRoadmapItem"
 import { useRoadmapItemStore } from "@/stores/roadmapItemStore"
+import useFolderStore from "@/stores/useFolderStore"
 import { useEffect } from "react"
 
 interface NoteItemProps {
@@ -17,18 +18,16 @@ interface NoteItemProps {
 const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick }: NoteItemProps) => {
   const { isLearningMode } = useLearningModeStore()
   const { setRoadmapItems, hasItemsForNote } = useRoadmapItemStore()
+  const { activeFolderId, folders } = useFolderStore()
 
-  // Utilisation du hook pour récupérer l'état
   const { item, isChecked } = useRoadmapItem(note.id)
+  const currentFolder = folders?.find((folder) => folder.id === activeFolderId)
+  console.log(currentFolder.roadmaps.length)
 
-  // Initialiser le store seulement si on n'a pas déjà les données
   useEffect(() => {
     if (note.roadmapItems && note.roadmapItems.length > 0) {
       if (!hasItemsForNote(note.id)) {
-        console.log("NoteItem: Initializing store with roadmap items for note", note.id)
         setRoadmapItems(note.id, note.roadmapItems)
-      } else {
-        console.log("NoteItem: Store already has data for note", note.id)
       }
     }
   }, [note.id, note.roadmapItems, setRoadmapItems, hasItemsForNote])
@@ -38,9 +37,6 @@ const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick }: NoteItem
     month: "2-digit",
     year: "numeric",
   })
-
-  // Debug: afficher l'état actuel
-  console.log(`NoteItem ${note.id} render - item:`, item, "isChecked:", isChecked)
 
   return (
     <ul
@@ -52,7 +48,7 @@ const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick }: NoteItem
           {note.title.length > 30 ? note.title.slice(0, 30) + "…" : note.title}
         </h6>
 
-        <div className={`flex flex-row gap-2.5 pr-7 ${item ? "" : "pb-[12px]"} ${isLearningMode ? "" : "pb-[12px]"}`}>
+        <div className={`flex flex-row gap-2.5 pr-7 ${item && currentFolder?.roadmaps.length > 0 ? "" : "pb-[12px]"} ${isLearningMode ? "" : "pb-[12px]"}`}>
           <p className="text-medium text-xs">{date}</p>
           <p className="truncate-text text-grayDark text-xs">
             {note.content
@@ -65,11 +61,13 @@ const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick }: NoteItem
 
         {isLearningMode &&
           item &&
-          (isChecked ? (
-            <p className="text-medium text-xs text-yellowLight font-semibold pb-[12px] pt-0.5">Maitrisé</p>
-          ) : (
-            <p className="text-medium text-xs text-grayOpacity font-semibold pb-[12px] pt-0.5">À explorer</p>
-          ))}
+          currentFolder?.roadmaps.length > 0 && (
+            isChecked ? (
+              <p className="text-medium text-xs text-yellowLight font-semibold pb-[12px] pt-0.5">Maitrisé</p>
+            ) : (
+              <p className="text-medium text-xs text-grayOpacity font-semibold pb-[12px] pt-0.5">À explorer</p>
+            )
+        )}
       </li>
     </ul>
   )

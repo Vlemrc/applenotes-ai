@@ -25,8 +25,6 @@ export const useRoadmapItemStore = create<RoadmapItemStore>()(
         const items = state.roadmapItems[noteId] || []
         const updatedItems = items.map((item) => (item.id === itemId ? { ...item, checked } : item))
 
-        console.log(`Updating item ${itemId} in note ${noteId} to ${checked}`)
-
         return {
           roadmapItems: {
             ...state.roadmapItems,
@@ -62,11 +60,8 @@ export const useRoadmapItemStore = create<RoadmapItemStore>()(
         const existingItems = state.roadmapItems[noteId]
 
         if (existingItems && existingItems.length > 0) {
-          console.log(`Skipping setRoadmapItems for note ${noteId} - data already exists`)
           return state
         }
-
-        console.log(`Setting roadmap items for note ${noteId}:`, items)
         return {
           roadmapItems: {
             ...state.roadmapItems,
@@ -77,7 +72,6 @@ export const useRoadmapItemStore = create<RoadmapItemStore>()(
 
     forceSetRoadmapItems: (noteId, items) =>
       set((state) => {
-        console.log(`Force setting roadmap items for note ${noteId}:`, items)
         return {
           roadmapItems: {
             ...state.roadmapItems,
@@ -96,7 +90,6 @@ export const useRoadmapItemStore = create<RoadmapItemStore>()(
 
           if (itemIndex !== -1) {
             newRoadmapItems[noteId] = items.map((item, index) => (index === itemIndex ? { ...item, checked } : item))
-            console.log(`Updated item ${itemId} checked state to ${checked}`)
             break
           }
         }
@@ -116,14 +109,11 @@ export const useRoadmapItemStore = create<RoadmapItemStore>()(
 
     refreshItemsFromAPI: async (noteId) => {
       try {
-        console.log(`Refreshing items for note ${noteId} from API`)
 
         const response = await fetch(`/api/notes/${noteId}/roadmap-items`)
         if (response.ok) {
           const items = await response.json()
           get().forceSetRoadmapItems(noteId, items)
-        } else {
-          console.error(`Failed to refresh items for note ${noteId}`)
         }
       } catch (error) {
         console.error(`Error refreshing items for note ${noteId}:`, error)

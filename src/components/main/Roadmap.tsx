@@ -67,15 +67,12 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
     }
   }, [folderId])
 
-  // Synchroniser les deux stores quand les roadmaps changent
   useEffect(() => {
     if (roadmaps.length > 0 && roadmaps[0]?.items) {
       console.log("Synchronizing roadmap items with item store")
 
-      // Pour chaque item, on l'ajoute au store des items par noteId
       roadmaps[0].items.forEach((item) => {
         if (item.note?.id) {
-          // Créer un tableau avec cet item pour cette note
           setRoadmapItems(item.note.id, [item])
         }
       })
@@ -113,9 +110,8 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
 
   const toggleItemCheck = async (itemId: number, checked: boolean) => {
     try {
-      // Mise à jour optimiste des deux stores
-      updateStoreItem(folderId, itemId, checked) // Store existant
-      updateItemChecked(itemId, checked) // Nouveau store
+      updateStoreItem(folderId, itemId, checked)
+      updateItemChecked(itemId, checked) 
 
       console.log(`Toggling item ${itemId} to ${checked} in both stores`)
 
@@ -132,7 +128,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
       })
 
       if (!response.ok) {
-        // Rollback en cas d'erreur
+        // Erreur
         updateStoreItem(folderId, itemId, !checked)
         updateItemChecked(itemId, !checked)
 
@@ -142,7 +138,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
         console.log(`Successfully updated item ${itemId} to ${checked}`)
       }
     } catch (error) {
-      // Rollback en cas d'erreur
+      // Erreur
       updateStoreItem(folderId, itemId, !checked)
       updateItemChecked(itemId, !checked)
 
@@ -169,10 +165,8 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
       const data = await response.json()
 
       if (response.ok) {
-        // Supprimer des deux stores
-        removeRoadmapItem(folderId, itemId) // Store existant
+        removeRoadmapItem(folderId, itemId) 
 
-        // Pour le nouveau store, on doit trouver la noteId associée à cet item
         const item = roadmaps[0]?.items.find((item) => item.id === itemId)
         if (item?.note?.id) {
           removeFromItemStore(item.note.id, itemId) // Nouveau store
@@ -218,8 +212,6 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
     return (
       <div className="p-4">
         <h1 className="font-semibold text-red-500 uppercase mb-4">Roadmap - Erreur</h1>
-        <p>Folder ID: {folderId}</p>
-        <p className="text-red-600">Erreur: {error}</p>
         <button onClick={fetchRoadmaps} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
           Réessayer
         </button>
@@ -236,13 +228,13 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
         <div className="flex flex-row gap-2 items-center mb-4">
           <h1 className="font-bold text-2xl uppercase">Roadmap</h1>
         </div>
-        <div className="text-center py-8 bg-gray-50 rounded">
+        <div className="text-center py-8 flex flex-col items-center gap-1">
           <p className="text-gray-600">Aucune roadmap trouvée pour ce dossier</p>
           <p className="text-sm text-gray-400">La roadmap a-t-elle été générée ?</p>
+          <button onClick={onBackToNote} className="mt-2 text-sm w-fit border border-solid border-grayLight shadow-sm px-2 bg-white rounded-md font-medium hover:bg-grayLight transition-colors duration-300">
+            Retour à ma note
+          </button>
         </div>
-        <button onClick={onBackToNote} className="mt-6 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
-          Retour aux notes
-        </button>
       </div>
     )
   }
@@ -291,7 +283,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
                   <div key={item.id} className="flex justify-between flex-row relative border-b border-grayLight pb-1">
                     <div>
                       <div className="font-medium">
-                        {idx + 1}. {item.note?.title || "Titre manquant"}
+                        {idx + 1}. {item.note?.title.length > 30 ? item.note?.title.slice(0, 30) + "…" : item.note?.title || "Pas de titre"}
                       </div>
                       {item.checked ? (
                         <p className="text-xs">Note maitrisée</p>

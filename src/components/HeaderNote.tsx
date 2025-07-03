@@ -36,10 +36,7 @@ const HeaderNote = ({ note, mode, onResetMode }: HeaderNoteProps) => {
   useEffect(() => {
     if (note.roadmapItems && note.roadmapItems.length > 0) {
       if (!hasItemsForNote(note.id)) {
-        console.log("Initializing store with fresh roadmap items for note", note.id)
         setRoadmapItems(note.id, note.roadmapItems)
-      } else {
-        console.log("Store already has data for note", note.id, "- skipping initialization")
       }
     }
   }, [note.id, note.roadmapItems, setRoadmapItems, hasItemsForNote, refreshItemsFromAPI])
@@ -114,7 +111,7 @@ const HeaderNote = ({ note, mode, onResetMode }: HeaderNoteProps) => {
           placeholder="Titre de la note..."
         />
       )}
-      {isLearningMode && mode !== "roadmap" && item && (
+      {isLearningMode && mode !== "roadmap" && item && currentFolder?.roadmaps.length > 0 && (
         <div className="flex items-center gap-2 absolute right-4 top-16">
           <button className="flex flex-row items-center gap-2" onClick={toggleItemCheck}>
             <div
