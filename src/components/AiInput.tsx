@@ -6,11 +6,12 @@ import QuestionsFreq from "./icons/QuestionFreq"
 import AiResponse from "./AiResponse"
 
 interface AiInputProps {
-  noteContent: string // Le contenu de la note actuelle
-  folderId?: number 
+  noteContent: string
+  folderId?: number
+  noteId?: number
 }
 
-const AiInput = ({ noteContent, folderId }: AiInputProps) => {
+const AiInput = ({ noteContent, folderId, noteId }: AiInputProps) => {
   const [questionsVisible, setQuestionsVisible] = useState(false)
   const [userMessage, setUserMessage] = useState("")
   const [aiResponse, setAiResponse] = useState("")
@@ -65,7 +66,7 @@ const AiInput = ({ noteContent, folderId }: AiInputProps) => {
 
   return (
     <>
-      {!aiResponse && 
+      {!aiResponse && (
         <div>
           <div className="bg-grayLight relative w-full rounded-xl p-2.5 flex flex-col gap-2.5">
             <h1 className="font-semibold">Besoin d&apos;améliorer votre note ?</h1>
@@ -104,57 +105,57 @@ const AiInput = ({ noteContent, folderId }: AiInputProps) => {
             </button>
           </div>
 
-        {/* Questions fréquentes */}
-        <div
-          className={`${questionsVisible ? "mt-4 opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"} transition-all duration-300`}
-        >
-          <div className="border-grayLight border-b w-full p-2.5 hover:bg-grayLight transition-colors duration-300 rounded-lg">
-            <button
-              className="w-full h-full flex flex-row items-center gap-6"
-              onClick={() => handleFrequentQuestion("Réécris cette note de façon plus claire")}
-            >
-              <div className="w-[20px] h-3">
-                <QuestionsFreq color="#A19D99" />
-              </div>
-              <p className="text-grayDark">Réécris cette note de façon plus claire</p>
-            </button>
-          </div>
-          <div className="border-grayLight border-b w-full p-2.5 hover:bg-grayLight transition-colors duration-300 rounded-lg">
-            <button
-              className="w-full h-full flex flex-row items-center gap-6"
-              onClick={() => handleFrequentQuestion("Corrige les éventuelles erreurs de ma note")}
-            >
-              <div className="w-[20px] h-3">
-                <QuestionsFreq color="#A19D99" />
-              </div>
-              <p className="text-grayDark">Corrige les éventuelles erreurs de ma note</p>
-            </button>
-          </div>
-          <div className="border-grayLight border-b w-full p-2.5 hover:bg-grayLight transition-colors duration-300 rounded-lg">
-            <button
-              className="w-full h-full flex flex-row items-center gap-6"
-              onClick={() => handleFrequentQuestion("Résume cette note en quelques mots")}
-            >
-              <div className="w-[20px] h-3">
-                <QuestionsFreq color="#A19D99" />
-              </div>
-              <p className="text-grayDark">Résume cette note en quelques mots</p>
-            </button>
-          </div>
-          <div className="w-full p-2.5 hover:bg-grayLight transition-colors duration-300 rounded-lg">
-            <button
-              className="w-full h-full flex flex-row items-center gap-6"
-              onClick={() => handleFrequentQuestion("Génère un résumé détaillé de ma note")}
-            >
-              <div className="w-[20px] h-3">
-                <QuestionsFreq color="#A19D99" />
-              </div>
-              <p className="text-grayDark">Génère un résumé détaillé de ma note</p>
-            </button>
+          {/* Questions fréquentes */}
+          <div
+            className={`${questionsVisible ? "mt-4 opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"} transition-all duration-300`}
+          >
+            <div className="border-grayLight border-b w-full p-2.5 hover:bg-grayLight transition-colors duration-300 rounded-lg">
+              <button
+                className="w-full h-full flex flex-row items-center gap-6"
+                onClick={() => handleFrequentQuestion("Réécris cette note de façon plus claire")}
+              >
+                <div className="w-[20px] h-3">
+                  <QuestionsFreq color="#A19D99" />
+                </div>
+                <p className="text-grayDark">Réécris cette note de façon plus claire</p>
+              </button>
+            </div>
+            <div className="border-grayLight border-b w-full p-2.5 hover:bg-grayLight transition-colors duration-300 rounded-lg">
+              <button
+                className="w-full h-full flex flex-row items-center gap-6"
+                onClick={() => handleFrequentQuestion("Corrige les éventuelles erreurs de ma note")}
+              >
+                <div className="w-[20px] h-3">
+                  <QuestionsFreq color="#A19D99" />
+                </div>
+                <p className="text-grayDark">Corrige les éventuelles erreurs de ma note</p>
+              </button>
+            </div>
+            <div className="border-grayLight border-b w-full p-2.5 hover:bg-grayLight transition-colors duration-300 rounded-lg">
+              <button
+                className="w-full h-full flex flex-row items-center gap-6"
+                onClick={() => handleFrequentQuestion("Résume cette note en quelques mots")}
+              >
+                <div className="w-[20px] h-3">
+                  <QuestionsFreq color="#A19D99" />
+                </div>
+                <p className="text-grayDark">Résume cette note en quelques mots</p>
+              </button>
+            </div>
+            <div className="w-full p-2.5 hover:bg-grayLight transition-colors duration-300 rounded-lg">
+              <button
+                className="w-full h-full flex flex-row items-center gap-6"
+                onClick={() => handleFrequentQuestion("Génère un résumé détaillé de ma note")}
+              >
+                <div className="w-[20px] h-3">
+                  <QuestionsFreq color="#A19D99" />
+                </div>
+                <p className="text-grayDark">Génère un résumé détaillé de ma note</p>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      }
+      )}
 
       {isLoading && !aiResponse && (
         <div className="mt-4 p-4 bg-white border border-grayLight rounded-xl flex items-center justify-center">
@@ -170,7 +171,8 @@ const AiInput = ({ noteContent, folderId }: AiInputProps) => {
         <AiResponse
           aiResponse={aiResponse}
           userMessage={sentQuestion}
-          folderId={folderId} // Ajouter cette ligne
+          folderId={folderId}
+          noteId={noteId}
           onBack={() => {
             setAiResponse("")
             setIsLoading(false)
