@@ -59,6 +59,7 @@ export default function Home() {
           <ActionsNav 
             bottomBar={bottomBar}
             setBottomBar={setBottomBar} 
+            note={activeNote}
           />
           <div className="pt-2 px-8 pb-8 h-calc-minus-50 overflow-y-scroll">
             {activeNote && <HeaderNote note={activeNote} mode={activeMode} onResetMode={() => setActiveMode(null)} />}

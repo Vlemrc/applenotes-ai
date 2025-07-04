@@ -13,12 +13,15 @@ import useFolderStore from '@/stores/useFolderStore'
 import Education from './icons/Education';
 import { useLearningModeStore } from '@/stores/learningModeStore';
 import Image from 'next/image';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Glossary from './icons/Glossary';
+import GlossaryLayout from './GlossaryLayout';
 
-const ActionsNav = ({ bottomBar, setBottomBar }) => {
+const ActionsNav = ({ bottomBar, setBottomBar, note }) => {
     const { activeFolderId, folders } = useFolderStore();
     const currentFolder = folders?.find(folder => folder.id === activeFolderId);
     const { toggleLearningMode, deactivateLearningMode, isLearningMode } = useLearningModeStore();
+    const [glossary, setGlossary] = useState(false);
 
     const handleCreateNote = async () => {
         if (!activeFolderId) {
@@ -78,6 +81,10 @@ const ActionsNav = ({ bottomBar, setBottomBar }) => {
         }
     }
 
+    const handleGlossaryClick = () => {
+        setGlossary(!glossary);
+    }
+
     useEffect(() => {
         const handleFullscreenChange = () => {
           if (!document.fullscreenElement && isLearningMode) {
@@ -116,6 +123,16 @@ const ActionsNav = ({ bottomBar, setBottomBar }) => {
                         <IconHoverContainer onClick={handleChangeMode}>
                             <Education color="#6F6F6F" />
                         </IconHoverContainer>
+                    )}
+                    {isLearningMode && (
+                    <div className="relative" onMouseLeave={() => setGlossary(false)}>
+                        <IconHoverContainer onClick={handleGlossaryClick}>
+                            <Glossary color="#6F6F6F" />
+                        </IconHoverContainer>
+                        {glossary && (
+                            <GlossaryLayout note={note} />
+                        )}
+                    </div>
                     )}
                 </div>
 
