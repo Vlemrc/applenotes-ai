@@ -93,7 +93,7 @@ export default function PercentRoadMap({ folderId }: PercentRoadMapProps) {
 
     frameId = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(frameId)
-  }, [percentage, roadmapItems])
+  }, [percentage, roadmapItems, animatedPercentage])
 
   if (!isDataLoaded(folderId) || !hasRoadmapData(folderId)) {
     return null
