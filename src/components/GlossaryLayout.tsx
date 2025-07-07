@@ -167,7 +167,7 @@ export default function GlossaryLayout({ note }: { note: Note }) {
               </div>
             </div>
           ) : (
-            `Générer un glossaire du dossier actif ${activeFolder?.notes?.length ? `(${activeFolder.notes.length} notes)` : "(aucune note)"}`
+            `Générer un glossaire du dossier ${activeFolder.name}`
           )}
         </button>
       </div>
