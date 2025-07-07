@@ -16,9 +16,10 @@ interface HeaderNoteProps {
   note: Note
   mode: "quiz" | "assistant" | "flashcards" | "roadmap" | null
   onResetMode: () => void
+  onNoteUpdate?: (updatedNote: Note) => void // Nouvelle prop pour notifier les changements
 }
 
-const HeaderNote = ({ note, mode, onResetMode }: HeaderNoteProps) => {
+const HeaderNote = ({ note, mode, onResetMode, onNoteUpdate }: HeaderNoteProps) => {
   const date = formatDate(note.updatedAt)
   const { activeFolderId, folders } = useFolderStore()
   const [title, setTitle] = useState(note?.title || "")
@@ -59,6 +60,12 @@ const HeaderNote = ({ note, mode, onResetMode }: HeaderNoteProps) => {
 
       if (!response.ok) {
         console.error("Failed to save note title")
+      } else {
+        // Notifier le composant parent du changement
+        if (onNoteUpdate) {
+          const updatedNote = { ...note, title: newTitle }
+          onNoteUpdate(updatedNote)
+        }
       }
     } catch (error) {
       console.error("Error saving note title:", error)
@@ -96,7 +103,6 @@ const HeaderNote = ({ note, mode, onResetMode }: HeaderNoteProps) => {
   if (currentFolder && currentFolder._count.notes === 0) {
     return null
   }
-
 
   return (
     <div>
