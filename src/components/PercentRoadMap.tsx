@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react"
 import { useRoadmapStore } from "@/stores/roadmapStore"
+import { useRoadmapItemStore } from "@/stores/roadmapItemStore"
 
 interface PercentRoadMapProps {
   folderId: number
 }
 
 export default function PercentRoadMap({ folderId }: PercentRoadMapProps) {
-  const { getCompletionPercentage, hasRoadmapData, isDataLoaded, setRoadmaps } = useRoadmapStore()
+  const { hasRoadmapData, isDataLoaded, setRoadmaps, roadmaps } = useRoadmapStore()
+  const { roadmapItems } = useRoadmapItemStore()
   const [animatedPercentage, setAnimatedPercentage] = useState(0)
 
   useEffect(() => {
@@ -43,8 +45,34 @@ export default function PercentRoadMap({ folderId }: PercentRoadMapProps) {
     loadRoadmapData()
   }, [folderId, isDataLoaded, setRoadmaps])
 
-  // Animation de pourcentage
-  const percentage = getCompletionPercentage(folderId)
+  const calculateRealTimePercentage = () => {
+    const folderRoadmaps = roadmaps[folderId] || []
+    if (folderRoadmaps.length === 0 || !folderRoadmaps[0]?.items) return 0
+
+    const items = folderRoadmaps[0].items
+    if (items.length === 0) return 0
+
+    // Pour chaque item, vérifier d'abord dans roadmapItemStore, sinon utiliser roadmapStore
+    let checkedCount = 0
+    items.forEach((item) => {
+      let isChecked = item.checked
+
+      for (const noteId in roadmapItems) {
+        const noteItems = roadmapItems[noteId] || []
+        const foundItem = noteItems.find((ri) => ri.id === item.id)
+        if (foundItem) {
+          isChecked = foundItem.checked
+          break
+        }
+      }
+
+      if (isChecked) checkedCount++
+    })
+
+    return Math.round((checkedCount / items.length) * 100)
+  }
+
+  const percentage = calculateRealTimePercentage()
 
   useEffect(() => {
     let frameId: number
@@ -65,7 +93,7 @@ export default function PercentRoadMap({ folderId }: PercentRoadMapProps) {
 
     frameId = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(frameId)
-  }, [percentage])
+  }, [percentage, roadmapItems])
 
   if (!isDataLoaded(folderId) || !hasRoadmapData(folderId)) {
     return null
