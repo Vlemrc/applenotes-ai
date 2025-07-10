@@ -158,7 +158,6 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
       setLoading(true)
       setProgress(0)
 
-      // Démarrer la simulation de progression (durée estimée : 10 secondes)
       progressInterval = simulateProgress(10000)
 
       const response = await fetch("/api/roadmap", {
@@ -174,7 +173,6 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
         const errorData = await response.json().catch(() => ({ error: "Erreur inconnue" }))
 
         if (response.status === 409 && errorData.code === "ROADMAP_ALREADY_EXISTS") {
-          // Au lieu d'afficher une alerte, récupérer la roadmap existante
           const existingRoadmapResponse = await fetch("/api/roadmap", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -187,7 +185,6 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
           if (existingRoadmapResponse.ok) {
             const data = await existingRoadmapResponse.json()
 
-            // Compléter la barre de progression
             if (progressInterval) {
               clearInterval(progressInterval)
             }
@@ -255,7 +252,6 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
     setBottomBar(!bottomBar)
   }
 
-  // Si le dossier actif n'a pas de notes, on ne peut pas générer de quiz ou de flashcards
   const activeFolder = folders.find((folder) => folder.id === activeFolderId)
 
   let shouldShowButton = false

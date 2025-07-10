@@ -5,6 +5,8 @@ import type { Note } from "@/types/notes"
 import { useState } from "react"
 import Image from "next/image"
 import useFolderStore from "@/stores/useFolderStore"
+import { Loader2 } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 export default function GlossaryLayout({ note }: { note: Note }) {
   const noteContent = note.content
@@ -131,46 +133,59 @@ export default function GlossaryLayout({ note }: { note: Note }) {
   }
 
   return (
-    <div className="p-2 absolute -bottom-[75px] -left-[8px] z-10">
-      <div className=" bg-grayLight px-4 py-2 shadow-lg rounded-md translate-y-[4px] border border-gray flex flex-col gap-1">
-        <button
-          onClick={handleGenerateGlossaireClick}
-          disabled={isLoading}
-          className={`block w-full text-left text-sm text-gray-600 hover:text-gray-900 whitespace-nowrap pr-10 ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
-        >
-          {isLoading ? (
-            <div className="flex items-center gap-2">
-              <span>Génération en cours...</span>
-              <div className="animate-spin rounded-full h-3 w-3">
-                <Image src="/encoursgray.svg" width={12} height={12} alt="Chargement" />
+    <>
+      <div className="p-2 absolute -bottom-[75px] -left-[8px] z-10">
+        <div className=" bg-grayLight px-4 py-2 shadow-lg rounded-md translate-y-[4px] border border-gray flex flex-col gap-1">
+          <button
+            onClick={handleGenerateGlossaireClick}
+            disabled={isLoading}
+            className={`block w-full text-left text-sm text-gray-600 hover:text-gray-900 whitespace-nowrap pr-10 ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+          >
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <span>Génération en cours...</span>
+                <div className="animate-spin rounded-full h-3 w-3">
+                  <Image src="/encoursgray.svg" width={12} height={12} alt="Chargement" />
+                </div>
               </div>
-            </div>
-          ) : (
-            "Générer un glossaire de cette note"
-          )}
-        </button>
-        <div className="w-full h-[1px] bg-gray"></div>
-        <button
-          onClick={handleGenerateFolderGlossaryClick}
-          disabled={isFolderLoading || !activeFolder?.notes?.length}
-          className={`block w-full text-left text-sm whitespace-nowrap ${
-            isFolderLoading || !activeFolder?.notes?.length
-              ? "opacity-50 cursor-not-allowed text-gray-400"
-              : "text-gray-600 hover:text-gray-900"
-          }`}
-        >
-          {isFolderLoading ? (
-            <div className="flex items-center gap-2">
-              <span>Génération en cours...</span>
-              <div className="animate-spin rounded-full h-3 w-3">
-                <Image src="/encoursgray.svg" width={12} height={12} alt="Chargement" />
+            ) : (
+              "Générer un glossaire de cette note"
+            )}
+          </button>
+          <div className="w-full h-[1px] bg-gray"></div>
+          <button
+            onClick={handleGenerateFolderGlossaryClick}
+            disabled={isFolderLoading || !activeFolder?.notes?.length}
+            className={`block w-full text-left text-sm whitespace-nowrap ${
+              isFolderLoading || !activeFolder?.notes?.length
+                ? "opacity-50 cursor-not-allowed text-gray-400"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            {isFolderLoading ? (
+              <div className="flex items-center gap-2">
+                <span>Génération en cours...</span>
+                <div className="animate-spin rounded-full h-3 w-3">
+                  <Image src="/encoursgray.svg" width={12} height={12} alt="Chargement" />
+                </div>
               </div>
-            </div>
-          ) : (
-            `Générer un glossaire du dossier ${activeFolder.name}`
-          )}
-        </button>
+            ) : (
+              `Générer un glossaire du dossier ${activeFolder.name}`
+            )}
+          </button>
+        </div>
       </div>
-    </div>
+      {isLoading || isFolderLoading && 
+        <div className="fixed right-2 top-2 z-[10000]">
+          <Alert>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <AlertTitle className="text-sm">Génération du glossaire en cours...</AlertTitle>
+            <AlertDescription className="text-xs">
+              Cela peut prendre quelques instants.
+            </AlertDescription>
+          </Alert>
+        </div>
+      }
+    </>
   )
 }
