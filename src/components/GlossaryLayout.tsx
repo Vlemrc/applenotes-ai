@@ -175,7 +175,18 @@ export default function GlossaryLayout({ note }: { note: Note }) {
           </button>
         </div>
       </div>
-      {isLoading || isFolderLoading && 
+      {isFolderLoading && 
+        <div className="fixed right-2 top-2 z-[10000]">
+          <Alert>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <AlertTitle className="text-sm">Génération du glossaire en cours...</AlertTitle>
+            <AlertDescription className="text-xs">
+              Cela peut prendre quelques instants.
+            </AlertDescription>
+          </Alert>
+        </div>
+      }
+      {isLoading && 
         <div className="fixed right-2 top-2 z-[10000]">
           <Alert>
             <Loader2 className="h-4 w-4 animate-spin" />
