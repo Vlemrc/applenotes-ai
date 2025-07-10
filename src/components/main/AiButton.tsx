@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { Progress } from "@/components/ui/progress"
 import Brain from "../icons/Brain"
 import Dices from "../icons/Dices"
 import FlashCard from "../icons/FlashCard"
@@ -19,15 +20,96 @@ interface AiButtonProps {
 const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }: AiButtonProps) => {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+  const [progress, setProgress] = useState<number>(0)
   const [mode, setMode] = useState<"quiz" | "assistant" | "flashcards" | "roadmap" | null>(null)
+  const [currentMessageIndex, setCurrentMessageIndex] = useState<number>(0)
 
   const { activeFolderId, folders } = useFolderStore()
 
+  const quizMessages = [
+    "Quiz en cours de création...",
+    "Analyse du sujet...",
+    "Extraction des concepts clés...",
+    "Génération des questions...",
+    "Révision du niveau de difficulté...",
+    "Formulation des réponses...",
+    "Finalisation du quiz...",
+    "Prêt à tester vos connaissances ?",
+  ]
+
+  const flashcardsMessages = [
+    "Flashcards en cours de création...",
+    "Analyse du contenu...",
+    "Identification des points clés...",
+    "Génération des cartes...",
+    "Optimisation des questions...",
+    "Création des réponses...",
+    "Finalisation des flashcards...",
+    "Prêt pour la révision ?",
+  ]
+
+  const roadmapMessages = [
+    "Roadmap en cours de création...",
+    "Analyse de la structure...",
+    "Identification des étapes...",
+    "Organisation du parcours...",
+    "Définition des objectifs...",
+    "Création des jalons...",
+    "Finalisation de la roadmap...",
+    "Votre parcours est prêt !",
+  ]
+
+  useEffect(() => {
+    let messageInterval: NodeJS.Timeout | null = null
+
+    if (loading && mode) {
+      setCurrentMessageIndex(0)
+
+      messageInterval = setInterval(() => {
+        setCurrentMessageIndex((prevIndex) => {
+          const messages = mode === "quiz" ? quizMessages : mode === "flashcards" ? flashcardsMessages : roadmapMessages
+          return (prevIndex + 1) % messages.length
+        })
+      }, 3000)
+    }
+
+    return () => {
+      if (messageInterval) {
+        clearInterval(messageInterval)
+      }
+    }
+  }, [loading, mode])
+
+  const simulateProgress = (duration: number) => {
+    setProgress(0)
+    const interval = 50
+    const steps = duration / interval
+    const increment = 100 / steps
+
+    let currentProgress = 0
+    const progressInterval = setInterval(() => {
+      currentProgress += increment
+      if (currentProgress >= 95) {
+        setProgress(95)
+        clearInterval(progressInterval)
+      } else {
+        setProgress(currentProgress)
+      }
+    }, interval)
+
+    return progressInterval
+  }
+
   const fetchAIResponse = async (mode: "quiz" | "flashcards") => {
+    let progressInterval: NodeJS.Timeout | null = null
+
     try {
       if (!noteContent) throw new Error("Note vide")
 
       setLoading(true)
+      setProgress(0)
+
+      progressInterval = simulateProgress(15000)
 
       const endpoint = mode === "quiz" ? "/api/quiz" : "/api/flashcard"
       const payload = mode === "quiz" ? { noteContent, questionCount: 8 } : { noteContent, flashcardsCount: 8 }
@@ -43,21 +125,41 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
       }
 
       const data = await response.json()
+
+      // Compléter la barre de progression
+      if (progressInterval) {
+        clearInterval(progressInterval)
+      }
+      setProgress(100)
+
+      // Petit délai pour montrer la completion
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
       return data
     } catch (error) {
       return null
     } finally {
+      if (progressInterval) {
+        clearInterval(progressInterval)
+      }
       setLoading(false)
+      setProgress(0)
     }
   }
 
   const generateRoadmap = async () => {
+    let progressInterval: NodeJS.Timeout | null = null
+
     if (!activeFolderId) {
       return null
     }
 
     try {
       setLoading(true)
+      setProgress(0)
+
+      // Démarrer la simulation de progression (durée estimée : 10 secondes)
+      progressInterval = simulateProgress(10000)
 
       const response = await fetch("/api/roadmap", {
         method: "POST",
@@ -83,7 +185,16 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
           })
 
           if (existingRoadmapResponse.ok) {
-            return await existingRoadmapResponse.json()
+            const data = await existingRoadmapResponse.json()
+
+            // Compléter la barre de progression
+            if (progressInterval) {
+              clearInterval(progressInterval)
+            }
+            setProgress(100)
+            await new Promise((resolve) => setTimeout(resolve, 500))
+
+            return data
           } else {
             return null
           }
@@ -94,7 +205,6 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
         return null
       }
 
-      // Vérifier le type de contenu avant de parser en JSON
       const contentType = response.headers.get("content-type")
 
       if (!contentType || !contentType.includes("application/json")) {
@@ -103,11 +213,22 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
       }
 
       const data = await response.json()
+
+      if (progressInterval) {
+        clearInterval(progressInterval)
+      }
+      setProgress(100)
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
       return data
     } catch (error) {
       return null
     } finally {
+      if (progressInterval) {
+        clearInterval(progressInterval)
+      }
       setLoading(false)
+      setProgress(0)
     }
   }
 
@@ -150,6 +271,14 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
 
   if (shouldShowButton) {
     return null
+  }
+
+  const getLoadingMessage = () => {
+    if (!mode) return "Chargement en cours"
+
+    const messages = mode === "quiz" ? quizMessages : mode === "flashcards" ? flashcardsMessages : roadmapMessages
+
+    return messages[currentMessageIndex] || messages[0]
   }
 
   return (
@@ -250,20 +379,17 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
               </button>
             </>
           )}
-          {loading &&
-            (mode === "quiz" ? (
-              <div className="w-full text-center h-20 animate-gray-gradient text-md whitespace-nowrap flex items-center justify-center">
-                Quiz en cours de création
+          {loading && (
+            <div className="w-full flex flex-col items-center justify-center h-20 space-y-3">
+              <div className="w-full max-w-md">
+                <div className="flex justify-between text-xs text-gray-600 mb-2">
+                  <div className="w-full text-center animate-gray-gradient text-md whitespace-nowrap flex items-center">{getLoadingMessage()}</div>
+                    <span>{Math.round(progress)}%</span>
+                  </div>
+                <Progress value={progress} className="w-full h-1" />
               </div>
-            ) : mode === "flashcards" ? (
-              <div className="w-full text-center h-20 animate-gray-gradient text-md whitespace-nowrap flex items-center justify-center">
-                Flashcards en cours de création
-              </div>
-            ) : mode === "roadmap" ? (
-              <div className="w-full text-center h-20 animate-gray-gradient text-md whitespace-nowrap flex items-center justify-center">
-                Roadmap en cours de création
-              </div>
-            ) : null)}
+            </div>
+          )}
         </div>
       </div>
     </>
