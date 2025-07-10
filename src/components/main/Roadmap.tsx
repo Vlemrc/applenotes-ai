@@ -69,7 +69,6 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
 
   useEffect(() => {
     if (roadmaps.length > 0 && roadmaps[0]?.items) {
-      console.log("Synchronizing roadmap items with item store")
 
       roadmaps[0].items.forEach((item) => {
         if (item.note?.id) {
@@ -113,8 +112,6 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
       updateStoreItem(folderId, itemId, checked)
       updateItemChecked(itemId, checked) 
 
-      console.log(`Toggling item ${itemId} to ${checked} in both stores`)
-
       const response = await fetch("/api/roadmap", {
         method: "POST",
         headers: {
@@ -128,14 +125,10 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
       })
 
       if (!response.ok) {
-        // Erreur
         updateStoreItem(folderId, itemId, !checked)
         updateItemChecked(itemId, !checked)
 
         const errorData = await response.json()
-        console.error("Erreur lors de la mise à jour:", errorData)
-      } else {
-        console.log(`Successfully updated item ${itemId} to ${checked}`)
       }
     } catch (error) {
       // Erreur
@@ -169,10 +162,8 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
 
         const item = roadmaps[0]?.items.find((item) => item.id === itemId)
         if (item?.note?.id) {
-          removeFromItemStore(item.note.id, itemId) // Nouveau store
+          removeFromItemStore(item.note.id, itemId)
         }
-
-        console.log(`Removed item ${itemId} from both stores`)
       } else {
         console.error("Erreur lors de la suppression:", data.error)
         alert(`Erreur: ${data.error}`)

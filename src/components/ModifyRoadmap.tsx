@@ -43,7 +43,6 @@ export default function ModifyRoadmap({
 
       if (response.ok) {
         const result = await response.json()
-        console.log(result.message)
         fetchFolders()
         onRoadmapDeleted?.()
         setModifyState(false)
@@ -75,17 +74,16 @@ export default function ModifyRoadmap({
 
       if (response.ok) {
         const result = await response.json()
-        console.log(result.message || "Roadmap régénérée avec succès")
         fetchFolders()
-        onRegenerationComplete?.() // Arrêter l'indicateur et rafraîchir
+        onRegenerationComplete?.() 
       } else {
         const errorData = await response.json()
         console.error("Erreur lors de la régénération:", errorData.error)
-        onRegenerationComplete?.() // Arrêter l'indicateur même en cas d'erreur
+        onRegenerationComplete?.()
       }
     } catch (error) {
       console.error("Erreur lors de la requête :", error)
-      onRegenerationComplete?.() // Arrêter l'indicateur même en cas d'erreur
+      onRegenerationComplete?.()
     }
   }
 

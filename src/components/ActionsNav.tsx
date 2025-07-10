@@ -88,7 +88,6 @@ const ActionsNav = ({ bottomBar, setBottomBar, note }) => {
     useEffect(() => {
         const handleFullscreenChange = () => {
           if (!document.fullscreenElement && isLearningMode) {
-            console.log("Sortie du plein écran détectée, désactivation du LearningMode")
             deactivateLearningMode();
           }
         }

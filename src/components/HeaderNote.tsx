@@ -82,20 +82,15 @@ const HeaderNote = ({ note, mode, onResetMode, onNoteUpdate }: HeaderNoteProps) 
 
   const toggleItemCheck = async () => {
     if (!item) {
-      console.log("No item to toggle")
       return
     }
-
-    console.log(`Toggling item from ${isChecked} to ${!isChecked}`)
     const success = await updateChecked(!isChecked)
 
     if (!success) {
-      console.error("Failed to toggle item check")
     }
   }
 
   const handleRefreshData = async () => {
-    console.log("Manually refreshing roadmap data for note", note.id)
     await refreshItemsFromAPI(note.id)
   }
 

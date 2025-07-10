@@ -162,9 +162,6 @@ const Quiz = ({
 
       if (response.ok) {
         setIsRoadmapItemChecked(newCheckedState)
-        console.log(`Roadmap item ${newCheckedState ? "marqué comme appris" : "marqué comme non-appris"}`)
-      } else {
-        console.error("Erreur lors de la mise à jour du roadmap item")
       }
     } catch (error) {
       console.error("Erreur lors de la mise à jour:", error)

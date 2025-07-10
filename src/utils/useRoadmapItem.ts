@@ -15,13 +15,8 @@ export const useRoadmapItem = (noteId: number) => {
   const updateChecked = useCallback(
     async (checked: boolean) => {
       if (!item) {
-        console.log("No item found for note", noteId)
         return false
       }
-
-      console.log(`Attempting to update item ${item.id} to ${checked}`)
-
-      // Mise à jour optimiste du store
       updateItemChecked(item.id, checked)
 
       try {
@@ -38,17 +33,13 @@ export const useRoadmapItem = (noteId: number) => {
         })
 
         if (response.ok) {
-          console.log(`Successfully updated item ${item.id} to ${checked}`)
           return true
         } else {
-          console.error("Failed to update item status")
-          // Rollback en cas d'erreur
           updateItemChecked(item.id, !checked)
           return false
         }
       } catch (error) {
         console.error("Error updating item status:", error)
-        // Rollback en cas d'erreur
         updateItemChecked(item.id, !checked)
         return false
       }

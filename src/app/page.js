@@ -23,13 +23,12 @@ export default function Home() {
   const [activeMode, setActiveMode] = useState(null)
   const [bottomBar, setBottomBar] = useState(false)
 
-  // Charger les notes quand le dossier actif change
   useEffect(() => {
     if (activeFolderId) {
       getNotesByFolder(activeFolderId)
         .then((fetchedNotes) => {
           setNotes(fetchedNotes)
-          // Définir la première note comme active si elle existe
+          
           if (fetchedNotes.length > 0) {
             setActiveNote(fetchedNotes[0])
           }
@@ -38,11 +37,9 @@ export default function Home() {
     }
   }, [activeFolderId])
 
-  // Fonction pour mettre à jour une note dans la liste
   const handleNoteUpdate = (updatedNote) => {
     setNotes((prevNotes) => prevNotes.map((note) => (note.id === updatedNote.id ? updatedNote : note)))
 
-    // Mettre à jour aussi la note active si c'est celle qui a été modifiée
     if (activeNote && activeNote.id === updatedNote.id) {
       setActiveNote(updatedNote)
     }
