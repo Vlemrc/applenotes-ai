@@ -163,3 +163,19 @@ body {
 .animate-spin-slow {
   animation: spin-slow 10s linear infinite;
 }
+
+@keyframes slowBlink {
+
+  0%,
+  100% {
+    background-color: #F2F2F2;
+  }
+
+  50% {
+    background-color: #fbfbfb;
+  }
+}
+
+.blinking-background {
+  animation: slowBlink 1.5s ease-in-out infinite;
+}

@@ -12,16 +12,17 @@ import useFolderStore from "@/stores/useFolderStore"
 interface AiButtonProps {
   noteId: number
   noteContent: string
-  onModeChange: (mode: "quiz" | "assistant" | "flashcards" | "roadmap" | null) => void
+  onModeChange: (mode: "quiz" | "assistant" | "flashcards" | "roadmap" | "tutorial" | null) => void
   bottomBar: boolean
   setBottomBar: (value: boolean) => void
+  tutorialStep?: number 
 }
 
-const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }: AiButtonProps) => {
+const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, tutorialStep }: AiButtonProps) => {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [progress, setProgress] = useState<number>(0)
-  const [mode, setMode] = useState<"quiz" | "assistant" | "flashcards" | "roadmap" | null>(null)
+  const [mode, setMode] = useState<"quiz" | "assistant" | "flashcards" | "roadmap" | "tutorial" | null>(null)
   const [currentMessageIndex, setCurrentMessageIndex] = useState<number>(0)
 
   const { activeFolderId, folders } = useFolderStore()
@@ -126,13 +127,11 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
 
       const data = await response.json()
 
-      // Compléter la barre de progression
       if (progressInterval) {
         clearInterval(progressInterval)
       }
       setProgress(100)
 
-      // Petit délai pour montrer la completion
       await new Promise((resolve) => setTimeout(resolve, 500))
 
       return data
@@ -264,6 +263,7 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
   } else {
     shouldShowButton = true
   }
+  
 
   if (shouldShowButton) {
     return null
@@ -322,6 +322,7 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
                 className={`
                           flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
                             transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
+                          ${tutorialStep === 2 ? "blinking-background" : ""}
                         `}
                 aria-label="Quiz"
                 onMouseEnter={() => setHoveredButton("quiz")}
@@ -334,7 +335,7 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
               <button
                 onClick={() => handleClick("assistant")}
                 id="icon-brain"
-                className="flex items-center justify-center flex-col h-full min-h-20 p-2 w-1/4 bg-grayLight rounded-lg"
+                className={`flex items-center justify-center flex-col h-full min-h-20 p-2 w-1/4 bg-grayLight rounded-lg ${tutorialStep === 2 ? "blinking-background" : ""}`}
                 aria-label="AI Assistant"
                 onMouseEnter={() => setHoveredButton("brain")}
                 onMouseLeave={() => setHoveredButton(null)}
@@ -348,7 +349,7 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
                 id="icon-roadmap"
                 className={`
                             flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
-                            transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
+                            transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300 ${tutorialStep === 3 ? "blinking-background" : ""}
                         `}
                 aria-label="Roadmaps"
                 onMouseEnter={() => setHoveredButton("roadmap")}
@@ -363,7 +364,7 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
                 id="icon-flashcard"
                 className={`
                             flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
-                            transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
+                            transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300 ${tutorialStep === 2 ? "blinking-background" : ""}
                         `}
                 aria-label="Flashcards"
                 onMouseEnter={() => setHoveredButton("flashcard")}
@@ -379,9 +380,11 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar }
             <div className="w-full flex flex-col items-center justify-center h-20 space-y-3">
               <div className="w-full max-w-md">
                 <div className="flex justify-between text-xs text-gray-600 mb-2">
-                  <div className="w-full text-center animate-gray-gradient text-md whitespace-nowrap flex items-center">{getLoadingMessage()}</div>
-                    <span>{Math.round(progress)}%</span>
+                  <div className="w-full text-center animate-gray-gradient text-md whitespace-nowrap flex items-center">
+                    {getLoadingMessage()}
                   </div>
+                  <span>{Math.round(progress)}%</span>
+                </div>
                 <Progress value={progress} className="w-full h-1" />
               </div>
             </div>

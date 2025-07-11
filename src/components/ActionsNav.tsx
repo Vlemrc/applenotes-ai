@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 import Glossary from './icons/Glossary';
 import GlossaryLayout from './GlossaryLayout';
 
-const ActionsNav = ({ bottomBar, setBottomBar, note }) => {
+const ActionsNav = ({ bottomBar, setBottomBar, note, tutorialStep }) => {
     const { activeFolderId, folders } = useFolderStore();
     const currentFolder = folders?.find(folder => folder.id === activeFolderId);
     const { toggleLearningMode, deactivateLearningMode, isLearningMode } = useLearningModeStore();
@@ -126,7 +126,7 @@ const ActionsNav = ({ bottomBar, setBottomBar, note }) => {
                     {isLearningMode && (
                     <div className="relative" onMouseLeave={() => setGlossary(false)}>
                         <IconHoverContainer onClick={handleGlossaryClick}>
-                            <Glossary color="#6F6F6F" />
+                            <Glossary color="#6F6F6F" tutorialStep={tutorialStep} />
                         </IconHoverContainer>
                         {glossary && (
                             <GlossaryLayout note={note} />

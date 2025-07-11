@@ -15,20 +15,23 @@ import FlashCard from "@/components/main/Flashcard"
 import AiInput from "@/components/AiInput"
 import HeaderNote from "@/components/HeaderNote"
 import Roadmap from "@/components/main/Roadmap"
+import Tutorial from "@/components/main/Tutorial"
 
 export default function Home() {
   const [notes, setNotes] = useState([])
   const [activeNote, setActiveNote] = useState(null)
   const { activeFolderId } = useFolderStore()
-  const [activeMode, setActiveMode] = useState(null)
+  const [activeMode, setActiveMode] = useState("tutorial")
   const [bottomBar, setBottomBar] = useState(false)
+  // Nouvel état pour gérer le step du tutorial
+  const [tutorialStep, setTutorialStep] = useState(1)
 
   useEffect(() => {
     if (activeFolderId) {
       getNotesByFolder(activeFolderId)
         .then((fetchedNotes) => {
           setNotes(fetchedNotes)
-          
+
           if (fetchedNotes.length > 0) {
             setActiveNote(fetchedNotes[0])
           }
@@ -61,15 +64,18 @@ export default function Home() {
           />
         </aside>
         <main className="w-full relative overflow-y-hidden">
-          <ActionsNav bottomBar={bottomBar} setBottomBar={setBottomBar} note={activeNote} />
+          <ActionsNav bottomBar={bottomBar} setBottomBar={setBottomBar} note={activeNote} tutorialStep={tutorialStep} />
           <div className="pt-2 px-8 pb-8 h-calc-minus-50 overflow-y-scroll">
-            {activeNote && (
+            {activeNote && activeMode !== "tutorial" && (
               <HeaderNote
                 note={activeNote}
                 mode={activeMode}
                 onResetMode={() => setActiveMode(null)}
                 onNoteUpdate={handleNoteUpdate}
               />
+            )}
+            {activeMode === "tutorial" && (
+              <Tutorial onModeChange={setActiveMode} step={tutorialStep} setStep={setTutorialStep} />
             )}
             {activeMode === null && <NoteContent note={activeNote} />}
             {activeMode === "quiz" && <Quiz noteId={Number(activeNote.id)} onBackToNote={() => setActiveMode(null)} />}
@@ -90,6 +96,7 @@ export default function Home() {
                 onModeChange={setActiveMode}
                 bottomBar={bottomBar}
                 setBottomBar={setBottomBar}
+                tutorialStep={tutorialStep}
               />
             )}
           </div>
