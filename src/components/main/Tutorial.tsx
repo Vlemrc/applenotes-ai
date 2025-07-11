@@ -24,6 +24,7 @@ export default function Tutorial({ onModeChange, step, setStep }: TutorialProps)
   const handleModeChange = (newMode: "quiz" | "assistant" | "flashcards" | "roadmap" | "tutorial" | null) => {
     setMode(newMode)
     onModeChange(newMode)
+    setStep(5)
   }
 
   const content = [
@@ -32,7 +33,6 @@ export default function Tutorial({ onModeChange, step, setStep }: TutorialProps)
       title: "Mode Apprentissage",
       description: "Voici votre boîte à outils IA pour booster vos notes.",
       stepNumber: 1,
-      component: <AppleSphere />,
     },
     {
       subtitle: "Nouveau - Quiz, Flashcard, AI Assistant",
@@ -40,7 +40,6 @@ export default function Tutorial({ onModeChange, step, setStep }: TutorialProps)
       description:
         "Avec un simple clic, génère des quiz pour t'auto-évaluer, des flashcards pour mémoriser, ou dialogue directement avec l'IA pour explorer les idées de ton contenu.",
       stepNumber: 2,
-      component: <AppleSphere />,
     },
     {
       subtitle: "Nouveau - Roadmap",
@@ -48,15 +47,13 @@ export default function Tutorial({ onModeChange, step, setStep }: TutorialProps)
       description:
         "L'IA lit ton dossier et transforme chaque note en une étape de ta progression. Tu obtiens une roadmap claire, organisée, prête à t'accompagner pas à pas.",
       stepNumber: 3,
-      component: <AppleSphere />,
     },
     {
       subtitle: "Nouveau - Glossaire",
       title: "Clarifie l'essentiel",
       description:
-        "Obtiens un glossaire structuré, avec définitions précises et accessibles. Idéal pour réviser, enseigner, ou mieux comprendre ce que tu viens d'écrire. Moins d'ambiguïtés, plus de clarté. Tu maîtrises ton sujet.",
+        "Une petite icône est apparue à côté de l'icône du mode apprentissage. Obtiens un glossaire structuré, avec définitions précises et accessibles. Idéal pour réviser, enseigner, ou mieux comprendre ce que tu viens d'écrire. Moins d'ambiguïtés, plus de clarté. Tu maîtrises ton sujet.",
       stepNumber: 4,
-      component: <AppleSphere />,
     },
   ]
 
@@ -73,7 +70,7 @@ export default function Tutorial({ onModeChange, step, setStep }: TutorialProps)
             </h2>
             <p className="font-bold text-center text-text">{currentContent.description}</p>
             <div className="flex flex-col justify-between gap-8">
-              {currentContent.component}
+            <AppleSphere step={step} />
               <div className="flex flex-row justify-between items-center gap-4 w-full">
                 <p className="text-sm">{String(currentContent.stepNumber).padStart(2, "0")}</p>
                 <button className="flex flex-row items-center gap-2 animlinkunderline" onClick={handleNextStep}>
@@ -89,7 +86,7 @@ export default function Tutorial({ onModeChange, step, setStep }: TutorialProps)
           <>
             <div className="flex flex-row gap-8 h-[85%] items-center justify-center">
               <div className="w-1/2 flex flex-col">
-                {currentContent.subtitle && <h6 className="font-semibold pb-3">{currentContent.subtitle}</h6>}
+                <h6 className="font-semibold pb-3">{currentContent.subtitle}</h6>
                 <h2 className="font-bold text-6xl tracking-tighter pb-5">
                   {currentContent.title.split(" ").map((word, index, array) => (
                     <React.Fragment key={index}>
@@ -101,7 +98,7 @@ export default function Tutorial({ onModeChange, step, setStep }: TutorialProps)
                 </h2>
                 <p className="text-grayDark font-semibold text-sm">{currentContent.description}</p>
               </div>
-              <div className="w-1/2">{currentContent.component}</div>
+              <div className="w-1/2"><AppleSphere step={step} /></div>
             </div>
             <div className="flex flex-row justify-between items-center gap-4 w-full">
               <p className="text-sm">{String(currentContent.stepNumber).padStart(2, "0")}</p>

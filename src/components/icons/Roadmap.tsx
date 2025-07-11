@@ -3,8 +3,14 @@
 import { motion } from "framer-motion"
 import { useState } from "react"
 
-export default function Component() {
+interface RoadmapProps {
+  tutorialStep?: number
+}
+
+export default function Component({ tutorialStep }: RoadmapProps) {
   const [isHovered, setIsHovered] = useState(false)
+
+  const shouldAnimate = isHovered || tutorialStep === 3
 
   return (
     <div className="flex items-center justify-center p-2.5">
@@ -31,7 +37,7 @@ export default function Component() {
             cy: 22.19,
           }}
           animate={
-            isHovered
+            shouldAnimate
               ? {
                   cx: [22.19, 145, 145, 15, 15, 131.76],
                   cy: [22.19, 50, 110, 80, 140, 168.56],
@@ -42,8 +48,8 @@ export default function Component() {
                 }
           }
           transition={{
-            duration: 2, // ralentir l'animation
-            repeat: isHovered ? Number.POSITIVE_INFINITY : 0,
+            duration: 2,
+            repeat: shouldAnimate ? Number.POSITIVE_INFINITY : 0,
             ease: "linear",
           }}
         />
@@ -57,7 +63,7 @@ export default function Component() {
             cy: 168.56,
           }}
           animate={
-            isHovered
+            shouldAnimate
               ? {
                   cx: [131.76, 15, 15, 145, 145, 22.19],
                   cy: [168.56, 140, 80, 110, 50, 22.19],
@@ -69,7 +75,7 @@ export default function Component() {
           }
           transition={{
             duration: 2,
-            repeat: isHovered ? Number.POSITIVE_INFINITY : 0,
+            repeat: shouldAnimate ? Number.POSITIVE_INFINITY : 0,
             ease: "linear",
           }}
         />

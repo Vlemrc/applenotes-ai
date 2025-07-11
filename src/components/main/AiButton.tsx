@@ -15,7 +15,7 @@ interface AiButtonProps {
   onModeChange: (mode: "quiz" | "assistant" | "flashcards" | "roadmap" | "tutorial" | null) => void
   bottomBar: boolean
   setBottomBar: (value: boolean) => void
-  tutorialStep?: number 
+  tutorialStep?: number
 }
 
 const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, tutorialStep }: AiButtonProps) => {
@@ -263,7 +263,6 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
   } else {
     shouldShowButton = true
   }
-  
 
   if (shouldShowButton) {
     return null
@@ -329,7 +328,7 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
                 onMouseLeave={() => setHoveredButton(null)}
                 disabled={loading}
               >
-                <Dices />
+                <Dices tutorialStep={tutorialStep} />
                 <LabelAiNav content="Générer un quiz" />
               </button>
               <button
@@ -341,7 +340,7 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
                 onMouseLeave={() => setHoveredButton(null)}
                 disabled={loading}
               >
-                <Brain />
+                <Brain tutorialStep={tutorialStep} />
                 <LabelAiNav content="Enrichir cette note" />
               </button>
               <button
@@ -356,7 +355,7 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
                 onMouseLeave={() => setHoveredButton(null)}
                 disabled={loading}
               >
-                <Roadmap />
+                <Roadmap tutorialStep={tutorialStep} />
                 <LabelAiNav content="Accéder à la roadmap" />
               </button>
               <button
@@ -371,7 +370,7 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
                 onMouseLeave={() => setHoveredButton(null)}
                 disabled={loading}
               >
-                <FlashCard />
+                <FlashCard tutorialStep={tutorialStep} />
                 <LabelAiNav content="Créer des flashcards" />
               </button>
             </>

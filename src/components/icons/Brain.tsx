@@ -1,16 +1,31 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useState } from "react"
 
-const Brain = () => {
+interface BrainProps {
+  tutorialStep?: number
+}
+
+const Brain = ({ tutorialStep }: BrainProps) => {
+  const [isHovered, setIsHovered] = useState(false)
+
+  const shouldAnimate = isHovered || tutorialStep === 2
+
   return (
     <motion.div
       initial={{ x: 0, rotate: 0 }}
-      whileHover={{
-        x: [0, 2, -2, 2, -2, 2, -2, 0, 2, -2, 2, -2, 2, -2, 0],
-        rotate: [0, 5, -5, 5, -5, 5, -5, 0, 5, -5, 0],
-        transition: { duration: 0.5 },
-      }}
+      animate={
+        shouldAnimate
+          ? {
+              x: [0, 2, -2, 2, -2, 2, -2, 0, 2, -2, 2, -2, 2, -2, 0],
+              rotate: [0, 5, -5, 5, -5, 5, -5, 0, 5, -5, 0],
+              transition: { duration: 0.5, repeat: Number.POSITIVE_INFINITY },
+            }
+          : { x: 0, rotate: 0 }
+      }
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className="p-2.5"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -24,4 +39,3 @@ const Brain = () => {
 }
 
 export default Brain
-

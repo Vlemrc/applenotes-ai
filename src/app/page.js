@@ -21,7 +21,7 @@ export default function Home() {
   const [notes, setNotes] = useState([])
   const [activeNote, setActiveNote] = useState(null)
   const { activeFolderId } = useFolderStore()
-  const [activeMode, setActiveMode] = useState("tutorial")
+  const [activeMode, setActiveMode] = useState(null)
   const [bottomBar, setBottomBar] = useState(false)
   // Nouvel état pour gérer le step du tutorial
   const [tutorialStep, setTutorialStep] = useState(1)
@@ -64,7 +64,7 @@ export default function Home() {
           />
         </aside>
         <main className="w-full relative overflow-y-hidden">
-          <ActionsNav bottomBar={bottomBar} setBottomBar={setBottomBar} note={activeNote} tutorialStep={tutorialStep} />
+          <ActionsNav bottomBar={bottomBar} setBottomBar={setBottomBar} note={activeNote} tutorialStep={tutorialStep} onModeChange={setActiveMode} activeMode={activeMode} />
           <div className="pt-2 px-8 pb-8 h-calc-minus-50 overflow-y-scroll">
             {activeNote && activeMode !== "tutorial" && (
               <HeaderNote
