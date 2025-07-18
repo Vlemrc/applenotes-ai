@@ -63,31 +63,31 @@ const ActionsNav = ({ bottomBar, setBottomBar, note, tutorialStep, onModeChange,
         webkitExitFullscreen?: () => Promise<void>
         msExitFullscreen?: () => Promise<void>
       }
-      if (document.fullscreenElement) {
-        if (doc.exitFullscreen) {
-          doc.exitFullscreen()
-        } else if (doc.webkitExitFullscreen) {
-          doc.webkitExitFullscreen()
-        } else if (doc.msExitFullscreen) {
-          doc.msExitFullscreen()
-        }
-      }
+      // if (document.fullscreenElement) {
+      //   if (doc.exitFullscreen) {
+      //     doc.exitFullscreen()
+      //   } else if (doc.webkitExitFullscreen) {
+      //     doc.webkitExitFullscreen()
+      //   } else if (doc.msExitFullscreen) {
+      //     doc.msExitFullscreen()
+      //   }
+      // }
     } else {
       // Si on active le learningMode
       // Entrer en plein écran
-      if (!document.fullscreenElement) {
-        const elem = document.documentElement as HTMLElement & {
-          webkitRequestFullscreen?: () => Promise<void>
-          msRequestFullscreen?: () => Promise<void>
-        }
-        if (elem.requestFullscreen) {
-          elem.requestFullscreen()
-        } else if (elem.webkitRequestFullscreen) {
-          elem.webkitRequestFullscreen()
-        } else if (elem.msRequestFullscreen) {
-          elem.msRequestFullscreen()
-        }
-      }
+      // if (!document.fullscreenElement) {
+      //   const elem = document.documentElement as HTMLElement & {
+      //     webkitRequestFullscreen?: () => Promise<void>
+      //     msRequestFullscreen?: () => Promise<void>
+      //   }
+      //   if (elem.requestFullscreen) {
+      //     elem.requestFullscreen()
+      //   } else if (elem.webkitRequestFullscreen) {
+      //     elem.webkitRequestFullscreen()
+      //   } else if (elem.msRequestFullscreen) {
+      //     elem.msRequestFullscreen()
+      //   }
+      // }
 
       if (!localStorage.getItem("tutochecked")) {
         onModeChange("tutorial")

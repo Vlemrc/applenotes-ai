@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react"
 import { Progress } from "@/components/ui/progress"
 import { useLearningModeStore } from "@/stores/learningModeStore"
+import { useRoadmapItem } from "@/utils/useRoadmapItem"
+import { useRoadmapItemStore } from "@/stores/roadmapItemStore"
 
 interface Answer {
   text: string
@@ -33,9 +35,10 @@ const Quiz = ({
   const [feedback, setFeedback] = useState<{ message: string; isCorrect: boolean } | null>(null)
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number | null>(null)
   const { isLearningMode } = useLearningModeStore()
-  const [roadmapItemId, setRoadmapItemId] = useState<number | null>(null)
-  const [isUpdatingRoadmap, setIsUpdatingRoadmap] = useState(false)
-  const [isRoadmapItemChecked, setIsRoadmapItemChecked] = useState<boolean>(false)
+  
+  // Utiliser le hook comme dans HeaderNote
+  const { item, isChecked, updateChecked } = useRoadmapItem(noteId)
+  const { setRoadmapItems, hasItemsForNote } = useRoadmapItemStore()
 
   useEffect(() => {
     const storedQuiz = localStorage.getItem(`generated-quiz-${noteId}`)
@@ -48,7 +51,6 @@ const Quiz = ({
     }
 
     // Récupérer les infos du roadmapItem
-    fetchNoteRoadmapInfo()
   }, [noteId])
 
   const handleBackToNote = () => {
@@ -124,50 +126,9 @@ const Quiz = ({
     setCorrectAnswerIndex(null)
   }
 
-  const fetchNoteRoadmapInfo = async () => {
-    try {
-      const response = await fetch(`/api/notes?id=${noteId}`)
-      if (response.ok) {
-        const note = await response.json()
-        // Récupérer le premier roadmapItem associé à cette note
-        if (note.roadmapItems && note.roadmapItems.length > 0) {
-          const roadmapItem = note.roadmapItems[0]
-          setRoadmapItemId(roadmapItem.id)
-          setIsRoadmapItemChecked(roadmapItem.checked)
-        }
-      }
-    } catch (error) {
-      console.error("Erreur lors de la récupération des infos de la note:", error)
-    }
-  }
-
   const updateRoadmapItemStatus = async () => {
-    if (!roadmapItemId) return
-
-    setIsUpdatingRoadmap(true)
-    const newCheckedState = !isRoadmapItemChecked
-
-    try {
-      const response = await fetch("/api/roadmap", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          action: "updateItem",
-          itemId: roadmapItemId,
-          checked: newCheckedState,
-        }),
-      })
-
-      if (response.ok) {
-        setIsRoadmapItemChecked(newCheckedState)
-      }
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour:", error)
-    } finally {
-      setIsUpdatingRoadmap(false)
-    }
+    if (!item) return
+    await updateChecked(!isChecked)
   }
 
   if (!quizData) {
@@ -294,21 +255,18 @@ const Quiz = ({
                 On réessaye ?
               </button>
             </div>
-            {isLearningMode && roadmapItemId && (
-                <button
-                  onClick={updateRoadmapItemStatus}
-                  disabled={isUpdatingRoadmap}
-                  className={`text-sm text-white px-4 rounded-md font-medium hover:bg-yellow transition-colors duration-300 mt-2 ${
-                    isRoadmapItemChecked ? "bg-orange-500 text-white" : "bg-green text-white"
-                  }`}
-                >
-                  {isUpdatingRoadmap
-                    ? "Mise à jour..."
-                    : isRoadmapItemChecked
-                      ? "Marquer comme à explorer"
-                      : "Marquer comme maitrisé"}
-                </button>
-              )}
+            {isLearningMode && item && (
+              <button
+                onClick={updateRoadmapItemStatus}
+                className={`text-sm text-white px-4 rounded-md font-medium hover:bg-yellow transition-colors duration-300 mt-2 ${
+                  isChecked ? "bg-orange-500 text-white" : "bg-green text-white"
+                }`}
+              >
+                {isChecked
+                  ? "Marquer comme à explorer"
+                  : "Marquer comme maitrisé"}
+              </button>
+            )}
           </div>
         )}
       </div>

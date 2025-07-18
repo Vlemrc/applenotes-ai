@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { useLearningModeStore } from "@/stores/learningModeStore"
+import { useRoadmapItem } from "@/utils/useRoadmapItem"
+import { useRoadmapItemStore } from "@/stores/roadmapItemStore"
 
 interface FlashcardItem {
   question: string
@@ -24,9 +26,10 @@ const FlashCard = ({
   const [isFlipped, setIsFlipped] = useState(false)
   const [direction, setDirection] = useState(1) // 1 pour next, -1 pour previous
   const { isLearningMode } = useLearningModeStore()
-  const [roadmapItemId, setRoadmapItemId] = useState<number | null>(null)
-  const [isUpdatingRoadmap, setIsUpdatingRoadmap] = useState(false)
-  const [isRoadmapItemChecked, setIsRoadmapItemChecked] = useState<boolean>(false)
+
+  // Utiliser le hook comme dans HeaderNote
+  const { item, isChecked, updateChecked } = useRoadmapItem(noteId)
+  const { setRoadmapItems, hasItemsForNote } = useRoadmapItemStore()
 
   useEffect(() => {
     const storedFlashcards = localStorage.getItem(`generated-flashcards-${noteId}`)
@@ -37,54 +40,11 @@ const FlashCard = ({
         console.error("Erreur de parsing JSON :", error)
       }
     }
-
-    // Récupérer les infos du roadmapItem
-    fetchNoteRoadmapInfo()
   }, [noteId])
 
-  const fetchNoteRoadmapInfo = async () => {
-    try {
-      const response = await fetch(`/api/notes?id=${noteId}`)
-      if (response.ok) {
-        const note = await response.json()
-        // Récupérer le premier roadmapItem associé à cette note
-        if (note.roadmapItems && note.roadmapItems.length > 0) {
-          const roadmapItem = note.roadmapItems[0]
-          setRoadmapItemId(roadmapItem.id)
-          setIsRoadmapItemChecked(roadmapItem.checked)
-        }
-      }
-    } catch (error) {
-      console.error("Erreur lors de la récupération des infos de la note:", error)
-    }
-  }
-
   const updateRoadmapItemStatus = async () => {
-    if (!roadmapItemId) return
-
-    setIsUpdatingRoadmap(true)
-    const newCheckedState = !isRoadmapItemChecked
-
-    try {
-      const response = await fetch("/api/roadmap", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          action: "updateItem",
-          itemId: roadmapItemId,
-          checked: newCheckedState,
-        }),
-      })
-
-      if (response.ok) {
-        setIsRoadmapItemChecked(newCheckedState)
-      }
-    } catch (error) {
-    } finally {
-      setIsUpdatingRoadmap(false)
-    }
+    if (!item) return
+    await updateChecked(!isChecked)
   }
 
   const slideVariants = {
@@ -147,10 +107,8 @@ const FlashCard = ({
     <div>
       <h1 className="font-semibold text-yellowLight uppercase -mt-1">Flashcard</h1>
 
-      {/* Conteneur pour l'animation de transition entre flashcards */}
       <div className="relative w-full mt-10 min-h-[340px] perspective-1000">
         <motion.div key={currentCardIndex} className="absolute top-0 left-0 w-full h-full">
-          {/* Composant contenant l'animation de flip */}
           <motion.div
             className="relative w-full h-full bg-grayLight rounded-xl cursor-pointer"
             onClick={toggleFlip}
@@ -162,7 +120,6 @@ const FlashCard = ({
               transformOrigin: "center center",
             }}
           >
-            {/* Face avant (question) */}
             <motion.div
               className="absolute w-full h-full flex flex-col justify-center items-center p-6 rounded-xl"
               style={{
@@ -187,7 +144,6 @@ const FlashCard = ({
               </motion.p>
             </motion.div>
 
-            {/* Face arrière (réponse) */}
             <motion.div
               className="absolute w-full h-full flex flex-col justify-center items-center p-6 rounded-xl"
               style={{
@@ -231,19 +187,16 @@ const FlashCard = ({
             &lt; Précédente
           </button>
 
-          {isLastCard && isLearningMode && roadmapItemId && (
+          {isLastCard && isLearningMode && item && (
             <button
               onClick={updateRoadmapItemStatus}
-              disabled={isUpdatingRoadmap}
               className={`text-sm text-white px-4 rounded-md font-medium hover:bg-yellow transition-colors duration-300 ${
-                isRoadmapItemChecked ? "bg-orange-500 text-white" : "bg-green text-white"
+                isChecked ? "bg-orange-500 text-white" : "bg-green text-white"
               }`}
             >
-              {isUpdatingRoadmap
-                ? "Mise à jour..."
-                : isRoadmapItemChecked
-                  ? "Marquer comme à explorer"
-                  : "Marquer comme maitrisé"}
+              {isChecked
+                ? "Marquer comme à explorer"
+                : "Marquer comme maitrisé"}
             </button>
           )}
 
