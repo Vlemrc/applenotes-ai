@@ -16,7 +16,7 @@ interface HeaderNoteProps {
   note: Note
   mode: "quiz" | "assistant" | "flashcards" | "roadmap" | null
   onResetMode: () => void
-  onNoteUpdate?: (updatedNote: Note) => void // Nouvelle prop pour notifier les changements
+  onNoteUpdate?: (updatedNote: Note) => void 
 }
 
 const HeaderNote = ({ note, mode, onResetMode, onNoteUpdate }: HeaderNoteProps) => {
@@ -61,7 +61,6 @@ const HeaderNote = ({ note, mode, onResetMode, onNoteUpdate }: HeaderNoteProps) 
       if (!response.ok) {
         console.error("Failed to save note title")
       } else {
-        // Notifier le composant parent du changement
         if (onNoteUpdate) {
           const updatedNote = { ...note, title: newTitle }
           onNoteUpdate(updatedNote)

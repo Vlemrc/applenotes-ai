@@ -379,7 +379,7 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
             <div className="w-full flex flex-col items-center justify-center h-20 space-y-3">
               <div className="w-full max-w-md">
                 <div className="flex justify-between text-xs text-gray-600 mb-2">
-                  <div className="w-full text-center animate-gray-gradient text-md whitespace-nowrap flex items-center">
+                  <div className="w-full text-center animate-gray-gradient text-[14px] whitespace-nowrap flex items-center">
                     {getLoadingMessage()}
                   </div>
                   <span>{Math.round(progress)}%</span>

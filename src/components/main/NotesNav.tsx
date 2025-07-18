@@ -200,7 +200,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
       )}
       {lastYearNotes.length !== 0 && (
         <>
-          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">Année dernière</p>
+          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">2025</p>
           <div className="p-2.5 pt-0">
             {lastYearNotes.map((note, index) => (
               <NoteItem

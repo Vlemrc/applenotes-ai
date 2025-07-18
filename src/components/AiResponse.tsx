@@ -157,12 +157,6 @@ const AiResponse = ({ aiResponse, userMessage, onBack, folderId, noteId }: AiRes
         >
           <Dislike color="#6F6F6F" /> Recommencer
         </button>
-        <button
-          className={`text-grayOpacity font-medium text-sm px-2.5 py-1 rounded-lg transition-all hover:bg-zinc-50`}
-          style={{ border: "1px solid var(--gray)" }}
-        >
-          <span className="italic font-semibold text-[16px] text-grayDark mr-1.5">?</span>Questions fréquentes
-        </button>
       </div>
     </>
   )
