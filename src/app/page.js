@@ -23,28 +23,61 @@ export default function Home() {
   const { activeFolderId } = useFolderStore()
   const [activeMode, setActiveMode] = useState(null)
   const [bottomBar, setBottomBar] = useState(false)
-  // Nouvel état pour gérer le step du tutorial
   const [tutorialStep, setTutorialStep] = useState(1)
 
-  useEffect(() => {
+  const fetchNotes = async () => {
     if (activeFolderId) {
-      getNotesByFolder(activeFolderId)
-        .then((fetchedNotes) => {
-          setNotes(fetchedNotes)
+      try {
+        const fetchedNotes = await getNotesByFolder(activeFolderId)
+        setNotes(fetchedNotes)
 
-          if (fetchedNotes.length > 0) {
-            setActiveNote(fetchedNotes[0])
-          }
-        })
-        .catch(console.error)
+        if (fetchedNotes.length > 0 && !activeNote) {
+          setActiveNote(fetchedNotes[0])
+        }
+      } catch (error) {
+        console.error(error)
+      }
     }
+  }
+
+  useEffect(() => {
+    fetchNotes()
   }, [activeFolderId])
+
+  const handleNoteCreated = async (newNote) => {
+    await fetchNotes()
+    setActiveNote(newNote)
+  }
 
   const handleNoteUpdate = (updatedNote) => {
     setNotes((prevNotes) => prevNotes.map((note) => (note.id === updatedNote.id ? updatedNote : note)))
 
     if (activeNote && activeNote.id === updatedNote.id) {
       setActiveNote(updatedNote)
+    }
+  }
+
+  const handleNoteDeleted = async () => {
+    if (activeFolderId) {
+      try {
+        const fetchedNotes = await getNotesByFolder(activeFolderId)
+        setNotes(fetchedNotes)
+
+        if (fetchedNotes.length > 0) {
+          const sortedNotes = [...fetchedNotes].sort((a, b) => {
+            const dateA = new Date(a.updatedAt || a.createdAt)
+            const dateB = new Date(b.updatedAt || b.createdAt)
+            return dateB - dateA 
+          })
+
+          const mostRecentNote = sortedNotes[0]
+          setActiveNote(mostRecentNote)
+        } else {
+          setActiveNote(null)
+        }
+      } catch (error) {
+        console.error("Erreur lors du rechargement des notes:", error)
+      }
     }
   }
 
@@ -55,7 +88,7 @@ export default function Home() {
       <Leftbar onBackToNote={() => setActiveMode(null)} />
       <div className="flex h-screen w-5/6">
         <aside className="min-w-1/3 w-1/3 h-full border-r border-solid border-gray flex flex-col relative">
-          <LeftbarNav activeNote={activeNote} />
+          <LeftbarNav activeNote={activeNote} onNoteDeleted={handleNoteDeleted} />
           <NotesNav
             notes={notes}
             activeNote={activeNote}
@@ -64,7 +97,15 @@ export default function Home() {
           />
         </aside>
         <main className="w-full relative overflow-y-hidden">
-          <ActionsNav bottomBar={bottomBar} setBottomBar={setBottomBar} note={activeNote} tutorialStep={tutorialStep} onModeChange={setActiveMode} activeMode={activeMode} />
+          <ActionsNav
+            bottomBar={bottomBar}
+            setBottomBar={setBottomBar}
+            note={activeNote}
+            tutorialStep={tutorialStep}
+            onModeChange={setActiveMode}
+            activeMode={activeMode}
+            onNoteCreated={handleNoteCreated}
+          />
           <div className="pt-2 px-8 pb-8 h-calc-minus-50 overflow-y-scroll">
             {activeNote && activeMode !== "tutorial" && (
               <HeaderNote

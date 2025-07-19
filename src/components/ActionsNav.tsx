@@ -17,7 +17,25 @@ import { useEffect, useState } from "react"
 import Glossary from "./icons/Glossary"
 import GlossaryLayout from "./GlossaryLayout"
 
-const ActionsNav = ({ bottomBar, setBottomBar, note, tutorialStep, onModeChange, activeMode }) => {
+interface ActionsNavProps {
+  bottomBar: boolean
+  setBottomBar: (value: boolean) => void
+  note: any
+  tutorialStep: number
+  onModeChange: (mode: string | null) => void
+  activeMode: string | null
+  onNoteCreated: (newNote: any) => void
+}
+
+const ActionsNav = ({
+  bottomBar,
+  setBottomBar,
+  note,
+  tutorialStep,
+  onModeChange,
+  activeMode,
+  onNoteCreated,
+}: ActionsNavProps) => {
   const { activeFolderId, folders } = useFolderStore()
   const currentFolder = folders?.find((folder) => folder.id === activeFolderId)
   const { toggleLearningMode, deactivateLearningMode, isLearningMode } = useLearningModeStore()
@@ -44,7 +62,9 @@ const ActionsNav = ({ bottomBar, setBottomBar, note, tutorialStep, onModeChange,
       }
 
       const newNote = await response.json()
-      window.location.reload()
+
+      // Appeler le callback au lieu de recharger la page
+      onNoteCreated(newNote)
     } catch (error) {
       console.error("Erreur lors de l'appel à l'API :", error)
     }
@@ -63,35 +83,11 @@ const ActionsNav = ({ bottomBar, setBottomBar, note, tutorialStep, onModeChange,
         webkitExitFullscreen?: () => Promise<void>
         msExitFullscreen?: () => Promise<void>
       }
-      // if (document.fullscreenElement) {
-      //   if (doc.exitFullscreen) {
-      //     doc.exitFullscreen()
-      //   } else if (doc.webkitExitFullscreen) {
-      //     doc.webkitExitFullscreen()
-      //   } else if (doc.msExitFullscreen) {
-      //     doc.msExitFullscreen()
-      //   }
-      // }
     } else {
       // Si on active le learningMode
-      // Entrer en plein écran
-      // if (!document.fullscreenElement) {
-      //   const elem = document.documentElement as HTMLElement & {
-      //     webkitRequestFullscreen?: () => Promise<void>
-      //     msRequestFullscreen?: () => Promise<void>
-      //   }
-      //   if (elem.requestFullscreen) {
-      //     elem.requestFullscreen()
-      //   } else if (elem.webkitRequestFullscreen) {
-      //     elem.webkitRequestFullscreen()
-      //   } else if (elem.msRequestFullscreen) {
-      //     elem.msRequestFullscreen()
-      //   }
-      // }
-
       if (!localStorage.getItem("tutochecked")) {
         onModeChange("tutorial")
-        localStorage.setItem("tutochecked", "true");
+        localStorage.setItem("tutochecked", "true")
       }
     }
   }
