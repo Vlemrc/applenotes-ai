@@ -3,7 +3,7 @@
 import type { Note } from "@/types/notes"
 import { formatDate } from "@/utils/formatDate"
 import useFolderStore from "@/stores/useFolderStore"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { debounce } from "lodash"
 import type React from "react"
 import { useLearningModeStore } from "@/stores/learningModeStore"
@@ -16,7 +16,7 @@ interface HeaderNoteProps {
   note: Note
   mode: "quiz" | "assistant" | "flashcards" | "roadmap" | null
   onResetMode: () => void
-  onNoteUpdate?: (updatedNote: Note) => void 
+  onNoteUpdate?: (updatedNote: Note) => void
 }
 
 const HeaderNote = ({ note, mode, onResetMode, onNoteUpdate }: HeaderNoteProps) => {
@@ -26,12 +26,20 @@ const HeaderNote = ({ note, mode, onResetMode, onNoteUpdate }: HeaderNoteProps) 
   const [isSaving, setIsSaving] = useState(false)
   const { isLearningMode } = useLearningModeStore()
 
-  const { setRoadmapItems, hasItemsForNote, refreshItemsFromAPI } = useRoadmapItemStore()
+  // Ref pour éviter les conflits de synchronisation
+  const isUserEditingRef = useRef(false)
+  const lastSavedTitleRef = useRef(note?.title || "")
 
+  const { setRoadmapItems, hasItemsForNote, refreshItemsFromAPI } = useRoadmapItemStore()
   const { item, isChecked, updateChecked } = useRoadmapItem(note.id)
 
+  // Mise à jour du titre seulement si l'utilisateur n'est pas en train d'éditer
+  // et si c'est vraiment une nouvelle note ou un changement externe
   useEffect(() => {
-    setTitle(note?.title || "")
+    if (!isUserEditingRef.current && note?.id && note.title !== lastSavedTitleRef.current) {
+      setTitle(note?.title || "")
+      lastSavedTitleRef.current = note?.title || ""
+    }
   }, [note?.id, note?.title])
 
   useEffect(() => {
@@ -61,6 +69,9 @@ const HeaderNote = ({ note, mode, onResetMode, onNoteUpdate }: HeaderNoteProps) 
       if (!response.ok) {
         console.error("Failed to save note title")
       } else {
+        // Mettre à jour la référence du dernier titre sauvegardé
+        lastSavedTitleRef.current = newTitle
+
         if (onNoteUpdate) {
           const updatedNote = { ...note, title: newTitle }
           onNoteUpdate(updatedNote)
@@ -70,11 +81,15 @@ const HeaderNote = ({ note, mode, onResetMode, onNoteUpdate }: HeaderNoteProps) 
       console.error("Error saving note title:", error)
     } finally {
       setIsSaving(false)
+      // L'utilisateur a fini d'éditer
+      isUserEditingRef.current = false
     }
   }, 500)
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value
+    // Marquer que l'utilisateur est en train d'éditer
+    isUserEditingRef.current = true
     setTitle(newTitle)
     saveTitle(newTitle)
   }

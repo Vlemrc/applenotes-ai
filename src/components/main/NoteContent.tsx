@@ -17,7 +17,6 @@ const NoteContent = ({ note }: NoteContentProps) => {
   const [fetchedNote, setFetchedNote] = useState<Note | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Refetch la note à partir de l'API
   useEffect(() => {
     const fetchNote = async () => {
       try {
@@ -90,7 +89,6 @@ const NoteContent = ({ note }: NoteContentProps) => {
     const newContent = e.target.value
     setContent(newContent)
     saveNote(newContent)
-    // Optionnel : autoResizeTextarea() ici pour une meilleure réactivité
   }
 
   return (
