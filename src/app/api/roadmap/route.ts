@@ -1,9 +1,10 @@
 import { OpenAI } from "openai"
 import { PrismaClient } from "@prisma/client"
+import type { NextRequest } from "next/server"
 
 const prisma = new PrismaClient()
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const { action, folderId, itemId, checked, roadmapId } = await req.json()
 
@@ -15,7 +16,7 @@ export async function POST(req: Request) {
       case "updateItem":
         return await updateRoadmapItem(itemId, checked)
       case "delete":
-        return await deleteRoadmap(roadmapId) // Utilisation du bon paramètre
+        return await deleteRoadmap(roadmapId)
       case "regenerate":
         return await regenerateRoadmap(folderId)
       default:
@@ -23,7 +24,13 @@ export async function POST(req: Request) {
     }
   } catch (error) {
     console.error("Error in roadmap API:", error)
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 })
+    return new Response(
+      JSON.stringify({
+        error: "Erreur serveur",
+        details: process.env.NODE_ENV === "development" ? error.message : undefined,
+      }),
+      { status: 500 },
+    )
   }
 }
 
@@ -32,125 +39,158 @@ async function generateRoadmap(folderId: string) {
     return new Response(JSON.stringify({ error: "No folder ID provided" }), { status: 400 })
   }
 
-  const existingRoadmap = await prisma.roadmap.findFirst({
-    where: { folderId: Number.parseInt(folderId) },
-  })
+  try {
+    const existingRoadmap = await prisma.roadmap.findFirst({
+      where: { folderId: Number.parseInt(folderId) },
+    })
 
-  if (existingRoadmap) {
-    return new Response(
-      JSON.stringify({
-        error: "Une roadmap existe déjà pour ce dossier",
-        code: "ROADMAP_ALREADY_EXISTS",
-        existingRoadmap: {
-          id: existingRoadmap.id,
-          title: existingRoadmap.title,
-          createdAt: existingRoadmap.createdAt,
-        },
-      }),
-      { status: 409 },
-    )
-  }
-
-  // Récupérer toutes les notes du dossier
-  const notes = await prisma.note.findMany({
-    where: { folderId: Number.parseInt(folderId) },
-    select: { id: true, title: true },
-  })
-
-  if (notes.length === 0) {
-    return new Response(JSON.stringify({ error: "No notes found in this folder" }), { status: 404 })
-  }
-
-  const folder = await prisma.folder.findUnique({
-    where: { id: Number.parseInt(folderId) },
-    select: { name: true },
-  })
-
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-
-  const noteTitles = notes.map((note) => note.title).join("\n- ")
-
-  const prompt = `
-    Crée une roadmap d'apprentissage basée sur les titres de notes suivants :
-    - ${noteTitles}
-    
-    Règles strictes :
-    - Analyse les titres et détermine l'ordre logique d'apprentissage
-    - Commence par les concepts de base et progresse vers les plus avancés
-    - Chaque titre de note doit apparaître exactement une fois dans la roadmap
-    - Réponds **uniquement** en JSON valide sous la forme suivante :
-    
-    {
-      "roadmapTitle": "Roadmap pour [sujet principal]",
-      "items": [
-        {
-          "noteTitle": "titre exact de la note",
-          "position": 1,
-          "reasoning": "courte explication de pourquoi cette note vient à cette position"
-        }
-      ]
-    }
-    
-    **IMPORTANT** : 
-    - Utilise exactement les titres fournis, sans modification
-    - Échappe les guillemets internes avec \\" pour garantir un JSON valide
-    - L'ordre doit être logique pour l'apprentissage progressif
-  `
-
-  const response = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.3,
-  })
-
-  const aiResponse = JSON.parse(response.choices[0].message.content || "{}")
-
-  const roadmap = await prisma.roadmap.create({
-    data: {
-      title: aiResponse.roadmapTitle || `Roadmap - ${folder?.name}`,
-      folderId: Number.parseInt(folderId),
-    },
-  })
-
-  const roadmapItems = []
-  for (const item of aiResponse.items) {
-    const note = notes.find((n) => n.title === item.noteTitle)
-    if (note) {
-      const roadmapItem = await prisma.roadmapItem.create({
-        data: {
-          roadmapId: roadmap.id,
-          noteId: note.id,
-          position: item.position,
-          checked: false,
-        },
-        include: {
-          note: {
-            select: { id: true, title: true },
+    if (existingRoadmap) {
+      return new Response(
+        JSON.stringify({
+          error: "Une roadmap existe déjà pour ce dossier",
+          code: "ROADMAP_ALREADY_EXISTS",
+          existingRoadmap: {
+            id: existingRoadmap.id,
+            title: existingRoadmap.title,
+            createdAt: existingRoadmap.createdAt,
           },
-        },
-      })
-      roadmapItems.push({
-        ...roadmapItem,
-        reasoning: item.reasoning,
-      })
+        }),
+        { status: 409 },
+      )
     }
+
+    // Récupérer les notes avec limite
+    const notes = await prisma.note.findMany({
+      where: { folderId: Number.parseInt(folderId) },
+      select: { id: true, title: true },
+      take: 20, // Limiter à 20 notes max
+    })
+
+    if (notes.length === 0) {
+      return new Response(JSON.stringify({ error: "No notes found in this folder" }), { status: 404 })
+    }
+
+    const folder = await prisma.folder.findUnique({
+      where: { id: Number.parseInt(folderId) },
+      select: { name: true },
+    })
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+      timeout: 25000,
+    })
+
+    const noteTitles = notes.map((note) => note.title).join("\n- ")
+
+    const prompt = `
+      Crée une roadmap d'apprentissage basée sur les titres de notes suivants :
+      - ${noteTitles}
+      
+      Règles strictes :
+      - Analyse les titres et détermine l'ordre logique d'apprentissage
+      - Commence par les concepts de base et progresse vers les plus avancés
+      - Chaque titre de note doit apparaître exactement une fois dans la roadmap
+      - Réponds **uniquement** en JSON valide sous la forme suivante :
+      
+      {
+        "roadmapTitle": "Roadmap pour [sujet principal]",
+        "items": [
+          {
+            "noteTitle": "titre exact de la note",
+            "position": 1,
+            "reasoning": "courte explication"
+          }
+        ]
+      }
+      
+      **IMPORTANT** : 
+      - Utilise exactement les titres fournis, sans modification
+      - Échappe les guillemets internes avec \\" pour garantir un JSON valide
+    `
+
+    const model = process.env.NODE_ENV === "production" ? "gpt-4o-mini" : "gpt-4"
+
+    const response = await openai.chat.completions.create({
+      model,
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.3,
+      max_tokens: 3000,
+    })
+
+    const content = response.choices[0].message.content
+    if (!content) {
+      throw new Error("No content received from OpenAI")
+    }
+
+    let aiResponse
+    try {
+      aiResponse = JSON.parse(content)
+    } catch (parseError) {
+      const cleanedContent = content.replace(/```json|```/g, "").trim()
+      aiResponse = JSON.parse(cleanedContent)
+    }
+
+    // Créer la roadmap en base
+    const roadmap = await prisma.roadmap.create({
+      data: {
+        title: aiResponse.roadmapTitle || `Roadmap - ${folder?.name}`,
+        folderId: Number.parseInt(folderId),
+      },
+    })
+
+    const roadmapItems = []
+    for (const item of aiResponse.items) {
+      const note = notes.find((n) => n.title === item.noteTitle)
+      if (note) {
+        const roadmapItem = await prisma.roadmapItem.create({
+          data: {
+            roadmapId: roadmap.id,
+            noteId: note.id,
+            position: item.position,
+            checked: false,
+          },
+          include: {
+            note: {
+              select: { id: true, title: true },
+            },
+          },
+        })
+        roadmapItems.push({
+          ...roadmapItem,
+          reasoning: item.reasoning,
+        })
+      }
+    }
+
+    roadmapItems.sort((a, b) => a.position - b.position)
+
+    const result = {
+      roadmap: {
+        id: roadmap.id,
+        title: roadmap.title,
+        createdAt: roadmap.createdAt,
+      },
+      items: roadmapItems,
+    }
+
+    return new Response(JSON.stringify(result), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    })
+  } catch (error) {
+    console.error("Generate roadmap error:", error)
+
+    if (error.code === "timeout") {
+      return new Response(
+        JSON.stringify({
+          error: "La génération a pris trop de temps. Veuillez réessayer.",
+        }),
+        { status: 408 },
+      )
+    }
+
+    throw error
   }
-
-  roadmapItems.sort((a, b) => a.position - b.position)
-
-  const result = {
-    roadmap: {
-      id: roadmap.id,
-      title: roadmap.title,
-      createdAt: roadmap.createdAt,
-    },
-    items: roadmapItems,
-  }
-
-  return new Response(JSON.stringify(result), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  })
 }
 
 async function fetchRoadmaps(folderId: string) {
@@ -195,15 +235,10 @@ async function updateRoadmapItem(itemId: number, checked: boolean) {
 async function deleteRoadmap(roadmapId: number) {
   try {
     if (!roadmapId) {
-      return new Response(
-        JSON.stringify({
-          error: "ID de roadmap manquant",
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        },
-      )
+      return new Response(JSON.stringify({ error: "ID de roadmap manquant" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      })
     }
 
     await prisma.roadmapItem.deleteMany({
@@ -223,22 +258,16 @@ async function deleteRoadmap(roadmapId: number) {
           title: deletedRoadmap.title,
         },
       }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      },
+      { status: 200, headers: { "Content-Type": "application/json" } },
     )
   } catch (error) {
     console.error("Error deleting roadmap:", error)
     return new Response(
       JSON.stringify({
         error: "Erreur lors de la suppression de la roadmap",
-        details: error.message,
+        details: process.env.NODE_ENV === "development" ? error.message : undefined,
       }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
+      { status: 500, headers: { "Content-Type": "application/json" } },
     )
   }
 }
@@ -249,6 +278,7 @@ async function regenerateRoadmap(folderId: string) {
   }
 
   try {
+    // Supprimer l'ancienne roadmap
     const existingRoadmap = await prisma.roadmap.findFirst({
       where: { folderId: Number.parseInt(folderId) },
     })
@@ -257,123 +287,21 @@ async function regenerateRoadmap(folderId: string) {
       await prisma.roadmapItem.deleteMany({
         where: { roadmapId: existingRoadmap.id },
       })
-
       await prisma.roadmap.delete({
         where: { id: existingRoadmap.id },
       })
     }
 
-    const notes = await prisma.note.findMany({
-      where: { folderId: Number.parseInt(folderId) },
-      select: { id: true, title: true },
-    })
-
-    if (notes.length === 0) {
-      return new Response(JSON.stringify({ error: "No notes found in this folder" }), { status: 404 })
-    }
-
-    const folder = await prisma.folder.findUnique({
-      where: { id: Number.parseInt(folderId) },
-      select: { name: true },
-    })
-
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-
-    const noteTitles = notes.map((note) => note.title).join("\n- ")
-
-    const prompt = `
-      Crée une roadmap d'apprentissage basée sur les titres de notes suivants :
-      - ${noteTitles}
-      
-      Règles strictes :
-      - Analyse les titres et détermine l'ordre logique d'apprentissage
-      - Commence par les concepts de base et progresse vers les plus avancés
-      - Chaque titre de note doit apparaître exactement une fois dans la roadmap
-      - Réponds **uniquement** en JSON valide sous la forme suivante :
-      
-      {
-        "roadmapTitle": "Roadmap pour [sujet principal]",
-        "items": [
-          {
-            "noteTitle": "titre exact de la note",
-            "position": 1,
-            "reasoning": "courte explication de pourquoi cette note vient à cette position"
-          }
-        ]
-      }
-      
-      **IMPORTANT** : 
-      - Utilise exactement les titres fournis, sans modification
-      - Échappe les guillemets internes avec \\" pour garantir un JSON valide
-      - L'ordre doit être logique pour l'apprentissage progressif
-    `
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.3,
-    })
-
-    const aiResponse = JSON.parse(response.choices[0].message.content || "{}")
-
-    const roadmap = await prisma.roadmap.create({
-      data: {
-        title: aiResponse.roadmapTitle || `Roadmap - ${folder?.name}`,
-        folderId: Number.parseInt(folderId),
-      },
-    })
-
-    const roadmapItems = []
-    for (const item of aiResponse.items) {
-      const note = notes.find((n) => n.title === item.noteTitle)
-      if (note) {
-        const roadmapItem = await prisma.roadmapItem.create({
-          data: {
-            roadmapId: roadmap.id,
-            noteId: note.id,
-            position: item.position,
-            checked: false,
-          },
-          include: {
-            note: {
-              select: { id: true, title: true },
-            },
-          },
-        })
-        roadmapItems.push({
-          ...roadmapItem,
-          reasoning: item.reasoning,
-        })
-      }
-    }
-
-    roadmapItems.sort((a, b) => a.position - b.position)
-
-    const result = {
-      roadmap: {
-        id: roadmap.id,
-        title: roadmap.title,
-        createdAt: roadmap.createdAt,
-      },
-      items: roadmapItems,
-      message: "Roadmap régénérée avec succès",
-    }
-
-    return new Response(JSON.stringify(result), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    })
+    // Générer une nouvelle roadmap
+    return await generateRoadmap(folderId)
   } catch (error) {
     console.error("Error regenerating roadmap:", error)
     return new Response(
       JSON.stringify({
         error: "Erreur lors de la régénération de la roadmap",
-        details: error.message,
+        details: process.env.NODE_ENV === "development" ? error.message : undefined,
       }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
+      { status: 500, headers: { "Content-Type": "application/json" } },
     )
   }
 }
