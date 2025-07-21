@@ -92,8 +92,9 @@ export default function Home() {
       <Leftbar onBackToNote={() => setActiveMode(null)} setDisplayMode={setDisplayMode} displayMode={displayMode} />
       <div className={`flex h-screen w-full
       lg:w-5/6`}>
-        <aside className={`min-w-[100vw] w-full h-full border-r border-solid border-gray flex flex-col relative ${displayMode === "notes" ? "translate-x-0" : "translate-x-[-100%]"}
-        lg:min-w-[25%] lg:w-1/3 lg:translate-x-0`}>
+        <aside className={`min-w-[100vw] w-full h-full border-r border-solid border-gray flex flex-col relative transition-opacity duration-300 delay-200 ease-in-out bg-[#FAFAFA]
+        ${displayMode === "notes" ? "translate-x-0 opacity-100" : "translate-x-[-100%] opacity-0"}
+        lg:min-w-[25%] lg:w-1/3 lg:translate-x-0 lg:bg-white lg:opacity-100`}>
           <LeftbarNav 
             activeNote={activeNote} 
             onNoteDeleted={handleNoteDeleted} 
@@ -109,8 +110,9 @@ export default function Home() {
             displayMode={displayMode}
           />
         </aside>
-        <main className={`w-full relative overflow-y-hidden ${displayMode === "content" ? "min-w-[100vw] translate-x-[-100%] lg:translate-x-0 lg:min-w-0" : ""}
-        lg:min-w-0 `}>
+        <main className={`w-full relative overflow-y-hidden transition-opacity duration-300 delay-200 ease-in-out
+        ${displayMode === "content" ? "min-w-[100vw] translate-x-[-100%] lg:translate-x-0 lg:min-w-0 opacity-100" : "opacity-0"}
+        lg:min-w-0 lg:opacity-100`}>
           <ActionsNav
             bottomBar={bottomBar}
             setBottomBar={setBottomBar}

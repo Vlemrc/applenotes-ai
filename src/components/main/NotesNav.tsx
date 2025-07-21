@@ -111,11 +111,11 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
     <ul className=" overflow-x-hidden h-full">
       <div
         className={` 
-        absolute bg-gray top-[50px] w-full h-[33px] z-10`}
-      />
+        absolute bg-gray top-[50px] w-full h-[33px] z-10 hidden lg:flex`}
+      />  
       {todayNotes.length !== 0 && (
         <>
-          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">
+          <p className="text-text font-bold text-md lg:text-xs lg:text-grayOpacity lg:font-semibold pl-4 py-2 sticky lg:bg-white top-0 z-10">
             Aujourd&apos;hui
           </p>
           <div className="p-2.5 pt-0">
@@ -139,8 +139,8 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
 
       {yesterdayNotes.length !== 0 && (
         <>
-          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">Hier</p>
-          <div className="p-2.5 pt-0">
+          <p className="text-text font-bold text-md lg:text-xs lg:text-grayOpacity lg:font-semibold pl-4 py-2 sticky lg:bg-white top-0 z-10">Hier</p>
+          <div className="p-2.5 pt-0 bg-white lg:bg-transparent">
             {yesterdayNotes.map((note, index) => (
               <NoteItem
                 key={note.id}
@@ -160,7 +160,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
       )}
       {lastWeekNotes.length !== 0 && (
         <>
-          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">
+          <p className="text-text font-bold text-md lg:text-xs lg:text-grayOpacity lg:font-semibold pl-4 py-2 sticky lg:bg-white top-0 z-10">
             Semaine dernière
           </p>
           <div className="p-2.5 pt-0">
@@ -181,7 +181,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
       )}
       {lastMonthNotes.length !== 0 && (
         <>
-          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">30 jours précédents</p>
+          <p className="text-text font-bold text-md lg:text-xs lg:text-grayOpacity lg:font-semibold pl-4 py-2 sticky lg:bg-white top-0 z-10">30 jours précédents</p>
           <div className="p-2.5 pt-0">
             {lastMonthNotes.map((note, index) => (
               <NoteItem
@@ -202,7 +202,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
       )}
       {lastYearNotes.length !== 0 && (
         <>
-          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">2025</p>
+          <p className="text-text font-bold text-md lg:text-xs lg:text-grayOpacity lg:font-semibold pl-4 py-2 sticky lg:bg-white top-0 z-10">2025</p>
           <div className="p-2.5 pt-0">
             {lastYearNotes.map((note, index) => (
               <NoteItem
@@ -221,7 +221,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
       )}
       {olderNotes.length !== 0 && (
         <>
-          <p className="text-xs text-grayOpacity font-semibold pl-4 py-2 sticky bg-white top-0 z-10">Plus ancien</p>
+          <p className="text-text font-bold text-md lg:text-xs lg:text-grayOpacity lg:font-semibold pl-4 py-2 sticky lg:bg-white top-0 z-10">Plus ancien</p>
           <div className="p-2.5 pt-0">
             {olderNotes.map((note, index) => (
               <NoteItem

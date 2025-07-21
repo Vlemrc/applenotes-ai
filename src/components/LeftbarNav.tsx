@@ -78,7 +78,7 @@ const LeftbarNav = ({ activeNote, onNoteDeleted, setDisplayMode, onNoteCreated }
 
   return (
     <div
-      className={`${currentFolder && currentFolder._count.notes === 0 ? "" : "border-b border-solid border-gray"} h-[50px] flex flex-row justify-between items-center px-2.5 py-4`}
+      className={`${currentFolder && currentFolder._count.notes === 0 ? "" : "lg:border-b lg:border-solid lg:border-gray"} h-[50px] flex flex-row justify-between items-center px-2.5 py-4`}
     >
       <button 
         className="flex flex-row items-center gap-1 lg:hidden"
@@ -86,7 +86,7 @@ const LeftbarNav = ({ activeNote, onNoteDeleted, setDisplayMode, onNoteCreated }
         <ChevronLeft
           className="text-yellow h-6 w-6"
         />
-        <p className="text-yellow">Dossier</p>
+        <p className="text-yellow">Dossiers</p>
       </button>
       <p className="text-text font-bold text-md absolute left-1/2 top-3 translate-x-[-50%] lg:hidden">{currentFolder?.name}</p>
       <div className="hidden lg:flex flex-row items-center">

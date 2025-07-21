@@ -42,7 +42,7 @@ const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick }: NoteItem
   return (
     <ul
       onClick={onClick}
-      className={`cursor-pointer ${isActive || nextIsActive ? "" : "border-nav-note"} ${isTopNote ? "mt-3" : ""}`}
+      className={`cursor-pointer ${isActive || nextIsActive ? "" : "border-nav-note"} ${isTopNote ? "lg:mt-3" : ""}`}
     >
       <li className={`${isActive ? "bg-gray" : "bg-white"} pt-3 pl-7 w-full rounded-md transition-colors`}>
         <h6 className="font-black text-sm text-left">

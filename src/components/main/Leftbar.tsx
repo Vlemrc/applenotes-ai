@@ -72,7 +72,7 @@ const Leftbar = ({ onBackToNote, displayMode, setDisplayMode }: LeftbarProps) =>
 
   return (
     <div
-      className={`${displayMode === "folder" ? "" : "translate-x-[0%]"} translate-x-[100%] w-full h-full bg-[#FAFAFA] p-3 pt-3 flex flex-col gap-4 border-r border-solid border-gray min-w-full 
+      className={`${displayMode === "folder" ? "translate-x-[100%]" : "translate-x-[0%]"} w-full h-full bg-[#FAFAFA] p-3 pt-3 flex flex-col gap-4 border-r border-solid border-gray min-w-full transition-transform duration-300 ease-in-out
     lg:min-w-[0] lg:bg-[#E9E5E1] lg:w-1/6 lg:translate-x-0`}
     >
       <div className="nav-leftbar flex flex-row gap-2 pl-1 items-center hidden lg:flex">
@@ -188,6 +188,7 @@ const Leftbar = ({ onBackToNote, displayMode, setDisplayMode }: LeftbarProps) =>
       >
         {isModifying ? "OK" : "Modifier"}
       </button>
+      <p className="text-text font-bold text-md absolute left-1/2 top-4 translate-x-[-50%] lg:hidden">Dossiers</p>
     </div>
   )
 }
