@@ -84,10 +84,14 @@ export default function Home() {
   const breadcrumbItems = activeNote ? [{ label: activeNote.title, href: "#" }] : []
 
   return (
-    <main className="flex flex-row h-full">
+    <main className="flex flex-row h-full w-full overflow-hidden">
       <Leftbar onBackToNote={() => setActiveMode(null)} />
-      <div className="flex h-screen w-5/6">
-        <aside className="min-w-1/3 w-1/3 h-full border-r border-solid border-gray flex flex-col relative">
+      <div className="flex h-screen w-full
+      lg:w-5/6">
+        <aside className="
+        min-w-full w-full h-full border-r border-solid border-gray flex flex-col relative translate-x-[100%]
+        lg:min-w-[25%] lg:w-1/3 lg:translate-x-0
+        ">
           <LeftbarNav activeNote={activeNote} onNoteDeleted={handleNoteDeleted} />
           <NotesNav
             notes={notes}

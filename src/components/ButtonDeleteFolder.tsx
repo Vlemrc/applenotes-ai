@@ -1,9 +1,11 @@
-import { useState } from "react";
-import useFolderStore from "@/stores/useFolderStore";
+"use client"
+
+import { useState } from "react"
+import useFolderStore from "@/stores/useFolderStore"
 
 export default function ButtonDeleteFolder({ folderId, setEditingFolderId }) {
-  const { deleteFolder } = useFolderStore();
-  const [isHovered, setIsHovered] = useState(false);
+  const { deleteFolder } = useFolderStore()
+  const [isHovered, setIsHovered] = useState(false)
 
   const handleDeleteFolder = async () => {
     try {
@@ -13,17 +15,17 @@ export default function ButtonDeleteFolder({ folderId, setEditingFolderId }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ id: folderId }),
-      });
+      })
 
       if (response.ok) {
-        deleteFolder(folderId); 
+        deleteFolder(folderId)
       } else {
-        console.error("Erreur lors de la suppression du dossier");
+        console.error("Erreur lors de la suppression du dossier")
       }
     } catch (error) {
-      console.error("Erreur lors de la suppression du dossier", error);
+      console.error("Erreur lors de la suppression du dossier", error)
     }
-  };
+  }
 
   return (
     <div className="relative">
@@ -35,22 +37,22 @@ export default function ButtonDeleteFolder({ folderId, setEditingFolderId }) {
       </button>
 
       {isHovered && (
-        <div className="z-[100] bg-grayLight absolute -bottom-2O -right-30 px-4 py-2 shadow-lg rounded-md translate-y-[4px] border border-gray flex flex-col gap-1">
-            <button
+        <div className="
+        z-[100] bg-grayLight absolute -bottom-2O -right-0 px-4 py-2 shadow-lg rounded-md translate-y-[4px] border border-gray flex flex-col gap-1
+        lg:-right-30
+        ">
+          <button
             className="block w-full text-left text-sm text-gray-600 hover:text-gray-900 whitespace-nowrap pr-10"
             onClick={() => setEditingFolderId(folderId)}
-            >
+          >
             Renommer le dossier
-            </button>
-            <div className="w-full h-[1px] bg-gray"></div>
-            <button
-            className="block w-full text-left text-sm whitespace-nowrap"
-            onClick={handleDeleteFolder}
-            >
+          </button>
+          <div className="w-full h-[1px] bg-gray"></div>
+          <button className="block w-full text-left text-sm whitespace-nowrap" onClick={handleDeleteFolder}>
             Supprimer le dossier
-            </button>
+          </button>
         </div>
       )}
     </div>
-  );
+  )
 }
