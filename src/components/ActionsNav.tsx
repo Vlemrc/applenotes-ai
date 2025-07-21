@@ -16,6 +16,7 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import Glossary from "./icons/Glossary"
 import GlossaryLayout from "./GlossaryLayout"
+import { ChevronLeft } from "lucide-react"
 
 interface ActionsNavProps {
   bottomBar: boolean
@@ -25,6 +26,7 @@ interface ActionsNavProps {
   onModeChange: (mode: string | null) => void
   activeMode: string | null
   onNoteCreated: (newNote: any) => void
+  setDisplayMode: (mode: string) => void
 }
 
 const ActionsNav = ({
@@ -35,6 +37,7 @@ const ActionsNav = ({
   onModeChange,
   activeMode,
   onNoteCreated,
+  setDisplayMode,
 }: ActionsNavProps) => {
   const { activeFolderId, folders } = useFolderStore()
   const currentFolder = folders?.find((folder) => folder.id === activeFolderId)
@@ -63,7 +66,6 @@ const ActionsNav = ({
 
       const newNote = await response.json()
 
-      // Appeler le callback au lieu de recharger la page
       onNoteCreated(newNote)
     } catch (error) {
       console.error("Erreur lors de l'appel à l'API :", error)
@@ -77,14 +79,11 @@ const ActionsNav = ({
     setBottomBar(true)
 
     if (wasLearningMode) {
-      // Si on était en learningMode et qu'on le désactive
-      // Sortir du plein écran
       const doc = document as Document & {
         webkitExitFullscreen?: () => Promise<void>
         msExitFullscreen?: () => Promise<void>
       }
     } else {
-      // Si on active le learningMode
       if (!localStorage.getItem("tutochecked")) {
         onModeChange("tutorial")
         localStorage.setItem("tutochecked", "true")
@@ -122,13 +121,24 @@ const ActionsNav = ({
 
   return (
     <div
-      className={`${currentFolder && currentFolder._count.notes === 0 ? "" : "border-b border-solid border-gray"} h-[50px] flex flex-row justify-between items-center px-2.5 py-4 w-full`}
+      className={`${currentFolder && currentFolder._count.notes === 0 ? "" : "lg:border-b lg:border-solid lg:border-gray"} h-[50px] flex flex-row justify-between items-center px-2.5 py-4 w-full`}
     >
-      <div className="flex flex-row items-center justify-between w-full">
+      <button 
+        className="flex flex-row items-center gap-1 lg:hidden"
+        onClick={() => setDisplayMode("notes")}>
+        <ChevronLeft
+          className="text-yellow h-6 w-6"
+        />
+        <p className="text-yellow">{currentFolder?.name}</p>
+      </button>
+      <div className="flex flex-row items-center justify-center absolute top-3 left-1/2 transform -translate-x-1/2 
+      lg:justify-between lg:translate-x-o lg:relative lg:top-auto lg:w-full">
         <div className="flex flex-row items-center gap-0.5">
-          <IconHoverContainer onClick={handleCreateNote}>
-            <Write color="#6F6F6F" />
-          </IconHoverContainer>
+          <div className="hidden lg:flex">
+            <IconHoverContainer onClick={handleCreateNote}>
+              <Write color="#6F6F6F" />
+            </IconHoverContainer>
+          </div>
           {isLearningMode && (
             <IconHoverContainer onClick={handleChangeMode}>
               <div className="translate-y-0.5 transform scale-x-[-1]">
@@ -151,7 +161,7 @@ const ActionsNav = ({
           )}
         </div>
 
-        <div className="flex flex-row items-center gap-2">
+        <div className="hidden lg:flex flex-row items-center gap-2">
           <IconHoverContainer>
             <Text color="#6F6F6F" />
           </IconHoverContainer>
@@ -165,7 +175,7 @@ const ActionsNav = ({
             <Images color="#6F6F6F" />
           </IconHoverContainer>
         </div>
-        <div className="flex flex-row items-center gap-x-6">
+        <div className="hidden lg:flex flex-row items-center gap-x-6">
           <div className="flex flex-row items-center">
             <IconHoverContainer>
               <Link color="#6F6F6F" />

@@ -96,7 +96,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
       const data = await response.json()
       if (response.ok) {
         const roadmapsArray = Array.isArray(data) ? data : []
-        setRoadmaps(folderId, roadmapsArray) // Utilise le store existant
+        setRoadmaps(folderId, roadmapsArray)
       } else {
         setError(data.error || "Erreur inconnue")
       }
@@ -294,7 +294,7 @@ const Roadmap = ({ folderId, onBackToNote }: RoadmapProps) => {
                         idx !== roadmap.items.length - 1
                           ? `roadmap-checkdiv ${item.checked ? "bg-yellowLight" : "bg-grayLight"}`
                           : `${item.checked ? "bg-yellowLight" : "bg-grayLight"}`
-                      } h-6 w-6 rounded-full cursor-pointer flex items-center justify-center absolute right-1/2 translate-y-2 transition-colors duration-200`}
+                      } h-6 w-6 rounded-full cursor-pointer flex items-center justify-center absolute right-4 lg:right-1/2 translate-y-2 transition-colors duration-200`}
                       onClick={() => toggleItemCheck(item.id, !item.checked)}
                     >
                       {item.checked ? (

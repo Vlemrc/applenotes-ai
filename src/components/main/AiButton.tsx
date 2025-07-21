@@ -280,7 +280,7 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
     <>
       <div
         className={`
-                absolute left-1/2 ${bottomBar ? "bottom-0" : "-bottom-[113px]"} -translate-x-1/2 
+                absolute left-1/2 ${bottomBar ? "bottom-0" : "-bottom-[209px] lg:-bottom-[113px]"} -translate-x-1/2 
                 border-t border-solid border-gray w-full
                 flex flex-row items-center justify-center gap-5
                 transition-all duration-300 ease-in-out group bg-white
@@ -312,67 +312,73 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
             />
           </svg>
         </button>
-        <div className="relative flex items-center justify-between w-full gap-4 m-4">
+        <div className="relative flex flex-col items-center justify-between w-full gap-4 m-4
+        lg:flex-row
+        ">
           {!loading && (
             <>
-              <button
-                onClick={() => handleClick("quiz")}
-                id="icon-quiz"
-                className={`
-                          flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
-                            transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300
-                          ${tutorialStep === 2 ? "blinking-background" : ""}
-                        `}
-                aria-label="Quiz"
-                onMouseEnter={() => setHoveredButton("quiz")}
-                onMouseLeave={() => setHoveredButton(null)}
-                disabled={loading}
-              >
-                <Dices tutorialStep={tutorialStep} />
-                <LabelAiNav content="Générer un quiz" />
-              </button>
-              <button
-                onClick={() => handleClick("assistant")}
-                id="icon-brain"
-                className={`flex items-center justify-center flex-col h-full min-h-20 p-2 w-1/4 bg-grayLight rounded-lg ${tutorialStep === 2 ? "blinking-background" : ""}`}
-                aria-label="AI Assistant"
-                onMouseEnter={() => setHoveredButton("brain")}
-                onMouseLeave={() => setHoveredButton(null)}
-                disabled={loading}
-              >
-                <Brain tutorialStep={tutorialStep} />
-                <LabelAiNav content="Enrichir cette note" />
-              </button>
-              <button
-                onClick={() => handleClick("roadmap")}
-                id="icon-roadmap"
-                className={`
+              <div className="flex flex-row gap-4 w-full">
+                <button
+                  onClick={() => handleClick("quiz")}
+                  id="icon-quiz"
+                  className={`
                             flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
-                            transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300 ${tutorialStep === 3 ? "blinking-background" : ""}
-                        `}
-                aria-label="Roadmaps"
-                onMouseEnter={() => setHoveredButton("roadmap")}
-                onMouseLeave={() => setHoveredButton(null)}
-                disabled={loading}
-              >
-                <Roadmap tutorialStep={tutorialStep} />
-                <LabelAiNav content="Accéder à la roadmap" />
-              </button>
-              <button
-                onClick={() => handleClick("flashcards")}
-                id="icon-flashcard"
-                className={`
-                            flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
-                            transition-all duration-300 w-1/4 ease-in-out delay-0 group-hover:delay-300 ${tutorialStep === 2 ? "blinking-background" : ""}
-                        `}
-                aria-label="Flashcards"
-                onMouseEnter={() => setHoveredButton("flashcard")}
-                onMouseLeave={() => setHoveredButton(null)}
-                disabled={loading}
-              >
-                <FlashCard tutorialStep={tutorialStep} />
-                <LabelAiNav content="Créer des flashcards" />
-              </button>
+                              transition-all duration-300 w-1/2 ease-in-out delay-0 group-hover:delay-300
+                            ${tutorialStep === 2 ? "blinking-background" : ""}
+                          `}
+                  aria-label="Quiz"
+                  onMouseEnter={() => setHoveredButton("quiz")}
+                  onMouseLeave={() => setHoveredButton(null)}
+                  disabled={loading}
+                >
+                  <Dices tutorialStep={tutorialStep} />
+                  <LabelAiNav content="Générer un quiz" />
+                </button>
+                <button
+                  onClick={() => handleClick("assistant")}
+                  id="icon-brain"
+                  className={`flex items-center justify-center flex-col h-full min-h-20 p-2 w-1/2 bg-grayLight rounded-lg ${tutorialStep === 2 ? "blinking-background" : ""}`}
+                  aria-label="AI Assistant"
+                  onMouseEnter={() => setHoveredButton("brain")}
+                  onMouseLeave={() => setHoveredButton(null)}
+                  disabled={loading}
+                >
+                  <Brain tutorialStep={tutorialStep} />
+                  <LabelAiNav content="Enrichir cette note" />
+                </button>
+              </div>
+              <div className="flex flex-row gap-4 w-full">
+                <button
+                  onClick={() => handleClick("roadmap")}
+                  id="icon-roadmap"
+                  className={`
+                              flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
+                              transition-all duration-300 w-1/2 ease-in-out delay-0 group-hover:delay-300 ${tutorialStep === 3 ? "blinking-background" : ""}
+                          `}
+                  aria-label="Roadmaps"
+                  onMouseEnter={() => setHoveredButton("roadmap")}
+                  onMouseLeave={() => setHoveredButton(null)}
+                  disabled={loading}
+                >
+                  <Roadmap tutorialStep={tutorialStep} />
+                  <LabelAiNav content="Accéder à la roadmap" />
+                </button>
+                <button
+                  onClick={() => handleClick("flashcards")}
+                  id="icon-flashcard"
+                  className={`
+                              flex flex-col align-center rounded-lg flex items-center justify-center bg-grayLight min-h-20
+                              transition-all duration-300 w-1/2 ease-in-out delay-0 group-hover:delay-300 ${tutorialStep === 2 ? "blinking-background" : ""}
+                          `}
+                  aria-label="Flashcards"
+                  onMouseEnter={() => setHoveredButton("flashcard")}
+                  onMouseLeave={() => setHoveredButton(null)}
+                  disabled={loading}
+                >
+                  <FlashCard tutorialStep={tutorialStep} />
+                  <LabelAiNav content="Créer des flashcards" />
+                </button>
+              </div>
             </>
           )}
           {loading && (

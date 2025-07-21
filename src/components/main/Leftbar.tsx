@@ -72,7 +72,7 @@ const Leftbar = ({ onBackToNote, displayMode, setDisplayMode }: LeftbarProps) =>
 
   return (
     <div
-      className={`${displayMode === "folder" ? "" : "translate-x-0"} translate-x-[100%] w-full h-full bg-[#FAFAFA] p-3 pt-3 flex flex-col gap-4 border-r border-solid border-gray min-w-full 
+      className={`${displayMode === "folder" ? "" : "translate-x-[0%]"} translate-x-[100%] w-full h-full bg-[#FAFAFA] p-3 pt-3 flex flex-col gap-4 border-r border-solid border-gray min-w-full 
     lg:min-w-[0] lg:bg-[#E9E5E1] lg:w-1/6 lg:translate-x-0`}
     >
       <div className="nav-leftbar flex flex-row gap-2 pl-1 items-center hidden lg:flex">

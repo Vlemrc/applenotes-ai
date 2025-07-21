@@ -109,7 +109,7 @@ const AiResponse = ({ aiResponse, userMessage, onBack, folderId, noteId }: AiRes
       <div>
         <p className="text-md whitespace-pre-line">{aiResponse}</p>
       </div>
-      <div id="nav-buttons" className="flex flex-row pt-4 gap-2">
+      <div id="nav-buttons" className="flex flex-row flex-wrap pt-4 gap-2">
         <button
           className="text-grayOpacity font-medium text-sm px-2.5 py-1 rounded-lg transition-all hover:bg-zinc-50"
           style={{ border: "1px solid var(--gray)" }}

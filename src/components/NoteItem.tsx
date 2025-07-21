@@ -46,15 +46,17 @@ const NoteItem = ({ note, isActive, nextIsActive, isTopNote, onClick }: NoteItem
     >
       <li className={`${isActive ? "bg-gray" : "bg-white"} pt-3 pl-7 w-full rounded-md transition-colors`}>
         <h6 className="font-black text-sm text-left">
-          {note.title.length > 30 ? note.title.slice(0, 30) + "…" : note.title}
+          {note.title.length > (window.innerWidth <= 768 ? 45 : 30)
+            ? note.title.slice(0, window.innerWidth <= 768 ? 45 : 30) + "…"
+            : note.title}
         </h6>
 
         <div className={`flex flex-row gap-2.5 pr-7 ${item && currentFolder?.roadmaps.length > 0 ? "" : "pb-[12px]"} ${isLearningMode ? "" : "pb-[12px]"}`}>
           <p className="text-medium text-xs">{date}</p>
           <p className="truncate-text text-grayDark text-xs">
             {note.content
-              ? note.content.length > 30
-                ? note.content.slice(0, 30) + "…"
+              ? note.content.length > (window.innerWidth <= 768 ? 45 : 30)
+                ? note.content.slice(0, window.innerWidth <= 768 ? 45 : 30) + "…"
                 : note.content
               : "Pas d'autre texte"}
           </p>

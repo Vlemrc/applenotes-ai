@@ -172,25 +172,44 @@ const FlashCard = ({
         </motion.div>
       </div>
 
-      <div className="flex flex-row justify-between mt-2.5">
-        <p className="font-medium text-text">
-          {currentCardIndex + 1} / {totalFlashcards}
-        </p>
-        <div className="flex gap-4 items-center">
-          <button
-            onClick={handlePreviousCard}
-            className={`font-medium text-text animlinkunderline ${
-              currentCardIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={currentCardIndex === 0}
-          >
-            &lt; Précédente
-          </button>
-
+        <div className="flex flex-row justify-between items-center mt-2">
+          <p className="font-medium text-text">
+            {currentCardIndex + 1} / {totalFlashcards}
+          </p>
+          <div className="flex flex-row gap-2">
+            <button
+              onClick={handlePreviousCard}
+              className={`font-medium text-text animlinkunderline ${
+                currentCardIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={currentCardIndex === 0}
+            >
+              &lt; Précédente
+            </button>
+            {isLastCard ? (
+              <button
+                onClick={() => onBackToNote && onBackToNote(noteId)}
+                className="text-sm border border-solid border-grayLight shadow-sm px-2 bg-white rounded-md font-medium hover:bg-grayLight transition-colors duration-300"
+              >
+                Revenir sur ma note
+              </button>
+            ) : (
+              <button
+                onClick={handleNextCard}
+                className={`font-medium text-text animlinkunderline ${
+                  currentCardIndex === totalFlashcards - 1 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={currentCardIndex === totalFlashcards - 1}
+              >
+                Suivante &gt;
+              </button>
+            )}
+          </div>
+        </div>
           {isLastCard && isLearningMode && item && (
             <button
               onClick={updateRoadmapItemStatus}
-              className={`text-sm text-white px-4 rounded-md font-medium hover:bg-yellow transition-colors duration-300 ${
+              className={`text-sm text-white px-4 rounded-md font-medium hover:bg-yellow transition-colors duration-300 float-right mt-2 ${
                 isChecked ? "bg-orange-500 text-white" : "bg-green text-white"
               }`}
             >
@@ -199,27 +218,6 @@ const FlashCard = ({
                 : "Marquer comme maitrisé"}
             </button>
           )}
-
-          {isLastCard ? (
-            <button
-              onClick={() => onBackToNote && onBackToNote(noteId)}
-              className="text-sm border border-solid border-grayLight shadow-sm px-2 bg-white rounded-md font-medium hover:bg-grayLight transition-colors duration-300"
-            >
-              Revenir sur ma note
-            </button>
-          ) : (
-            <button
-              onClick={handleNextCard}
-              className={`font-medium text-text animlinkunderline ${
-                currentCardIndex === totalFlashcards - 1 ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={currentCardIndex === totalFlashcards - 1}
-            >
-              Suivante &gt;
-            </button>
-          )}
-        </div>
-      </div>
     </div>
   )
 }

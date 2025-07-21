@@ -92,9 +92,14 @@ export default function Home() {
       <Leftbar onBackToNote={() => setActiveMode(null)} setDisplayMode={setDisplayMode} displayMode={displayMode} />
       <div className={`flex h-screen w-full
       lg:w-5/6`}>
-        <aside className={`min-w-full w-full h-full border-r border-solid border-gray flex flex-col relative ${displayMode === "notes" ? "translate-x-0" : "translate-x-[-100%]"}
+        <aside className={`min-w-[100vw] w-full h-full border-r border-solid border-gray flex flex-col relative ${displayMode === "notes" ? "translate-x-0" : "translate-x-[-100%]"}
         lg:min-w-[25%] lg:w-1/3 lg:translate-x-0`}>
-          <LeftbarNav activeNote={activeNote} onNoteDeleted={handleNoteDeleted} />
+          <LeftbarNav 
+            activeNote={activeNote} 
+            onNoteDeleted={handleNoteDeleted} 
+            setDisplayMode={setDisplayMode} 
+            onNoteCreated={handleNoteCreated}
+          />
           <NotesNav
             notes={notes}
             activeNote={activeNote}
@@ -104,9 +109,8 @@ export default function Home() {
             displayMode={displayMode}
           />
         </aside>
-        <main className="w-full relative overflow-y-hidden
-        lg:min-w-0 
-        ">
+        <main className={`w-full relative overflow-y-hidden ${displayMode === "content" ? "min-w-[100vw] translate-x-[-100%] lg:translate-x-0 lg:min-w-0" : ""}
+        lg:min-w-0 `}>
           <ActionsNav
             bottomBar={bottomBar}
             setBottomBar={setBottomBar}
@@ -115,6 +119,7 @@ export default function Home() {
             onModeChange={setActiveMode}
             activeMode={activeMode}
             onNoteCreated={handleNoteCreated}
+            setDisplayMode={setDisplayMode} 
           />
           <div className="pt-2 px-8 pb-8 h-calc-minus-50 overflow-y-scroll">
             {activeNote && activeMode !== "tutorial" && (

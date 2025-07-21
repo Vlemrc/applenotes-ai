@@ -164,7 +164,7 @@ const Quiz = ({
                   <li
                     key={index}
                     onClick={() => handleAnswerClick(index)}
-                    className={`font-semibold text-center text-sm w-1/3 flex items-center justify-center px-4 py-5 rounded-lg cursor-pointer transition-all duration-300
+                    className={`font-semibold text-center text-sm w-full lg:w-1/3 flex items-center justify-center px-4 py-5 rounded-lg cursor-pointer transition-all duration-300
                     ${
                       selectedAnswerIndex !== null
                         ? index === selectedAnswerIndex
