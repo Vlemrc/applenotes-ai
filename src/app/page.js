@@ -24,6 +24,8 @@ export default function Home() {
   const [activeMode, setActiveMode] = useState(null)
   const [bottomBar, setBottomBar] = useState(false)
   const [tutorialStep, setTutorialStep] = useState(1)
+  const [displayMode, setDisplayMode] = useState("folder")
+  console.log(displayMode)
 
   const fetchNotes = async () => {
     if (activeFolderId) {
@@ -83,24 +85,28 @@ export default function Home() {
 
   const breadcrumbItems = activeNote ? [{ label: activeNote.title, href: "#" }] : []
 
+  
+
   return (
     <main className="flex flex-row h-full w-full overflow-hidden">
-      <Leftbar onBackToNote={() => setActiveMode(null)} />
-      <div className="flex h-screen w-full
-      lg:w-5/6">
-        <aside className="
-        min-w-full w-full h-full border-r border-solid border-gray flex flex-col relative translate-x-[100%]
-        lg:min-w-[25%] lg:w-1/3 lg:translate-x-0
-        ">
+      <Leftbar onBackToNote={() => setActiveMode(null)} setDisplayMode={setDisplayMode} displayMode={displayMode} />
+      <div className={`flex h-screen w-full
+      lg:w-5/6`}>
+        <aside className={`min-w-full w-full h-full border-r border-solid border-gray flex flex-col relative ${displayMode === "notes" ? "translate-x-0" : "translate-x-[-100%]"}
+        lg:min-w-[25%] lg:w-1/3 lg:translate-x-0`}>
           <LeftbarNav activeNote={activeNote} onNoteDeleted={handleNoteDeleted} />
           <NotesNav
             notes={notes}
             activeNote={activeNote}
             onNoteSelect={setActiveNote}
             onBackToNote={() => setActiveMode(null)}
+            setDisplayMode={setDisplayMode}
+            displayMode={displayMode}
           />
         </aside>
-        <main className="w-full relative overflow-y-hidden">
+        <main className="w-full relative overflow-y-hidden
+        lg:min-w-0 
+        ">
           <ActionsNav
             bottomBar={bottomBar}
             setBottomBar={setBottomBar}

@@ -16,9 +16,11 @@ import { ChevronRight } from "lucide-react"
 
 interface LeftbarProps {
   onBackToNote: () => void
+  displayMode: string
+  setDisplayMode: (mode: string) => void 
 }
 
-const Leftbar = ({ onBackToNote }: LeftbarProps) => {
+const Leftbar = ({ onBackToNote, displayMode, setDisplayMode }: LeftbarProps) => {
   const { folders, activeFolderId, setActiveFolder, fetchFolders, isLoading } = useFolderStore()
   const [addFolder, setAddFolder] = useState(false)
   const [hoveredFolderId, setHoveredFolderId] = useState<number | null>(null)
@@ -34,6 +36,7 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
   const handleFolderClick = (folder: Folder) => {
     setActiveFolder(folder.id)
     onBackToNote()
+    setDisplayMode("notes")
   }
 
   const handleFolderAdded = () => {
@@ -69,8 +72,8 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
 
   return (
     <div
-      className="w-1/6 h-full bg-[#FAFAFA] p-3 pt-3 flex flex-col gap-4 border-r border-solid border-gray min-w-full 
-    lg:min-w-[0] lg:bg-[#E9E5E1]"
+      className={`${displayMode === "folder" ? "" : "translate-x-0"} translate-x-[100%] w-full h-full bg-[#FAFAFA] p-3 pt-3 flex flex-col gap-4 border-r border-solid border-gray min-w-full 
+    lg:min-w-[0] lg:bg-[#E9E5E1] lg:w-1/6 lg:translate-x-0`}
     >
       <div className="nav-leftbar flex flex-row gap-2 pl-1 items-center hidden lg:flex">
         <div className="bg-[#FF5F57] h-3 w-3 rounded-full"></div>
@@ -91,8 +94,8 @@ const Leftbar = ({ onBackToNote }: LeftbarProps) => {
         </h6>
         <ul
           className="
-        bg-white rounded-md
-        lg:bg-transparent"
+        bg-white rounded-md pt-1
+        lg:bg-transparent pt-0"
         >
           {isLoading ? (
             <div className="text-sm text-grayDark p-2">Chargement...</div>

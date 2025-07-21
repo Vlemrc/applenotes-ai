@@ -9,9 +9,11 @@ interface NotesNavProps {
   activeNote: Note | null
   onNoteSelect: (note: Note) => void
   onBackToNote?: (noteId: number) => void
+  setDisplayMode: (mode: string) => void
+  displayMode: string
 }
 
-export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote }: NotesNavProps) {
+export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote, setDisplayMode, displayMode }: NotesNavProps) {
   const [isLoading, setIsLoading] = useState(true)
   const { activeFolderId, folders } = useFolderStore()
 
@@ -30,6 +32,7 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
   const handleNoteClick = (note: Note) => {
     onNoteSelect(note);
     onBackToNote && onBackToNote(note.id);
+    setDisplayMode("content");
   };
 
   if (isEmptyFolder) {
@@ -107,7 +110,6 @@ export default function NotesNav({ notes, activeNote, onNoteSelect, onBackToNote
   return (
     <ul className=" overflow-x-hidden h-full">
       <div
-      // ${notes.length >= 7 ? "w-calc-minus-15" : ""}
         className={` 
         absolute bg-gray top-[50px] w-full h-[33px] z-10`}
       />
