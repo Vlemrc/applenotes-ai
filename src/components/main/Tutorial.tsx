@@ -61,8 +61,8 @@ export default function Tutorial({ onModeChange, step, setStep }: TutorialProps)
 
   return (
     <section className="flex items-center justify-center flex-row h-full">
-      <div className="w-full h-full -translate-y-20 flex flex-col items-center justify-center relative">
-        <p className="text-sm text-grayDark text-center absolute top-20 left-1/2 -translate-x-1/2">Didacticiel</p>
+      <div className="w-full h-full lg:-translate-y-20 flex flex-col items-center justify-center relative">
+        <p className="text-sm text-grayDark text-center absolute top-0 lg:top-20 left-1/2 -translate-x-1/2">Didacticiel</p>
         {step === 1 && (
           <>
             <h2 className="pt-20 text-2xl font-bold w-full bg-transparent outline-none pb-1 text-center text-[#161828]">
@@ -84,10 +84,10 @@ export default function Tutorial({ onModeChange, step, setStep }: TutorialProps)
 
         {step > 1 && (
           <>
-            <div className="flex flex-row gap-8 h-[85%] items-center justify-center">
-              <div className="w-1/2 flex flex-col">
-                <h6 className="font-semibold pb-3">{currentContent.subtitle}</h6>
-                <h2 className="font-bold text-6xl tracking-tighter pb-5">
+            <div className="flex flex-col lg:flex-row gap-8 h-full lg:h-[85%] items-center justify-center">
+              <div className="w-full lg:w-1/2 flex flex-col">
+                <h6 className="font-semibold text-center lg:text-left pb-3">{currentContent.subtitle}</h6>
+                <h2 className="font-bold text-5xl lg:text-6xl tracking-tighter pb-5 text-center lg:text-left">
                   {currentContent.title.split(" ").map((word, index, array) => (
                     <React.Fragment key={index}>
                       {word}
@@ -96,9 +96,9 @@ export default function Tutorial({ onModeChange, step, setStep }: TutorialProps)
                     </React.Fragment>
                   ))}
                 </h2>
-                <p className="text-grayDark font-semibold text-sm">{currentContent.description}</p>
+                <p className="text-grayDark font-semibold text-sm text-center lg:text-left">{currentContent.description}</p>
               </div>
-              <div className="w-1/2"><AppleSphere step={step} /></div>
+              <div className="w-full lg:w-1/2"><AppleSphere step={step} /></div>
             </div>
             <div className="flex flex-row justify-between items-center gap-4 w-full">
               <p className="text-sm">{String(currentContent.stepNumber).padStart(2, "0")}</p>

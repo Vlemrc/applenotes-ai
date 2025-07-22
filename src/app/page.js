@@ -25,7 +25,6 @@ export default function Home() {
   const [bottomBar, setBottomBar] = useState(false)
   const [tutorialStep, setTutorialStep] = useState(1)
   const [displayMode, setDisplayMode] = useState("folder")
-  console.log(displayMode)
 
   const fetchNotes = async () => {
     if (activeFolderId) {
