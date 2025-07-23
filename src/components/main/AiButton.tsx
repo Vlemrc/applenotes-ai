@@ -7,6 +7,7 @@ import Dices from "../icons/Dices"
 import FlashCard from "../icons/FlashCard"
 import Roadmap from "../icons/Roadmap"
 import LabelAiNav from "../LabelAiNav"
+import QuizDetailsInput from "../QuizDetailsInput"
 import useFolderStore from "@/stores/useFolderStore"
 
 interface AiButtonProps {
@@ -24,6 +25,7 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
   const [progress, setProgress] = useState<number>(0)
   const [mode, setMode] = useState<"quiz" | "assistant" | "flashcards" | "roadmap" | "tutorial" | null>(null)
   const [currentMessageIndex, setCurrentMessageIndex] = useState<number>(0)
+  const [showQuizDetails, setShowQuizDetails] = useState<boolean>(false)
 
   const { activeFolderId, folders } = useFolderStore()
 
@@ -101,7 +103,7 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
     return progressInterval
   }
 
-  const fetchAIResponse = async (mode: "quiz" | "flashcards") => {
+  const fetchAIResponse = async (mode: "quiz" | "flashcards", complexity?: string, questionCount?: number) => {
     let progressInterval: NodeJS.Timeout | null = null
 
     try {
@@ -113,7 +115,10 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
       progressInterval = simulateProgress(15000)
 
       const endpoint = mode === "quiz" ? "/api/quiz" : "/api/flashcard"
-      const payload = mode === "quiz" ? { noteContent, questionCount: 8 } : { noteContent, flashcardsCount: 8 }
+      const payload =
+        mode === "quiz"
+          ? { noteContent, questionCount: questionCount || 8, complexity: complexity || "moyen" }
+          : { noteContent, flashcardsCount: 8 }
 
       const response = await fetch(endpoint, {
         method: "POST",
@@ -228,11 +233,27 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
     }
   }
 
+  const handleQuizGenerate = async (complexity: string, questionCount: number) => {
+    setMode("quiz")
+    const generatedContent = await fetchAIResponse("quiz", complexity, questionCount)
+    if (generatedContent) {
+      localStorage.setItem(`generated-quiz-${noteId}`, JSON.stringify(generatedContent))
+    }
+    setBottomBar(false)
+    onModeChange("quiz")
+  }
+
   const handleClick = async (mode: "quiz" | "assistant" | "flashcards" | "roadmap") => {
     if (loading) return
+
+    if (mode === "quiz") {
+      setShowQuizDetails(true)
+      return
+    }
+
     setMode(mode)
 
-    if (mode === "quiz" || mode === "flashcards") {
+    if (mode === "flashcards") {
       const generatedContent = await fetchAIResponse(mode)
       if (generatedContent) {
         localStorage.setItem(`generated-${mode}-${noteId}`, JSON.stringify(generatedContent))
@@ -278,6 +299,13 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
 
   return (
     <>
+      {showQuizDetails && (
+        <QuizDetailsInput
+          setShowQuizDetails={setShowQuizDetails}
+          onQuizGenerate={handleQuizGenerate}
+          noteContent={noteContent}
+        />
+      )}
       <div
         className={`
                 absolute left-1/2 ${bottomBar ? "bottom-0" : "-bottom-[209px] lg:-bottom-[113px]"} -translate-x-1/2 
@@ -312,9 +340,11 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
             />
           </svg>
         </button>
-        <div className="relative flex flex-col items-center justify-between w-full gap-4 m-4
+        <div
+          className="relative flex flex-col items-center justify-between w-full gap-4 m-4
         lg:flex-row
-        ">
+        "
+        >
           {!loading && (
             <>
               <div className="flex flex-row gap-4 w-full">

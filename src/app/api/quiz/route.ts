@@ -1,29 +1,43 @@
-import { OpenAI } from "openai"
+import OpenAI from "openai"
 import type { NextRequest } from "next/server"
 
 export async function POST(req: NextRequest) {
   try {
-    const { noteContent, questionCount = 8 } = await req.json()
+    const { noteContent, questionCount = 8, complexity = "moyen" } = await req.json()
 
     if (!noteContent) {
       return new Response(JSON.stringify({ error: "No content provided" }), { status: 400 })
     }
 
-    // Limiter le nombre de questions pour éviter les timeouts
-    const limitedQuestionCount = Math.min(questionCount, 10)
+    const limitedQuestionCount = Math.min(questionCount, 15)
 
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
-      timeout: 25000,
+      timeout: 120000,
     })
+
+    const getComplexityInstructions = (level: string) => {
+      switch (level) {
+        case "facile":
+          return "Les questions doivent être simples et directes, portant sur les faits et concepts de base présents dans la note."
+        case "moyen":
+          return "Les questions doivent être équilibrées, mélangeant des questions factuelles et des questions nécessitant une compréhension plus approfondie."
+        case "difficile":
+          return "Les questions doivent être complexes, nécessitant une analyse approfondie, des connexions entre concepts et une réflexion critique."
+        default:
+          return "Les questions doivent être équilibrées, mélangeant des questions factuelles et des questions nécessitant une compréhension plus approfondie."
+      }
+    }
 
     const prompt = `
       Crée un quiz basé sur la note suivante :
       ---
-      ${noteContent.slice(0, 4000)} // Limiter la taille
+      ${noteContent}
       ---
       Règles strictes :
       - Il doit y avoir ${limitedQuestionCount} questions.
+      - Complexité : ${complexity.toUpperCase()}
+      - ${getComplexityInstructions(complexity)}
       - La langue du quiz doit être identique à celle de la note.
       - Chaque question doit avoir exactement 4 réponses possibles.
       - Une seule réponse correcte par question.
@@ -52,8 +66,8 @@ export async function POST(req: NextRequest) {
     const response = await openai.chat.completions.create({
       model,
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
-      max_tokens: 3000
+      temperature: complexity === "difficile" ? 0.8 : complexity === "facile" ? 0.5 : 0.7,
+      max_tokens: 5000,
     })
 
     const content = response.choices[0].message.content

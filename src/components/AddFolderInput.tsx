@@ -63,7 +63,7 @@ export default function AddFolderInput({ setAddFolder, onFolderAdded }) {
     };
 
     return (
-        <div ref={containerRef} className="fixed flex items-center justify-center inset-0 bg-gray__container z-50">
+        <div ref={containerRef} className="fixed flex items-center justify-center inset-0 bg-gray__container z-1000000 lg:w-screen">
             <div ref={modalRef} className="bg-white w-4/5 lg:w-1/3 rounded-lg p-6 flex flex-col gap-4 border border-grayOpacity">
                 <h2 className="text-black font-bold text-sm">Nouveau dossier</h2>
 
