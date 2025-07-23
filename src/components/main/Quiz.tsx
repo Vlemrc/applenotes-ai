@@ -34,8 +34,6 @@ const Quiz = ({
   const [score, setScore] = useState(0)
   const [feedback, setFeedback] = useState<{ message: string; isCorrect: boolean } | null>(null)
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number | null>(null)
-  const [debugInfo, setDebugInfo] = useState<string>("")
-  const [isLoading, setIsLoading] = useState(true)
   const { isLearningMode } = useLearningModeStore()
   
   // Utiliser le hook comme dans HeaderNote
@@ -43,34 +41,16 @@ const Quiz = ({
   const { setRoadmapItems, hasItemsForNote } = useRoadmapItemStore()
 
   useEffect(() => {
-    console.log(`[Quiz] Tentative de récupération du quiz pour noteId: ${noteId}`)
-    
     const storedQuiz = localStorage.getItem(`generated-quiz-${noteId}`)
-    
     if (storedQuiz) {
-      console.log(`[Quiz] Quiz trouvé dans localStorage:`, storedQuiz.substring(0, 100) + "...")
       try {
-        const parsedQuiz = JSON.parse(storedQuiz)
-        console.log(`[Quiz] Quiz parsé avec succès:`, parsedQuiz)
-        setQuizData(parsedQuiz)
-        setDebugInfo(`Quiz chargé avec succès (${parsedQuiz.questions?.length || 0} questions)`)
+        setQuizData(JSON.parse(storedQuiz))
       } catch (error) {
-        console.error(`[Quiz] Erreur de parsing JSON:`, error)
-        setDebugInfo(`Erreur de parsing: ${error.message}`)
+        console.error("Erreur de parsing JSON :", error)
       }
-    } else {
-      console.log(`[Quiz] Aucun quiz trouvé dans localStorage pour la clé: generated-quiz-${noteId}`)
-      setDebugInfo("Aucun quiz trouvé dans localStorage")
-      
-      // Debugging: lister toutes les clés localStorage
-      const allKeys = Object.keys(localStorage)
-      console.log(`[Quiz] Toutes les clés localStorage:`, allKeys)
-      
-      const quizKeys = allKeys.filter(key => key.startsWith('generated-quiz-'))
-      console.log(`[Quiz] Clés quiz trouvées:`, quizKeys)
     }
-    
-    setIsLoading(false)
+
+    // Récupérer les infos du roadmapItem
   }, [noteId])
 
   const handleBackToNote = () => {
@@ -151,35 +131,12 @@ const Quiz = ({
     await updateChecked(!isChecked)
   }
 
-  if (isLoading) {
-    return (
-      <div>
-        <h1 className="font-semibold text-yellowLight uppercase -mt-1">Quiz</h1>
-        <div className="relative bg-grayLight flex flex-col items-center p-6 rounded-xl mt-10">
-          <p>Chargement du quiz...</p>
-        </div>
-      </div>
-    )
-  }
-
   if (!quizData) {
     return (
       <div>
         <h1 className="font-semibold text-yellowLight uppercase -mt-1">Quiz</h1>
         <div className="relative bg-grayLight flex flex-col items-center p-6 rounded-xl mt-10">
-          <p className="mb-4">Aucun quiz trouvé pour cette note.</p>
-          <div className="text-xs text-gray-600 bg-gray-100 p-3 rounded">
-            <strong>Debug Info:</strong><br/>
-            {debugInfo}<br/>
-            <strong>Note ID:</strong> {noteId}<br/>
-            <strong>Clé recherchée:</strong> generated-quiz-{noteId}
-          </div>
-          <button
-            onClick={handleBackToNote}
-            className="mt-4 text-sm bg-yellowLight text-white px-4 py-2 rounded-md font-medium hover:bg-yellow transition-colors duration-300"
-          >
-            Retour à la note
-          </button>
+          <p>Votre note est trop courte pour demander un quiz.</p>
         </div>
       </div>
     )
