@@ -17,7 +17,7 @@ export default function QuizDetailsInput({ showQuizDetails, setShowQuizDetails, 
 
   const calculateQuestionCount = (content: string, complexityLevel: string) => {
     const wordCount = content.trim().split(/\s+/).length
-    const baseQuestions = Math.max(3, Math.min(15, Math.floor(wordCount / 20)))
+    const baseQuestions = Math.max(3, Math.min(20, Math.floor(wordCount / 20)))
 
     switch (complexityLevel) {
       case "facile":
@@ -25,7 +25,7 @@ export default function QuizDetailsInput({ showQuizDetails, setShowQuizDetails, 
       case "moyen":
         return Math.min(20, Math.floor(baseQuestions * 0.7))
       case "difficile":
-        return Math.min(20, Math.floor(baseQuestions * 1))
+        return Math.min(20, Math.floor(baseQuestions * 1.3))
       default:
         return baseQuestions
     }
