@@ -3,15 +3,15 @@
 import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
-import gsap from "gsap"
 
 interface QuizDetailsInputProps {
   setShowQuizDetails: (show: boolean) => void
   onQuizGenerate: (complexity: string, questionCount: number) => void
   noteContent: string
+  showQuizDetails: boolean
 }
 
-export default function QuizDetailsInput({ setShowQuizDetails, onQuizGenerate, noteContent }: QuizDetailsInputProps) {
+export default function QuizDetailsInput({ showQuizDetails, setShowQuizDetails, onQuizGenerate, noteContent }: QuizDetailsInputProps) {
   const [complexity, setComplexity] = useState("moyen")
   const [questionCount, setQuestionCount] = useState(0)
 
@@ -56,8 +56,11 @@ export default function QuizDetailsInput({ setShowQuizDetails, onQuizGenerate, n
 
   return (
     <div
-      className="absolute flex items-center justify-center bottom-0 left-1/2 transform -translate-x-1/2 z-[1000000] w-full"
+      className={`absolute flex items-center justify-center left-1/2 transform -translate-x-1/2 transition-[bottom] ease-in-out duration-300 z-[1000000] w-full ${
+        showQuizDetails ? "bottom-0" : "-bottom-[600px]"
+      }`}
     >
+
       <div
         className="bg-white w-full p-6 flex flex-col gap-4 border-t border-gray"
       >

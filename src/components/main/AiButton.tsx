@@ -299,13 +299,12 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
 
   return (
     <>
-      {showQuizDetails && (
         <QuizDetailsInput
           setShowQuizDetails={setShowQuizDetails}
           onQuizGenerate={handleQuizGenerate}
           noteContent={noteContent}
+          showQuizDetails={showQuizDetails}
         />
-      )}
       <div
         className={`
                 absolute left-1/2 ${bottomBar ? "bottom-0" : "-bottom-[209px] lg:-bottom-[113px]"} -translate-x-1/2 
