@@ -21,11 +21,11 @@ export default function QuizDetailsInput({ showQuizDetails, setShowQuizDetails, 
 
     switch (complexityLevel) {
       case "facile":
-        return Math.max(3, Math.floor(baseQuestions * 0.7))
+        return Math.max(3, Math.floor(baseQuestions * 0.5))
       case "moyen":
-        return baseQuestions
+        return Math.min(20, Math.floor(baseQuestions * 0.7))
       case "difficile":
-        return Math.min(20, Math.floor(baseQuestions * 1.3))
+        return Math.min(20, Math.floor(baseQuestions * 1))
       default:
         return baseQuestions
     }
@@ -110,6 +110,7 @@ export default function QuizDetailsInput({ showQuizDetails, setShowQuizDetails, 
             <button
               type="submit"
               className="text-sm bg-yellowButton w-[120px] rounded-md font-medium hover:bg-yellow transition-colors duration-300"
+              onClick={() => setShowQuizDetails(false)}
             >
               Générer le quiz
             </button>

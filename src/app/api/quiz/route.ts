@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
-      timeout: 120000,
+      timeout: 60000,
     })
 
     const getComplexityInstructions = (level: string) => {
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       **IMPORTANT** : Échappe les guillemets internes avec \\" pour garantir un JSON valide.
     `
 
-    const model = process.env.NODE_ENV === "production" ? "gpt-4o-mini" : "gpt-4"
+    const model = "gpt-4o"
 
     const response = await openai.chat.completions.create({
       model,
