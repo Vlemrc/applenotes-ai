@@ -13,7 +13,7 @@ import useFolderStore from "@/stores/useFolderStore"
 import Education from "./icons/Education"
 import { useLearningModeStore } from "@/stores/learningModeStore"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import Glossary from "./icons/Glossary"
 import GlossaryLayout from "./GlossaryLayout"
 import { ChevronLeft } from "lucide-react"
@@ -43,6 +43,7 @@ const ActionsNav = ({
   const currentFolder = folders?.find((folder) => folder.id === activeFolderId)
   const { toggleLearningMode, deactivateLearningMode, isLearningMode } = useLearningModeStore()
   const [glossary, setGlossary] = useState(false)
+  const glossaryRef = useRef<HTMLDivElement>(null)
 
   const handleCreateNote = async () => {
     if (!activeFolderId) {
@@ -95,6 +96,23 @@ const ActionsNav = ({
     setGlossary(!glossary)
   }
 
+  // Fermer le glossaire en cliquant à l'extérieur
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (glossaryRef.current && !glossaryRef.current.contains(event.target as Node)) {
+        setGlossary(false)
+      }
+    }
+
+    if (glossary) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [glossary])
+
   useEffect(() => {
     if (!isLearningMode && activeMode === "tutorial") {
       onModeChange(null)
@@ -123,16 +141,14 @@ const ActionsNav = ({
     <div
       className={`${currentFolder && currentFolder._count.notes === 0 ? "" : "lg:border-b lg:border-solid lg:border-gray"} h-[50px] flex flex-row justify-between items-center px-2.5 py-4 w-full`}
     >
-      <button 
-        className="flex flex-row items-center gap-1 lg:hidden"
-        onClick={() => setDisplayMode("notes")}>
-        <ChevronLeft
-          className="text-yellow h-6 w-6"
-        />
+      <button className="flex flex-row items-center gap-1 lg:hidden" onClick={() => setDisplayMode("notes")}>
+        <ChevronLeft className="text-yellow h-6 w-6" />
         <p className="text-yellow">{currentFolder?.name}</p>
       </button>
-      <div className="flex flex-row items-center justify-center absolute top-3 left-1/2 transform -translate-x-1/2 
-      lg:justify-between lg:translate-x-o lg:relative lg:top-auto lg:w-full">
+      <div
+        className="flex flex-row items-center justify-center absolute top-3 left-1/2 transform -translate-x-1/2 
+      lg:justify-between lg:translate-x-o lg:relative lg:top-auto lg:w-full"
+      >
         <div className="flex flex-row items-center gap-0.5">
           <div className="hidden lg:flex">
             <IconHoverContainer onClick={handleCreateNote}>
@@ -152,11 +168,11 @@ const ActionsNav = ({
             </IconHoverContainer>
           )}
           {isLearningMode && (
-            <div className="relative" onMouseLeave={() => setGlossary(false)}>
+            <div className="relative" ref={glossaryRef}>
               <IconHoverContainer onClick={handleGlossaryClick}>
                 <Glossary color="#6F6F6F" tutorialStep={tutorialStep} />
               </IconHoverContainer>
-              {glossary && <GlossaryLayout note={note} />}
+              {glossary && <GlossaryLayout note={note} onClose={() => setGlossary(false)} />}
             </div>
           )}
         </div>

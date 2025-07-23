@@ -5,10 +5,15 @@ import type { Note } from "@/types/notes"
 import { useState } from "react"
 import Image from "next/image"
 import useFolderStore from "@/stores/useFolderStore"
-import { Loader2 } from "lucide-react"
+import { Loader2, X } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
-export default function GlossaryLayout({ note }: { note: Note }) {
+interface GlossaryLayoutProps {
+  note: Note
+  onClose: () => void
+}
+
+export default function GlossaryLayout({ note, onClose }: GlossaryLayoutProps) {
   const noteContent = note.content
   const noteTitle = note.title
   const [isLoading, setIsLoading] = useState(false)
@@ -40,6 +45,7 @@ export default function GlossaryLayout({ note }: { note: Note }) {
 
       generatePDF(data.glossary, noteTitle)
       setIsLoading(false)
+      onClose() // Fermer le glossaire après génération
     } catch (error) {
       setIsLoading(false)
     }
@@ -77,6 +83,7 @@ export default function GlossaryLayout({ note }: { note: Note }) {
 
       generatePDF(data.glossary, `Glossaire - ${activeFolder.name}`)
       setIsFolderLoading(false)
+      onClose() // Fermer le glossaire après génération
     } catch (error) {
       setIsFolderLoading(false)
       console.error("Erreur lors de la génération du glossaire du dossier:", error)
@@ -135,7 +142,16 @@ export default function GlossaryLayout({ note }: { note: Note }) {
   return (
     <>
       <div className="p-2 absolute -bottom-[75px] -left-[8px] z-10">
-        <div className=" bg-grayLight px-4 py-2 shadow-lg rounded-md translate-y-[4px] border border-gray flex flex-col gap-1">
+        <div className="bg-grayLight px-4 py-2 shadow-lg rounded-md translate-y-[4px] border border-gray flex flex-col gap-1 relative">
+          {/* Bouton de fermeture */}
+          <button
+            onClick={onClose}
+            className="absolute -top-2 -right-2 bg-white border border-gray rounded-full p-1 hover:bg-gray-50 transition-colors"
+            aria-label="Fermer le glossaire"
+          >
+            <X size={12} className="text-gray-600" />
+          </button>
+
           <button
             onClick={handleGenerateGlossaireClick}
             disabled={isLoading}
@@ -170,33 +186,22 @@ export default function GlossaryLayout({ note }: { note: Note }) {
                 </div>
               </div>
             ) : (
-              `Générer un glossaire du dossier ${activeFolder.name}`
+              `Générer un glossaire du dossier ${activeFolder?.name || ""}`
             )}
           </button>
         </div>
       </div>
-      {isFolderLoading && 
+
+      {/* Les Alerts restent en position fixed mais n'interfèrent plus avec le hover
+      {(isFolderLoading || isLoading) && (
         <div className="fixed right-2 top-2 z-[10000]">
           <Alert>
             <Loader2 className="h-4 w-4 animate-spin" />
             <AlertTitle className="text-sm">Génération du glossaire en cours...</AlertTitle>
-            <AlertDescription className="text-xs">
-              Cela peut prendre quelques instants.
-            </AlertDescription>
+            <AlertDescription className="text-xs">Cela peut prendre quelques instants.</AlertDescription>
           </Alert>
         </div>
-      }
-      {isLoading && 
-        <div className="fixed right-2 top-2 z-[10000]">
-          <Alert>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <AlertTitle className="text-sm">Génération du glossaire en cours...</AlertTitle>
-            <AlertDescription className="text-xs">
-              Cela peut prendre quelques instants.
-            </AlertDescription>
-          </Alert>
-        </div>
-      }
+      )} */}
     </>
   )
 }
