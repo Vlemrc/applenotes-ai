@@ -1,5 +1,7 @@
 import OpenAI from "openai"
 import type { NextRequest } from "next/server"
+export const runtime = "nodejs";   // déploie en Node Function (pas Edge)
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
