@@ -80,6 +80,8 @@ export async function POST(req: NextRequest) {
       - La langue du quiz doit être identique à celle de la note.
       - Chaque question doit avoir exactement 4 réponses possibles.
       - Une seule réponse correcte par question.
+      - La réponse correcte doit être placée au hasard parmi les 4 réponses à chaque question (A, B, C ou D).
+      - La réponse correcte ne doit pas être trois fois de suite sur la même réponse (A, B, C ou D).
       - Les réponses incorrectes doivent être plausibles et pertinentes.
       - Réponds **uniquement** en JSON valide sous la forme suivante :
       
