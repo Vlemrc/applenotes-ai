@@ -139,7 +139,7 @@ const ActionsNav = ({
 
   return (
     <div
-      className={`${currentFolder && currentFolder._count.notes === 0 ? "" : "lg:border-b lg:border-solid lg:border-gray"} h-[50px] flex flex-row justify-between items-center px-2.5 py-4 w-full`}
+      className={`${currentFolder && currentFolder._count.notes === 0 ? "" : "lg:border-b lg:border-solid lg:border-gray"} h-[50px] flex flex-row justify-between items-center px-2.5 py-4 w-full relative z-[10000]`}
     >
       <button className="flex flex-row items-center gap-1 lg:hidden" onClick={() => setDisplayMode("notes")}>
         <ChevronLeft className="text-yellow h-6 w-6" />

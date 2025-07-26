@@ -6,7 +6,6 @@ import { useState } from "react"
 import Image from "next/image"
 import useFolderStore from "@/stores/useFolderStore"
 import { Loader2, X } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 interface GlossaryLayoutProps {
   note: Note
