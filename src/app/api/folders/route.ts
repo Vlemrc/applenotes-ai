@@ -106,7 +106,27 @@ export async function DELETE(req) {
       })
     }
 
-    // Maintenant que le dossier est vide, on peut le supprimer
+    // Trouver les roadmaps liées
+    const roadmaps = await prisma.roadmap.findMany({
+      where: { folderId: id },
+      select: { id: true },
+    })
+
+    const roadmapIds = roadmaps.map(r => r.id)
+
+    // Supprimer les RoadmapItems liés aux roadmaps
+    await prisma.roadmapItem.deleteMany({
+      where: {
+        roadmapId: { in: roadmapIds },
+      },
+    })
+
+    // Supprimer les roadmaps elles-mêmes
+    await prisma.roadmap.deleteMany({
+      where: { id: { in: roadmapIds } },
+    })
+
+    // Supprimer le dossier
     const deletedFolder = await prisma.folder.delete({
       where: { id },
     })
@@ -121,6 +141,8 @@ export async function DELETE(req) {
     return NextResponse.json({ error: "Error deleting folder" }, { status: 500 })
   }
 }
+
+
 
 export async function PATCH(req) {
   try {
