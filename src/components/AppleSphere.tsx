@@ -113,7 +113,7 @@ interface AppleSphereProps {
 
 export default function AppleSphere({ step }: AppleSphereProps) {
   return (
-    <div className="h-[400px] bg-white">
+    <div className="h-[250px] lg:h-[400px] bg-white">
       <Canvas camera={{ position: [0, 0, 8], fov: 45 }} gl={{ antialias: true }}>
         <ambientLight intensity={2.0} color="#ffffff" />
         <Sphere step={step} />

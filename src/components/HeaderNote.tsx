@@ -127,7 +127,7 @@ const HeaderNote = ({ note, mode, onResetMode, onNoteUpdate }: HeaderNoteProps) 
         />
       )}
       {isLearningMode && mode !== "roadmap" && item && currentFolder?.roadmaps.length > 0 && (
-        <div className="flex items-center gap-2 absolute right-4 top-[14px] lg:top-16">
+        <div className="flex items-center gap-2 absolute right-4 top-[14px] lg:top-16 z-[100000000]">
           <button className="flex flex-row items-center gap-2" onClick={toggleItemCheck}>
             <div
               className={`${isChecked ? "bg-yellow-gradient" : "bg-grayLight"} h-4 w-4 rounded-full cursor-pointer flex items-center justify-center transition-colors duration-200`}
