@@ -307,11 +307,12 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
         />
       <div
         className={`
-                absolute left-1/2 ${bottomBar ? "bottom-0" : "-bottom-[209px] lg:-bottom-[113px]"} -translate-x-1/2 
-                border-t border-solid border-gray w-full
-                flex flex-row items-center justify-center gap-5
-                transition-all duration-300 ease-in-out group bg-white
-            `}
+          absolute left-1/2 ${bottomBar ? "bottom-0" : "-bottom-[209px] lg:-bottom-[113px]"} -translate-x-1/2 
+          border-t border-solid border-gray w-full
+          flex flex-row items-center justify-center gap-5
+          transition-all duration-300 ease-in-out group bg-white
+          pb-[env(safe-area-inset-bottom)]
+        `}
       >
         <button
           className={`
