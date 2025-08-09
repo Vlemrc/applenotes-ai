@@ -26,8 +26,42 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
   const [mode, setMode] = useState<"quiz" | "assistant" | "flashcards" | "roadmap" | "tutorial" | null>(null)
   const [currentMessageIndex, setCurrentMessageIndex] = useState<number>(0)
   const [showQuizDetails, setShowQuizDetails] = useState<boolean>(false)
+  const [viewportHeight, setViewportHeight] = useState<number>(0)
 
   const { activeFolderId, folders } = useFolderStore()
+
+  // Détecter les changements de viewport pour Safari mobile
+  useEffect(() => {
+    const updateViewportHeight = () => {
+      // Utiliser la hauteur dynamique du viewport
+      const vh = window.innerHeight * 0.01
+      document.documentElement.style.setProperty("--vh", `${vh}px`)
+      setViewportHeight(window.innerHeight)
+    }
+
+    updateViewportHeight()
+    window.addEventListener("resize", updateViewportHeight)
+    window.addEventListener("orientationchange", updateViewportHeight)
+
+    // Détecter les changements de focus pour les champs de saisie
+    const handleFocusIn = () => {
+      setTimeout(updateViewportHeight, 300)
+    }
+
+    const handleFocusOut = () => {
+      setTimeout(updateViewportHeight, 300)
+    }
+
+    window.addEventListener("focusin", handleFocusIn)
+    window.addEventListener("focusout", handleFocusOut)
+
+    return () => {
+      window.removeEventListener("resize", updateViewportHeight)
+      window.removeEventListener("orientationchange", updateViewportHeight)
+      window.removeEventListener("focusin", handleFocusIn)
+      window.removeEventListener("focusout", handleFocusOut)
+    }
+  }, [])
 
   const quizMessages = [
     "Quiz en cours de création...",
@@ -299,12 +333,12 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
 
   return (
     <>
-        <QuizDetailsInput
-          setShowQuizDetails={setShowQuizDetails}
-          onQuizGenerate={handleQuizGenerate}
-          noteContent={noteContent}
-          showQuizDetails={showQuizDetails}
-        />
+      <QuizDetailsInput
+        setShowQuizDetails={setShowQuizDetails}
+        onQuizGenerate={handleQuizGenerate}
+        noteContent={noteContent}
+        showQuizDetails={showQuizDetails}
+      />
       <div
         className={`
           fixed lg:absolute left-1/2
@@ -313,16 +347,27 @@ const AiButton = ({ noteId, noteContent, onModeChange, bottomBar, setBottomBar, 
           border-t border-solid border-gray w-full
           flex flex-row items-center justify-center gap-5
           transition-all duration-300 ease-in-out group bg-white
-          pb-[env(safe-area-inset-bottom)]
+          pb-[max(env(safe-area-inset-bottom),20px)]
+          lg:pb-[env(safe-area-inset-bottom)]
         `}
+        style={{
+          // Utiliser la hauteur dynamique du viewport sur mobile
+          bottom: bottomBar ? "max(env(safe-area-inset-bottom), 20px)" : undefined,
+        }}
       >
         <button
           className={`
-                    absolute -top-6 left-1/2 -translate-x-1/2
-                    transition-transform duration-400
-                    ${bottomBar ? "rotate-180" : ""}
-                `}
+            absolute left-1/2 -translate-x-1/2
+            transition-transform duration-400
+            ${bottomBar ? "rotate-180 -top-6" : "-top-6"}
+            z-10 bg-white rounded-full p-2 shadow-lg
+            lg:bg-transparent lg:shadow-none lg:p-0
+          `}
           onClick={handleShowBottomBar}
+          style={{
+            // S'assurer que le bouton est toujours visible sur mobile
+            top: bottomBar ? "-24px" : "-24px",
+          }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
