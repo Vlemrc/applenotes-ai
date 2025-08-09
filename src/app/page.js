@@ -87,9 +87,9 @@ export default function Home() {
   
 
   return (
-    <main className="flex flex-row h-full w-full overflow-hidden">
+    <main className="flex flex-row h-[100dvh] lg:h-full w-full overflow-hidden">
       <Leftbar onBackToNote={() => setActiveMode(null)} setDisplayMode={setDisplayMode} displayMode={displayMode} />
-      <div className={`flex h-screen w-full
+      <div className={`flex h-[100dvh] lg:h-screen w-full
       lg:w-5/6`}>
         <aside className={`min-w-[100vw] w-full h-full border-r border-solid border-gray flex flex-col relative transition-opacity duration-300 delay-200 ease-in-out bg-[#FAFAFA]
         ${displayMode === "notes" ? "translate-x-0 opacity-100" : "translate-x-[-100%] opacity-0"}

@@ -99,7 +99,7 @@ body {
 }
 
 .h-calc-minus-50 {
-  height: calc(100% - 50px);
+  height: calc(100dvh - 50px);
 }
 
 .bg-green {
